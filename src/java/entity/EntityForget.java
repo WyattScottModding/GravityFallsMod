@@ -2,7 +2,6 @@ package entity;
 
 import javax.annotation.Nullable;
 
-import effects.CustomMobEffects;
 import handlers.RegistryHandler;
 import items.MemoryGunOld;
 import main.GravityFalls;

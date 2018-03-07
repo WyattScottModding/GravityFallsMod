@@ -3,7 +3,6 @@ package handlers;
 import entity.EntityForget;
 import entity.EntityGnome;
 import entity.EntityGolfCart;
-import entity.EntityHook;
 import entity.EntityLight;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
@@ -15,7 +14,6 @@ import render.RenderFlashlight;
 import render.RenderForget;
 import render.RenderGnome;
 import render.RenderGolfCart;
-import render.RenderHook;
 import render.RenderTimeCopDundgren;
 import render.RenderTimeCopLolph;
 
@@ -44,16 +42,7 @@ public class RenderHandler {
 			
 		});
 
-		
-		RenderingRegistry.registerEntityRenderingHandler(EntityHook.class, new IRenderFactory<EntityHook>()
-		{
-			@Override
-			public Render<? super EntityHook> createRenderFor(RenderManager manager)
-			{
-				return new RenderHook(manager);
-			}
-			
-		});
+
 		
 		RenderingRegistry.registerEntityRenderingHandler(EntityLight.class, new IRenderFactory<EntityLight>()
 		{

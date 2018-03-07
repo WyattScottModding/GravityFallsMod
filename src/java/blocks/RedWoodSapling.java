@@ -47,7 +47,6 @@ import net.minecraft.world.gen.feature.WorldGenBigTree;
 import net.minecraft.world.gen.feature.WorldGenTrees;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.event.terraingen.TerrainGen;
-import worldgen.WorldGenRedWood;
 
 public class RedWoodSapling extends BlockBush implements IGrowable, IHasModel
 {	

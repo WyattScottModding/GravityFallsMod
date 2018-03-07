@@ -58,10 +58,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import worldgen.WorldGenBunker;
 import worldgen.WorldGenCustomStructures;
-import worldgen.WorldGenJournal3;
-import worldgen.WorldGenMysteryShack;
 import worldgen.WorldGenOres;
 
 @EventBusSubscriber

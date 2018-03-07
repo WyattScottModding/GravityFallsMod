@@ -1,0 +1,26 @@
+{
+    "entity.gnome.ambient":
+    {
+        "category": "entity",
+        "subtitle": "entity.gnome.ambient",
+        "sounds": [{ "name": "gravityfalls:entity/gnome/ambient", "stream": true}]
+    },
+    "entity.gnome.hurt":
+    {
+        "category": "entity",
+        "subtitle": "entity.gnome.hurt",
+        "sounds": [{ "name": "gravityfalls:entity/gnome/hurt", "stream": true}]
+    },
+    "entity.gnome.death":
+    {
+        "category": "entity",
+        "subtitle": "entity.gnome.death",
+        "sounds": [{ "name": "gravityfalls:entity/gnome/death", "stream": true}]
+    },
+    "entity.gnome.angry":
+    {
+        "category": "entity",
+        "subtitle": "entity.gnome.angry",
+        "sounds": [{ "name": "gravityfalls:entity/gnome/angry", "stream": true}]
+    }
+}

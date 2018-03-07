@@ -1,0 +1,40 @@
+{
+    "pools": [
+        {
+            "name": "GnomeMain",
+            "rolls": {
+                "min": 1,
+                "max": 2
+            },
+            "bonus_rolls": {
+                "min": 0,
+                "max": 3
+            },
+            "conditions": [
+                {
+                    "condition": "killed_by_player"
+                }
+            ],
+            "entries": [
+                {
+                    "type": "item",
+                    "weight": 100,
+                    "name": "minecraft:carrot",
+                    "quality": 5
+                },
+                 {
+                    "type": "item",
+                    "weight": 1,
+                    "name": "minecraft:enchanting_table",
+                    "quality": 1
+                },
+                 {
+                    "type": "item",
+                    "weight": 3,
+                    "name": "minecraft:gold_ingot",
+                    "quality": 3
+                }
+            ]
+        }
+    ]
+}

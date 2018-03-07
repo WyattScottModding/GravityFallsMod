@@ -1,0 +1,29 @@
+{
+    "display": {
+        "title": "Welcome to Gravity Falls",
+        "description": "Find a Gravity Falls Biome",
+        "icon": {
+            "item": "gravityfalls:pinehat"
+        },
+        "frame": "goal",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false,
+        "background": "gravityfalls:textures/backgrounds/bill2.png"
+    },
+    "criteria": {
+        "biome": {
+            "trigger": "minecraft:location",
+            "conditions": {
+                "biome": "gravityfalls:gravityfalls"
+            }
+        }
+    },
+    "rewards": {
+        "recipes": [
+            "dipperhat1",
+            "dipperhat2",
+            "mabelsweater"
+        ]
+    }
+}

@@ -1,0 +1,36 @@
+{
+    "display": {
+        "title": "1.21 Gigawatts",
+        "description": "Make a Uranium Furnace",
+        "icon": {
+            "item": "gravityfalls:uranium_furnace"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "parent": "gravityfalls:gravityfalls/book2",
+    "criteria": {
+        "book1": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "gravityfalls:uranium_furnace"
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "recipes": [
+            "rubberhelmet1",
+            "rubberhelmet2",
+            "rubberchestplate",
+            "rubberleggings",
+            "rubberboots1",
+            "rubberboots2"
+        ]
+    }
+}

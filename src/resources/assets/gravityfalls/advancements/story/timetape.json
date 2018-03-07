@@ -1,0 +1,31 @@
+{
+    "display": {
+        "title": "Time Tape",
+        "description": "Where we're going, we don't need roads",
+        "icon": {
+            "item": "gravityfalls:timetape"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "parent": "gravityfalls:gravityfalls/book3",
+    "criteria": {
+        "book1": {
+            "trigger": "minecraft:inventory_changed",
+            "conditions": {
+                "items": [
+                    {
+                        "item": "gravityfalls:timetape"
+                    }
+                ]
+            }
+        }
+    },
+    "rewards": {
+        "recipes": [
+            ""
+        ]
+    }
+}

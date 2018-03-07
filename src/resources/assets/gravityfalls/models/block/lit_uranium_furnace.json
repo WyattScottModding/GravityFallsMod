@@ -1,0 +1,13 @@
+{
+    "parent": "block/orientable",
+    "textures":
+    {
+        "particle": "gravityfalls:blocks/uraniumfurnace_front",
+        "up": "gravityfalls:blocks/uraniumfurnace_top",
+        "down": "gravityfalls:blocks/uraniumfurnace_bottom",
+        "north": "gravityfalls:blocks/uraniumfurnace_front_lit",
+        "east": "gravityfalls:blocks/uraniumfurnace_right",
+        "west": "gravityfalls:blocks/uraniumfurnace_left",
+        "south": "gravityfalls:blocks/uraniumfurnace_back"
+    }
+}

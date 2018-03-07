@@ -18,7 +18,6 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 
 public class WorldGenTrees implements IWorldGenerator
 {
-	private final WorldGenerator REDWOOD = new WorldGenRedWood();
 	
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator, IChunkProvider chunkProvider) 
@@ -31,8 +30,7 @@ public class WorldGenTrees implements IWorldGenerator
 			
 		case 0:
 			
-			runGenerator(REDWOOD, world, random, chunkX, chunkZ, 3, -1, 0, BiomeGravityFalls.class);
-			runGenerator(REDWOOD, world, random, chunkX, chunkZ, 3, -1, 0, BiomePlains.class);
+			
 			break;
 			
 		case -1:

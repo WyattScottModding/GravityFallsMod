@@ -30,7 +30,6 @@ import net.minecraft.world.gen.feature.WorldGenAbstractTree;
 
 public class BiomeGravityFalls extends Biome
 {
-	protected static final WorldGenAbstractTree TREE = new WorldGenRedWood();
 	
 	public BiomeGravityFalls()
 	{
@@ -76,7 +75,7 @@ public class BiomeGravityFalls extends Biome
 	@Override
 	public WorldGenAbstractTree getRandomTreeFeature(Random rand)
 	{
-		return TREE;
+		return null;
 	}
 	
 	

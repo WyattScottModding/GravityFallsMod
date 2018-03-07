@@ -8,7 +8,6 @@ import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-import effects.CustomPotions;
 import entity.EntityForget;
 import init.ItemInit;
 import main.GravityFalls;

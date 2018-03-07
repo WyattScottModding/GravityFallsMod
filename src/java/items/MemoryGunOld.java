@@ -5,7 +5,6 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import effects.CustomPotions;
 import entity.EntityForget;
 import init.ItemInit;
 import main.GravityFalls;

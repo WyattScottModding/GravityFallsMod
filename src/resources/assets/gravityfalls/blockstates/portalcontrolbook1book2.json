@@ -1,0 +1,9 @@
+{
+    "variants":
+    {
+        "facing=north": {"model": "gravityfalls:portalcontrolbook1book2"},
+        "facing=east": {"model": "gravityfalls:portalcontrolbook1book2", "y": 90},
+        "facing=south": {"model": "gravityfalls:portalcontrolbook1book2", "y": 180},
+        "facing=west": {"model": "gravityfalls:portalcontrolbook1book2", "y": 270}
+     }
+}

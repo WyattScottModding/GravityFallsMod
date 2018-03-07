@@ -1,0 +1,13 @@
+{
+    "variants":
+    {
+        "burning=false,facing=north": {"model": "gravityfalls:uranium_furnace"},
+        "burning=false,facing=east": {"model": "gravityfalls:uranium_furnace", "y": 90},
+        "burning=false,facing=south": {"model": "gravityfalls:uranium_furnace", "y": 180},
+        "burning=false,facing=west": {"model": "gravityfalls:uranium_furnace", "y": 270},
+        "burning=true,facing=north": {"model": "gravityfalls:lit_uranium_furnace"},
+        "burning=true,facing=east": {"model": "gravityfalls:lit_uranium_furnace", "y": 90},
+        "burning=true,facing=south": {"model": "gravityfalls:lit_uranium_furnace", "y": 180},
+        "burning=true,facing=west": {"model": "gravityfalls:lit_uranium_furnace", "y": 270}
+    }
+}

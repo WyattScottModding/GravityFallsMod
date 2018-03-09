@@ -2,6 +2,7 @@ package worldgen;
 
 import java.util.Random;
 
+import main.Reference;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
@@ -31,7 +32,7 @@ public class WorldGenStructure extends WorldGenerator implements IStructure
 	{
 		MinecraftServer mcServer = world.getMinecraftServer();
 		TemplateManager manager = worldServer.getStructureTemplateManager();
-		ResourceLocation location = new ResourceLocation(main.Reference.MODID, structureName);
+		ResourceLocation location = new ResourceLocation(Reference.MODID, structureName);
 		Template template = manager.get(mcServer, location);
 
 		if(template != null)

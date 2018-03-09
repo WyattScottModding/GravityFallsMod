@@ -23,14 +23,13 @@ public class WorldGenOres implements IWorldGenerator{
 	public WorldGenOres()
 	{
 		//The number is how many in a vein
-		uranium = new WorldGenMinable(BlockInit.URANIUM.getDefaultState(), 2, BlockMatcher.forBlock(Blocks.STONE));
-		crystal = new WorldGenMinable(BlockInit.CRYSTAL.getDefaultState(), 1, BlockMatcher.forBlock(Blocks.TALLGRASS));
-
+	//	uranium = new WorldGenMinable(BlockInit.URANIUM.getDefaultState(), 2);
 	}
 
 	private void runGenerator(WorldGenerator gen, World world, Random rand, int chunkX, int chunkZ, int chance, int minHeight, int maxHeight)
 	{
-		if(minHeight > maxHeight || minHeight < 0 || maxHeight > 256) throw new IllegalArgumentException("Ore generated out of bounds");
+		if(minHeight > maxHeight || minHeight < 0 || maxHeight > 256) 
+			throw new IllegalArgumentException("Ore generated out of bounds");
 		
 		int heightDiff = maxHeight - minHeight + 1;
 		for(int i = 0; i < chance; i++)
@@ -51,13 +50,13 @@ public class WorldGenOres implements IWorldGenerator{
 
 		//chance   minheight   maxheight
 
-		switch(0)//world.provider.getDimension())
+		switch(world.provider.getDimension())
 		{
 		case -1:
 			break;
 		case 0:
-			runGenerator(uranium, world, random, chunkX, chunkZ, 3, 3, 16);
-			runGenerator(crystal, world, random, chunkX, chunkZ, 50, 50, 80);	break;
+		//	runGenerator(uranium, world, random, chunkX, chunkZ, 90, 3, 80);  
+			break;
 		case 1:
 			break;
 		}

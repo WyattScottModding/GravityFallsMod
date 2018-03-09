@@ -27,13 +27,16 @@ import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.gen.feature.WorldGenAbstractTree;
+import net.minecraft.world.gen.feature.WorldGenBigTree;
 
 public class BiomeGravityFalls extends Biome
 {
 	
+	protected static final WorldGenAbstractTree TREE = new WorldGenBigTree(true);
+
 	public BiomeGravityFalls()
 	{
-		super(new BiomeProperties("GravityFalls").setBaseHeight(0.2F).setRainDisabled().setHeightVariation(0.01F).setTemperature(1.0F));
+		super(new BiomeProperties("GravityFalls").setBaseHeight(0.2F).setRainDisabled().setHeightVariation(0.005F).setTemperature(1.5F));
 	
 		topBlock = Blocks.GRASS.getDefaultState();
 		fillerBlock = Blocks.DIRT.getDefaultState();
@@ -57,15 +60,15 @@ public class BiomeGravityFalls extends Biome
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityPig.class, 8, 0, 5));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityBat.class, 5, 0, 4));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityRabbit.class, 3, 0, 4));
-		this.spawnableCreatureList.add(new SpawnListEntry(EntityLlama.class, 3, 0, 1));
+		this.spawnableCreatureList.add(new SpawnListEntry(EntityLlama.class, 2, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityWitch.class, 3, 0, 5));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityChicken.class, 5, 0, 5));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityEnderman.class, 3, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityShulker.class, 1, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntitySpider.class, 8, 0, 2));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityWolf.class, 3, 0, 5));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityZombieHorse.class, 1, 0, 2));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntitySkeletonHorse.class, 1, 0, 2));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityZombieHorse.class, 1, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntitySkeletonHorse.class, 1, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityWitherSkeleton.class, 1, 0, 1));
 
 
@@ -75,7 +78,7 @@ public class BiomeGravityFalls extends Biome
 	@Override
 	public WorldGenAbstractTree getRandomTreeFeature(Random rand)
 	{
-		return null;
+		return TREE;
 	}
 	
 	

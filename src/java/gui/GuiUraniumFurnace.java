@@ -41,7 +41,7 @@ public class GuiUraniumFurnace extends GuiContainer
 		if(TileEntityUraniumFurnace.isBurning(tileentity))
 		{
 			int k = this.getBurnLeftScaled(27);
-			this.drawTexturedModalRect(this.guiLeft + 98, this.guiTop + 37 + 12 - k, 176, 12 - k, 14, k + 1);
+			this.drawTexturedModalRect(this.guiLeft + 98, this.guiTop + 38 + 12 - k, 176, 12 - k, 14, k + 1);
 			
 		}
 		

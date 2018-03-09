@@ -95,111 +95,90 @@ public class MagicFlashLight extends Item implements IHasModel{
 	}
 
 
-
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
-		if(entityIn instanceof EntityPlayer && ((EntityPlayer) entityIn).getHeldItemMainhand().equals(ItemInit.MAGICFLASHLIGHT))
+		if(entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) entityIn;
-			
-			if(height > 2 && Keyboard.isKeyDown(Keyboard.KEY_LEFT))
-				getMouseOver(player, worldIn, (int) height * 2);
 
-			float heightChange = 0.015F;
-			float widthChange = 0.005F;
-			float eyeHeightChange = 0.013F;
-			float stepHeightChange = 0.0083F;
-			float jumpChange = 0.00016F;
-
-			playerX = player.posX;
-			playerY = player.posY;
-			playerZ = player.posZ;
-
-			AxisAlignedBB boundingBox = new AxisAlignedBB((double)player.getEntityBoundingBox().minX, (double)player.getEntityBoundingBox().minY, (double)player.getEntityBoundingBox().minZ, (double)player.getEntityBoundingBox().minX + width, (double)player.getEntityBoundingBox().minY + height, (double)player.getEntityBoundingBox().minZ + width);
-
-
-
-			player.setEntityBoundingBox(boundingBox);
-
-			if(grow.isKeyDown())
+			if(player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.MAGICFLASHLIGHT)))
 			{
-				if(height < 10)
+				
+
+				float heightChange = 0.015F;
+				float widthChange = 0.005F;
+				float eyeHeightChange = 0.013F;
+				float stepHeightChange = 0.0083F;
+				float jumpChange = 0.00016F;
+
+				if(grow.isPressed() || shrink.isPressed())
 				{
-					height += heightChange;
-					width += widthChange;
-					eyeHeight += eyeHeightChange;
-					stepHeight += stepHeightChange;
-					jumpFactor += jumpChange;
+					playerX = player.posX;
+					playerY = player.posY;
+					playerZ = player.posZ;
+				}
 
-					player.eyeHeight = .9F * (height);
-					player.stepHeight = stepHeight;
-					player.jumpMovementFactor = jumpFactor; 
+				//	AxisAlignedBB boundingBox = new AxisAlignedBB((double)player.getEntityBoundingBox().minX, (double)player.getEntityBoundingBox().minY, (double)player.getEntityBoundingBox().minZ, (double)player.getEntityBoundingBox().minX + width, (double)player.getEntityBoundingBox().minY + height, (double)player.getEntityBoundingBox().minZ + width);
 
+				//	player.setEntityBoundingBox(boundingBox);
 
-					
-					player.height = height;
-					player.width = width;
-					player.setAIMoveSpeed(player.getAIMoveSpeed() + jumpFactor);
-					//player.renderOffsetY = (float) (height - 1.8);
-
-					/*
-					if(height > 1.8)
+				if(grow.isKeyDown())
+				{
+					if(height < 10)
 					{
-					//	player.motionX -= (height * height * .01);
-					//	player.motionZ -= (height * height * .01);
-						player.setVelocity(0, 0, 0);
+						height += heightChange;
+						width += widthChange;
+						eyeHeight += eyeHeightChange;
+						stepHeight += stepHeightChange;
+						jumpFactor += jumpChange;
+
+						player.eyeHeight = .9F * (height);
+						player.stepHeight = stepHeight;
+						player.jumpMovementFactor = jumpFactor; 
+
+
+						setSize(width, height, player);
+						player.setAIMoveSpeed(player.getAIMoveSpeed() + jumpFactor);
+						//player.renderOffsetY = (float) (height - 1.8);
+
+
+						player.setPosition(playerX, playerY, playerZ);
 					}
-					 */
+				}
+
+				if(shrink.isKeyDown())
+				{
+					if(height > 0.1)
+					{
+						height -= heightChange;
+						width -= widthChange;
+						eyeHeight -= eyeHeightChange;
+						stepHeight -= stepHeightChange;
+						jumpFactor -= jumpChange;
+
+						player.eyeHeight = .9F * (height);
+						player.stepHeight = stepHeight;
+						player.jumpMovementFactor = jumpFactor; 
+
+
+						setSize(width, height, player);
+						player.setAIMoveSpeed(player.getAIMoveSpeed() + jumpFactor);
+						//player.renderOffsetY = (float) (height - 1.8);
+
+
+						player.setPosition(playerX, playerY, playerZ);
+					}
 
 				}
 			}
-
-			if(shrink.isKeyDown())
-			{
-
-				if(height > 0.1)
-				{
-					height -= heightChange;
-					width -= widthChange;
-					eyeHeight -= eyeHeightChange;
-					stepHeight -= stepHeightChange;
-					jumpFactor -= jumpChange;
-
-					player.eyeHeight = .9F * (height);
-					player.stepHeight = stepHeight;
-					player.jumpMovementFactor = jumpFactor; 
-
-					
-					player.height = height;
-					player.width = width;
-					player.setAIMoveSpeed(player.getAIMoveSpeed() + jumpFactor);
-					//player.renderOffsetY = (float) (height - 1.8);
-
-					/*
-					if(height > 1.8)
-					{
-						//player.motionX -= (height * height * .01);
-						//player.motionZ -= (height * height * .01);
-						player.setVelocity(0, 0, 0);
-					}
-					 */
-
-				}
-
-			}
-
 
 		}
-
-
-
-
 
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
-	
+
 
 	protected void setSize(float width, float height, EntityPlayer player)
 	{
@@ -209,20 +188,25 @@ public class MagicFlashLight extends Item implements IHasModel{
 			player.width = width;
 			player.height = height;
 
-			if (player.width < f)
-			{
-				double d0 = (double)width / 2.0D;
-				player.setEntityBoundingBox(new AxisAlignedBB(player.posX - d0, player.posY, player.posZ - d0, player.posX + (d0 / 2), player.posY + (double)player.height, player.posZ + (d0 / 2)));
-				return;
-			}
+	//		if (player.width < f)
+	//		{
+	//			double d0 = (double)width / 2.0D;
+	//			player.setEntityBoundingBox(new AxisAlignedBB(player.posX - d0, player.posY, player.posZ - d0, player.posX + (d0 / 2), player.posY + (double)player.height, player.posZ + (d0 / 2)));
+	//			return;
+	//		}
 
-			AxisAlignedBB axisalignedbb = player.getEntityBoundingBox();
-			player.setEntityBoundingBox(new AxisAlignedBB(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ, axisalignedbb.minX + ((double)player.width / 2), axisalignedbb.minY + (double)player.height, axisalignedbb.minZ + ((double)player.width / 2)));
+			//	AxisAlignedBB axisalignedbb = player.getEntityBoundingBox();
+			//	player.setEntityBoundingBox(new AxisAlignedBB(axisalignedbb.minX, axisalignedbb.minY, axisalignedbb.minZ, axisalignedbb.minX + ((double)player.width / 2), axisalignedbb.minY + (double)player.height, axisalignedbb.minZ + ((double)player.width / 2)));
 
-			if (player.width > f && !player.world.isRemote)
-			{
-				player.move(MoverType.SELF, (double)(f - player.width), 0.0D, (double)(f - player.width));
-			}
+			AxisAlignedBB boundingBox = new AxisAlignedBB((double)player.posX, (double)player.posY, (double)player.posZ, (double)player.posX + width, (double)player.posY + height, (double)player.posZ + width);
+
+			player.setEntityBoundingBox(boundingBox);
+			
+
+	//		if (player.width > f && !player.world.isRemote)
+	//		{
+	//			player.move(MoverType.SELF, (double)(f - player.width), 0.0D, (double)(f - player.width));
+	//		}
 
 		}
 	}
@@ -240,53 +224,9 @@ public class MagicFlashLight extends Item implements IHasModel{
 
 		return super.onItemRightClick(worldIn, player, handIn);
 	}
+
+
 	
-	
-	public void getMouseOver(EntityPlayer player, World world, int reach)
-	{
-
-		Vec3d lookVec = player.getLookVec();
-
-		BlockPos pos = player.getPosition();
-
-		float yaw = player.rotationYaw;
-		float pitch = player.rotationPitch;
-
-		for(int f = 0; f <= reach; f++)
-		{
-			double x = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
-			double y = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
-			double z = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
-
-
-			AxisAlignedBB entityPos = new AxisAlignedBB(pos.getX() + x, pos.getY() + y, pos.getZ() + z, pos.getX() + x + 1, pos.getY() + y + 1, pos.getZ() + z + 1);
-
-			List<Entity> list = world.getEntitiesInAABBexcluding(player, entityPos, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
-			{
-				public boolean apply(@Nullable Entity p_apply_1_)
-				{
-					return p_apply_1_ != null && p_apply_1_.canBeCollidedWith();
-				}
-			}));
-
-			for(int j = 0; j < list.size(); ++j)
-			{
-				Entity entity = list.get(j);
-				if(player instanceof EntityPlayerMP)
-				{					
-					EntityPlayerMP entityplayer = (EntityPlayerMP) player;
-
-					
-					if(entity instanceof EntityLivingBase)
-					{
-						EntityLivingBase mob = (EntityLivingBase) entity;
-
-						mob.fallDistance = 5;
-					}
-				}				
-			}
-		}
-	}
 
 
 }

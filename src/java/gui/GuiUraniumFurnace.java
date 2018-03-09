@@ -32,21 +32,25 @@ public class GuiUraniumFurnace extends GuiContainer
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) 
+	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY)
 	{
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
 		this.mc.getTextureManager().bindTexture(TEXTURES);
 		this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
 	
+		/*
 		if(TileEntityUraniumFurnace.isBurning(tileentity))
 		{
-			int k = this.getBurnLeftScaled(27);
-			this.drawTexturedModalRect(this.guiLeft + 98, this.guiTop + 38 + 12 - k, 176, 12 - k, 14, k + 1);
-			
+			int k = this.getBurnLeftScaled(13);
+			this.drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 54 + 12 - k, 176, 12 - k, 14, k + 1);
 		}
+		*/
 		
+		int l = this.getCookProgressScaled(26);
+		this.drawTexturedModalRect(this.guiLeft + 98, this.guiTop + 46, 177, 1, 7, l);
 	}
-	
+
+	/*
 	private int getBurnLeftScaled(int pixels)
 	{
 		int i = this.tileentity.getField(1);
@@ -55,13 +59,13 @@ public class GuiUraniumFurnace extends GuiContainer
 		return this.tileentity.getField(0) * pixels / i;
 				
 	}
-	
+	*/
 	
 	private int getCookProgressScaled(int pixels)
 	{
-		int i = this.tileentity.getField(0);
-		int j = this.tileentity.getField(4);
-		return j != 0 && i != 0 ? i * pixels / j : 0;
+		int j = this.tileentity.getField(3);
+
+		return j != 0 ? j * pixels / 500 : 0;
 		
 		
 	}

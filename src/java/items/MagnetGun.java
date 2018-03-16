@@ -105,12 +105,12 @@ public class MagnetGun extends ItemBow implements IHasModel{
 			if(active)
 			{
 				//The gun is only attracted to objects that contain iron
-				if(blockType == Blocks.IRON_BLOCK || blockType == Blocks.IRON_BARS || blockType == Blocks.IRON_ORE || blockType == Blocks.IRON_DOOR || blockType == Blocks.IRON_TRAPDOOR || blockType == Blocks.DETECTOR_RAIL || blockType == Blocks.RAIL || blockType == Blocks.ACTIVATOR_RAIL || blockType == Blocks.ANVIL || blockType == Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE || blockType == Blocks.PISTON || blockType == Blocks.STICKY_PISTON  || blockType == BlockInit.URANIUM_TANK || blockType == BlockInit.URANIUM_TANK_FILLED || blockType == BlockInit.URANIUM_TANK_HALFFILLED || blockType == Blocks.HOPPER || blockType == BlockInit.METAL_TREE)
+				if(blockType == Blocks.IRON_BLOCK || blockType == Blocks.IRON_BARS || blockType == Blocks.IRON_ORE || blockType == Blocks.IRON_DOOR || blockType == Blocks.DETECTOR_RAIL || blockType == Blocks.RAIL || blockType == Blocks.ACTIVATOR_RAIL || blockType == Blocks.ANVIL || blockType == Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE || blockType == Blocks.PISTON || blockType == Blocks.STICKY_PISTON  || blockType == BlockInit.URANIUM_TANK || blockType == BlockInit.URANIUM_TANK_FILLED || blockType == BlockInit.URANIUM_TANK_HALFFILLED || blockType == Blocks.HOPPER || blockType == BlockInit.METAL_TREE)
 				{
 					float yaw = player.rotationYaw;
 					float pitch = player.rotationPitch;
 
-
+					
 					//Amount of movement
 					float f = 1.2F;
 
@@ -170,7 +170,14 @@ public class MagnetGun extends ItemBow implements IHasModel{
 					
 				}
 			
-			
+				//If it is an iron trapdoor, remove it
+				if(blockType == Blocks.IRON_TRAPDOOR)
+				{
+					IBlockState state = Blocks.AIR.getDefaultState();
+					world.setBlockState(blockPosition.getBlockPos(), state);
+					world.destroyBlock(blockPosition.getBlockPos(), true);
+					player.addItemStackToInventory(new ItemStack(Blocks.IRON_TRAPDOOR));
+				}
 			
 			}
 		}

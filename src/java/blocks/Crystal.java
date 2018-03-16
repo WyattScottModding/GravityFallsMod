@@ -33,6 +33,8 @@ public class Crystal extends Block implements IHasModel{
 		this.setLightOpacity(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
+		this.setHardness(2.0F);
+		this.setResistance(10.0F);
 		this.setCreativeTab(GravityFalls.gravityfallstab);
 		this.setSoundType(SoundType.GLASS);
 		

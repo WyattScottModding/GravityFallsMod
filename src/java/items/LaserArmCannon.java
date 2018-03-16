@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
+import org.apache.http.impl.conn.Wire;
+
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
@@ -12,7 +14,13 @@ import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityPigZombie;
+import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -51,9 +59,20 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
-		if(cooldown == 0)
-			fired = true;
+		boolean flag = playerIn.capabilities.isCreativeMode;
+		boolean hasItemStack = playerIn.inventory.hasItemStack(new ItemStack(Items.REDSTONE));
 
+		if (hasItemStack || flag)
+		{
+			if (!worldIn.isRemote && cooldown == 0)
+			{
+				ItemStack itemstack = findAmmo(playerIn);
+
+				fired = true;
+
+				itemstack.shrink(1);
+			}
+		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 
@@ -111,11 +130,45 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 				{
 					EntityLivingBase mob = (EntityLivingBase) entity;
 
-					mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 1, 0));
+					if(mob instanceof EntitySkeleton || mob instanceof EntityZombie || mob instanceof EntityZombieHorse)
+						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 1, 0));
+					else
+						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 1, 0));
+					
+					
+
 				}
 			}
 		}
 
+	}
+	
+
+	private ItemStack findAmmo(EntityPlayer player)
+	{
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(Items.REDSTONE)))
+		{
+			return player.getHeldItem(EnumHand.OFF_HAND);
+		}
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(Items.REDSTONE)))
+		{
+			return player.getHeldItem(EnumHand.MAIN_HAND);
+		}
+		else
+		{
+			for (int i = 0; i < player.inventory.getSizeInventory(); ++i)
+			{
+				ItemStack itemstack = player.inventory.getStackInSlot(i);
+
+				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(Items.REDSTONE)))
+
+				{
+					return itemstack;
+				}
+			}
+
+			return ItemStack.EMPTY;
+		}
 	}
 }
 

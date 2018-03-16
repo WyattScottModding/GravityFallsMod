@@ -49,8 +49,7 @@ public class Uranium extends Block implements IHasModel
 		return new ItemStack(Item.getItemFromBlock(this));
 	}
 
-
-	@Override
+	
 	public void registerModels() 
 	{
 		GravityFalls.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");

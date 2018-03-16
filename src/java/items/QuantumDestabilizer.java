@@ -56,6 +56,7 @@ import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import net.minecraft.init.Items;
 
 public class QuantumDestabilizer extends ItemBow implements IHasModel{
 
@@ -80,19 +81,17 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel{
 			EntityPlayer player = (EntityPlayer) entityIn;
 
 			boolean flag = player.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
-			ItemStack itemstack = this.findAmmo(player);
+			boolean hasItemStack = player.inventory.hasItemStack(new ItemStack(Items.DIAMOND));
 
 			int i = this.getMaxItemUseDuration(stack);
-			i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, player, i, !itemstack.isEmpty() || flag);
+			i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, player, i, hasItemStack || flag);
 			if (i < 0) 
 				return;
 
-			if (!itemstack.isEmpty() || flag)
+			if (hasItemStack || flag)
 			{
-				if (itemstack.isEmpty())
-				{
-					itemstack = new ItemStack(Items.DIAMOND);
-				}
+	
+				ItemStack itemstack = findAmmo(player);
 
 				float f = getArrowVelocity(i);
 
@@ -174,7 +173,8 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel{
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
 		ItemStack itemstack = playerIn.getHeldItem(handIn);
-		boolean flag = !this.findAmmo(playerIn).isEmpty();
+		boolean flag = playerIn.inventory.hasItemStack(new ItemStack(Items.DIAMOND));
+
 
 		if(!worldIn.isRemote && playerIn instanceof EntityPlayer)
 		{
@@ -202,41 +202,6 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel{
 	}
 
 
-	private ItemStack findAmmo(EntityPlayer player)
-	{
-		if (this.isArrow(player.getHeldItem(EnumHand.OFF_HAND)))
-		{
-			return player.getHeldItem(EnumHand.OFF_HAND);
-		}
-		else if (this.isArrow(player.getHeldItem(EnumHand.MAIN_HAND)))
-		{
-			return player.getHeldItem(EnumHand.MAIN_HAND);
-		}
-		else
-		{
-			for (int i = 0; i < player.inventory.getSizeInventory(); ++i)
-			{
-				ItemStack itemstack = player.inventory.getStackInSlot(i);
-
-				if (this.isArrow(itemstack))
-				{
-					return itemstack;
-				}
-			}
-
-			return ItemStack.EMPTY;
-		}
-	}
-
-
-
-
-	@Override
-	protected boolean isArrow(ItemStack stack)
-	{
-		return stack == new ItemStack(Items.DIAMOND);
-	}
-
 
 
 	@Override
@@ -257,6 +222,33 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel{
 		}
 
 		return f;
+	}
+	
+	private ItemStack findAmmo(EntityPlayer player)
+	{
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(Items.DIAMOND)))
+		{
+			return player.getHeldItem(EnumHand.OFF_HAND);
+		}
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(Items.DIAMOND)))
+		{
+			return player.getHeldItem(EnumHand.MAIN_HAND);
+		}
+		else
+		{
+			for (int i = 0; i < player.inventory.getSizeInventory(); ++i)
+			{
+				ItemStack itemstack = player.inventory.getStackInSlot(i);
+
+				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(Items.DIAMOND)))
+
+				{
+					return itemstack;
+				}
+			}
+
+			return ItemStack.EMPTY;
+		}
 	}
 
 

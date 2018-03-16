@@ -5,8 +5,7 @@ import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 
-public class ModelGnome
-  extends ModelBase
+public class ModelGnome extends ModelBase
 {
   ModelRenderer Arm1;
   ModelRenderer Leg1;

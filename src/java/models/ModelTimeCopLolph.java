@@ -12,7 +12,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 
 
-public class ModelTimeCopDundgren extends ModelBase {
+public class ModelTimeCopLolph extends ModelBase {
 
 	ModelRenderer leftFoot;
 	ModelRenderer rightFoot;
@@ -24,7 +24,7 @@ public class ModelTimeCopDundgren extends ModelBase {
 	ModelRenderer head;
 	ModelRenderer metalEye;
 
-	public ModelTimeCopDundgren()
+	public ModelTimeCopLolph()
 	{
 		this.textureHeight = 256;
 		this.textureWidth = 256;
@@ -86,7 +86,7 @@ public class ModelTimeCopDundgren extends ModelBase {
 		setRotation(this.head, 0.0F, 0.0F, 0.0F);
 		
 		this.metalEye = new ModelRenderer(this, 0, 64);
-		this.metalEye.addBox(-2.0F, -20.0F, -2.0F, 3, 3, 2);
+		this.metalEye.addBox(3.0F, -20.0F, -2.0F, 3, 3, 2);
 		this.metalEye.setRotationPoint(0.0F, 0.0F, 0.0F);
 		this.metalEye.setTextureSize(16, 16);
 	    this.metalEye.showModel = true;
@@ -106,6 +106,7 @@ public class ModelTimeCopDundgren extends ModelBase {
 		this.rightArm.renderWithRotation(f5);
 		this.head.renderWithRotation(f5);
 		this.metalEye.renderWithRotation(f5);
+
 	}
 
 	private void setRotation(ModelRenderer model, float x, float y, float z)

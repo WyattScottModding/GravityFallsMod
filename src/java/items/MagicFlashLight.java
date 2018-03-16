@@ -140,9 +140,10 @@ public class MagicFlashLight extends Item implements IHasModel{
 
 						setSize(width, height, player);
 						player.setAIMoveSpeed(player.getAIMoveSpeed() + jumpFactor);
-						//player.renderOffsetY = (float) (height - 1.8);
+						player.renderOffsetY = (float) (height - 1.8);
 
-
+						//GL11.glScaled(widthChange + 1, heightChange + 1, widthChange + 1);
+						
 						player.setPosition(playerX, playerY, playerZ);
 					}
 				}
@@ -164,9 +165,11 @@ public class MagicFlashLight extends Item implements IHasModel{
 
 						setSize(width, height, player);
 						player.setAIMoveSpeed(player.getAIMoveSpeed() + jumpFactor);
-						//player.renderOffsetY = (float) (height - 1.8);
+						player.renderOffsetY = (float) (height - 1.8);
 
-
+						//GL11.glScaled(widthChange + 1, heightChange + 1, widthChange + 1);
+						
+						
 						player.setPosition(playerX, playerY, playerZ);
 					}
 

@@ -1,7 +1,6 @@
 package render;
 
 import entity.EntityTimeCopDundgren;
-import entity.EntityTimeCopLolph;
 import main.Reference;
 import models.ModelTimeCopDundgren;
 import net.minecraft.client.model.ModelBase;
@@ -16,8 +15,7 @@ public class RenderTimeCopDundgren extends RenderLiving<EntityTimeCopDundgren>
 
 	public RenderTimeCopDundgren(RenderManager manager) 
 	{
-		super(manager, new ModelTimeCopDundgren(), 0.5F);
-		
+		super(manager, new ModelTimeCopDundgren(), 0.6F);
 	}
 
 	protected ResourceLocation getEntityTexture(EntityTimeCopDundgren entity) {

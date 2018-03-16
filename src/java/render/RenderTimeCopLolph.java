@@ -2,7 +2,7 @@ package render;
 
 import entity.EntityTimeCopLolph;
 import main.Reference;
-import models.ModelTimeCopDundgren;
+import models.ModelTimeCopLolph;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -15,7 +15,7 @@ public class RenderTimeCopLolph extends RenderLiving<EntityTimeCopLolph>
 
 	public RenderTimeCopLolph(RenderManager manager) 
 	{
-		super(manager, new ModelTimeCopDundgren(), 0.5F);
+		super(manager, new ModelTimeCopLolph(), 0.6F);
 		
 	}
 

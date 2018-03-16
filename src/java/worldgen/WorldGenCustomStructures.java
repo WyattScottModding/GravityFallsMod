@@ -22,11 +22,11 @@ import net.minecraftforge.fml.common.IWorldGenerator;
 
 public class WorldGenCustomStructures implements IWorldGenerator
 {
-//	WorldGenStructure CRYSTAL = new WorldGenStructure("crystal");
-//	WorldGenStructure MYSTERYSHACK = new WorldGenStructure("mysteryshack");
-//	WorldGenStructure JOURNAL3 = new WorldGenStructure("journal3");
-//	WorldGenStructure BUNKER = new WorldGenStructure("bunker");
-//	WorldGenStructure REDWOODTREES = new WorldGenStructure("redwoodtrees");
+	//	WorldGenStructure CRYSTAL = new WorldGenStructure("crystal");
+	//	WorldGenStructure MYSTERYSHACK = new WorldGenStructure("mysteryshack");
+	//	WorldGenStructure JOURNAL3 = new WorldGenStructure("journal3");
+	//	WorldGenStructure BUNKER = new WorldGenStructure("bunker");
+	//	WorldGenStructure REDWOODTREES = new WorldGenStructure("redwoodtrees");
 
 
 	@Override
@@ -39,19 +39,20 @@ public class WorldGenCustomStructures implements IWorldGenerator
 			break;
 		case 0:
 
-			this.generateStructureBunker(new WorldGenStructure("bunker"), world, random, chunkX, chunkZ, 500, Blocks.GRASS, BiomeGravityFalls.class);
-			this.generateStructureCrystal(new WorldGenStructure("crystal"), world, random, chunkX, chunkZ, 400, Blocks.GRASS, BiomeGravityFalls.class);
-			this.generateStructureJournal3(new WorldGenStructure("journal3"), world, random, chunkX, chunkZ, 500, Blocks.GRASS, BiomeGravityFalls.class);
-			this.generateStructureShack(new WorldGenStructure("mysteryshack"), world, random, chunkX, chunkZ, 500, Blocks.GRASS, BiomeGravityFalls.class);
+			this.generateStructureBunker(new WorldGenStructure("bunker"), world, random, chunkX, chunkZ, 400, Blocks.GRASS, BiomeGravityFalls.class);
+			this.generateStructureCrystal(new WorldGenStructure("crystal"), world, random, chunkX, chunkZ, 300, Blocks.GRASS, BiomeGravityFalls.class);
+			this.generateStructureJournal3(new WorldGenStructure("journal3"), world, random, chunkX, chunkZ, 400, Blocks.GRASS, BiomeGravityFalls.class);
+			this.generateStructureShack(new WorldGenStructure("mysteryshack"), world, random, chunkX, chunkZ, 400, Blocks.GRASS, BiomeGravityFalls.class);
 			this.generateStructure(new WorldGenStructure("redwoodtrees"), world, random, chunkX, chunkZ, 1, Blocks.GRASS, BiomeGravityFalls.class);
-			this.generateStructureUranium(new WorldGenStructure("uranium"), world, random, chunkX, chunkZ, 1);
+			this.generateStructureUFO(new WorldGenStructure("ufo"), world, random, chunkX, chunkZ, 400, Blocks.GRASS, BiomeGravityFalls.class);
+			this.generateStructureUranium(new WorldGenStructure("uranium"), world, random, chunkX, chunkZ);
 
 			//Not sure why the code below doesn't work
-	//			this.generateStructure(REDWOODTREES, world, random, chunkX, chunkZ, 3, Blocks.GRASS, BiomeGravityFalls.class);
-	//			this.generateStructureBunker(BUNKER, world, random, chunkX, chunkZ, 25, Blocks.GRASS, BiomeGravityFalls.class);
-	//			this.generateStructure(CRYSTAL, world, random, chunkX, chunkZ, 25, Blocks.GRASS, BiomeGravityFalls.class);
-	//			this.generateStructureJournal3(JOURNAL3, world, random, chunkX, chunkZ, 25, Blocks.GRASS, BiomeGravityFalls.class);
-	//			this.generateStructureShack(MYSTERYSHACK, world, random, chunkX, chunkZ, 25, Blocks.GRASS, BiomeGravityFalls.class);
+			//	this.generateStructure(REDWOODTREES, world, random, chunkX, chunkZ, 3, Blocks.GRASS, BiomeGravityFalls.class);
+			//	this.generateStructureBunker(BUNKER, world, random, chunkX, chunkZ, 25, Blocks.GRASS, BiomeGravityFalls.class);
+			//	this.generateStructure(CRYSTAL, world, random, chunkX, chunkZ, 25, Blocks.GRASS, BiomeGravityFalls.class);
+			//	this.generateStructureJournal3(JOURNAL3, world, random, chunkX, chunkZ, 25, Blocks.GRASS, BiomeGravityFalls.class);
+			//	this.generateStructureShack(MYSTERYSHACK, world, random, chunkX, chunkZ, 25, Blocks.GRASS, BiomeGravityFalls.class);
 
 			break;
 		case 1:
@@ -205,12 +206,12 @@ public class WorldGenCustomStructures implements IWorldGenerator
 		}
 	}
 
-	private void generateStructureUranium(WorldGenerator generator, World world, Random random, int chunkX, int chunkZ, int chance)
+	private void generateStructureUranium(WorldGenerator generator, World world, Random random, int chunkX, int chunkZ)
 	{
 
 		int x = (chunkX * 16) + random.nextInt(15) + 8;
 		int z = (chunkZ * 16) + random.nextInt(15) + 8;
-		int y = random.nextInt(14) + 2;
+		int y = random.nextInt(11);
 
 
 		BlockPos pos = new BlockPos(x, y, z);
@@ -227,6 +228,33 @@ public class WorldGenCustomStructures implements IWorldGenerator
 			}
 
 		}
+	}
+
+	private void generateStructureUFO(WorldGenerator generator, World world, Random random, int chunkX, int chunkZ, int chance, Block topBlock, Class<?>...classes)
+	{
+		ArrayList<Class<?>> classesList = new ArrayList<Class<?>> (Arrays.asList(classes));
+
+		int x = (chunkX * 16) + random.nextInt(15) + 8;
+		int z = (chunkZ * 16) + random.nextInt(15) + 8;
+		int y = calculateGenerationHeight(world, x, z, topBlock) - 18;
+
+
+		BlockPos pos = new BlockPos(x, y, z);
+
+
+		Class<?> biome = world.provider.getBiomeForCoords(pos).getClass();
+
+		if(world.getWorldType() != WorldType.FLAT)
+		{
+			if(classesList.contains(biome))
+			{
+				if(random.nextInt(chance) == 0)
+				{
+					generator.generate(world, random, pos);
+				}
+			}
+		}
+
 	}
 
 	private static int calculateGenerationHeight(World world, int x, int z, Block topBlock)

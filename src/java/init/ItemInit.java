@@ -129,8 +129,8 @@ public class ItemInit {
 
 	public static final Item LASER_ARM_CANNON = new LaserArmCannon("laser_arm_cannon", ToolMaterial.DIAMOND);
 
-	//public static final Item GOLF_CART = new GolfCart("golfcart");
+	public static final Item GOLF_CART = new GolfCart("golfcart");
 	
-	public static final Item FORDS_RAZOR = new FordsRazor("fordsrazor", ToolMaterial.IRON);
+	//public static final Item FORDS_RAZOR = new FordsRazor("fordsrazor", ToolMaterial.IRON);
 
 }

@@ -4,6 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
+
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import com.google.common.collect.Multimap;
 
 import armor.FireHelmet;
@@ -17,11 +24,14 @@ import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import main.Reference;
+import models.ModelSize;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.client.renderer.entity.RenderEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -37,6 +47,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -46,13 +57,16 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -109,27 +123,29 @@ public class RegistryHandler
 
 	public static void preInitRegistries()
 	{
+		GameRegistry.registerWorldGenerator(new WorldGenOres(), 0);
+		
+		
+		BiomeInit.registerBiomes();
+		
 		EntityRegistry.registerEntities();
 		RenderHandler.registerEntityRenders();
-		GameRegistry.registerWorldGenerator(new WorldGenCustomStructures(), 0);
+
 
 
 	}
 
 	public static void initRegistries()
 	{
-		NetworkRegistry.INSTANCE.registerGuiHandler(GravityFalls.instance, new GuiHandler());
-		//NetworkRegistry.INSTANCE.newSimpleChannel(GravityFalls.NETWORK_CHANNEL_NAME);
 		SoundsHandler.registerSounds();
+		NetworkRegistry.INSTANCE.registerGuiHandler(GravityFalls.instance, new GuiHandler());
 	}
 
 
 	public static void otherRegistries()
 	{
-		GameRegistry.registerWorldGenerator(new WorldGenOres(), 0);
 		//GameRegistry.registerWorldGenerator(new WorldGenTrees(), 0);
-
-		BiomeInit.registerBiomes();
+		GameRegistry.registerWorldGenerator(new WorldGenCustomStructures(), 0);
 	}
 
 
@@ -144,26 +160,6 @@ public class RegistryHandler
 		if ((event.getEntity() instanceof EntityPlayer))
 		{
 			EntityPlayer player = (EntityPlayer)event.getEntity();
-
-
-
-			//IAttribute REACH_DISTANCE = new RangedAttribute(IAttribute player.getAttributeMap().get, Reference.MODID + ":ReachDistance", 20.0, 0.0, 1000.0).setShouldWatch(true);
-
-			/*
-			ArrayList list = new ArrayList();
-
-			for(int i = 0; i < player.getAttributeMap().getAllAttributes().size(); i++);
-			{
-				list.add(player.getAttributeMap().getAllAttributes().toArray());
-			}
-
-			for(int i = 0; i < list.size(); i++)
-			{
-				System.out.println(list.get(i));
-			}
-			 */
-
-			//player.getAttributeMap().registerAttribute(REACH_DISTANCE);
 
 			if(player.getArmorInventoryList().toString().length() > 91)
 			{
@@ -225,16 +221,7 @@ public class RegistryHandler
 				fire = false;
 
 
-			/*
-			//Speed Boots
-			if(player.getArmorInventoryList().toString().length() > 8)
-			{
-				if(player.getArmorInventoryList().toString().substring(8, 18).equals("speedboots"))
-					speed = true;
-				else
-					speed = false;
-			}
-			 */
+			
 		}
 
 		boolean mabelArmor = false;
@@ -301,6 +288,13 @@ public class RegistryHandler
 	//		if(player.height < 5)
 	//			player.removeActivePotionEffect(Potion.getPotionById(5));
 
+			//Increases player reach distance depending on how big they are
+		//	if(player.height > 2)
+		//		getMouseOver(player, player.world, (int) player.height * 3);
+			
+			
+			
+			
 		}
 
 	}
@@ -353,45 +347,88 @@ public class RegistryHandler
 		}
 	}
 	 */
-	public static EntityLivingBase getClosestEntityLiving(World parWorld, BlockPos parPos, double parMaxDistance)
-	{
-		if (parMaxDistance <= 0.0D)
-		{
-			return null;
-		}
+	
 
-		EntityLivingBase closestLiving = null;
-		double distanceSq = parMaxDistance*parMaxDistance;
-		AxisAlignedBB aabb = new AxisAlignedBB(
-				parPos.getX()-parMaxDistance,
-				parPos.getY()-parMaxDistance,
-				parPos.getZ()-parMaxDistance,
-				parPos.getX()+parMaxDistance,
-				parPos.getY()+parMaxDistance,
-				parPos.getZ()+parMaxDistance
-				);
-		List<EntityLivingBase> listEntitiesInRange = parWorld.getEntitiesWithinAABB(EntityLivingBase.class, aabb);
-		Iterator<EntityLivingBase> iterator = listEntitiesInRange.iterator();
-		while (iterator.hasNext())
+	public static void getMouseOver(EntityPlayer player, World world, int reach)
+	{
+
+		Vec3d lookVec = player.getLookVec();
+
+		BlockPos pos = player.getPosition();
+
+		float yaw = player.rotationYaw;
+		float pitch = player.rotationPitch;
+
+		for(int f = 0; f <= reach; f++)
 		{
-			EntityLivingBase next = iterator.next();
-			if (getDistanceSq(next.getPosition(), parPos) < distanceSq)
+			double x = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
+			double y = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
+			double z = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
+
+
+			AxisAlignedBB entityPos = new AxisAlignedBB(pos.getX() + x, pos.getY() + y, pos.getZ() + z, pos.getX() + x + 1, pos.getY() + y + 1, pos.getZ() + z + 1);
+
+			List<Entity> list = world.getEntitiesInAABBexcluding(player, entityPos, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
 			{
-				closestLiving = next;
-			}		
+				public boolean apply(@Nullable Entity p_apply_1_)
+				{
+					return p_apply_1_ != null && p_apply_1_.canBeCollidedWith();
+				}
+			}));
+
+			for(int j = 0; j < list.size(); ++j)
+			{
+				Entity entity = list.get(j);
+				if(player instanceof EntityPlayerMP)
+				{					
+					EntityPlayerMP entityplayer = (EntityPlayerMP) player;
+
+
+					if(entity instanceof EntityLivingBase)
+					{
+						EntityLivingBase mob = (EntityLivingBase) entity;
+
+						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 1, 0));
+					}
+				}				
+			}
 		}
-		return closestLiving;
 	}
-
-	protected static double getDistanceSq(BlockPos parPos1, BlockPos parPos2)
+	
+	@SubscribeEvent
+	public void changeSize(PlayerTickEvent event)
 	{
-		return (  (parPos1.getX()-parPos2.getX())*(parPos1.getX()-parPos2.getX())
-				+ (parPos1.getY()-parPos2.getY())*(parPos1.getY()-parPos2.getY())
-				+ (parPos1.getZ()-parPos2.getZ())*(parPos1.getZ()-parPos2.getZ()));
+		EntityPlayer player = event.player;
+	//	player.boundingBox.maxY = player.boundingBox.minY + (height);
+		
+	}
+	
+	/*
+	ModelBase value;
+	
+	@SubscribeEvent
+	public void onRenderPlayerPre(RenderPlayerEvent.Pre pre) {
+		value = ObfuscationReflectionHelper.getPrivateValue(RenderEntity.class, pre.getRenderer(), new String[] { "mainModel", "field_77045_g" });
+		int type = 0;
+		if(EntityPlayer.getPlayerEntity(pre.getEntityPlayer()) != null) {
+			type = EntityPlayer.getPlayerEntity(pre.getEntityPlayer());
+		}
+		switch (type) {
+		case 0:
+			ObfuscationReflectionHelper.setPrivateValue(RenderEntity.class, pre.getRenderer(), new ModelSize(type), new String[] { "mainModel", "field_77045_g" });
+			break;
+		default:
+			break;
+		}
 	}
 
+	@SubscribeEvent
+	public void onRenderPlayerPost(RenderPlayerEvent.Post post) {
+		ObfuscationReflectionHelper.setPrivateValue(RenderEntity.class, post.getRenderer(), value, new String[] { "mainModel", "field_77045_g" });
+	}
 
-
+	}
+*/
 
 
 }

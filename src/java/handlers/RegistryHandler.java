@@ -17,10 +17,13 @@ import armor.FireHelmet;
 import armor.RegenerationLegs;
 import armor.SpeedBoots;
 import armor.StrengthChestplate;
+import commands.CommandDimensionTeleport;
 import entity.EntityRegistry;
 import init.BiomeInit;
 import init.BlockInit;
+import init.DimensionInit;
 import init.ItemInit;
+import items.FlashLight;
 import main.GravityFalls;
 import main.IHasModel;
 import main.Reference;
@@ -39,11 +42,14 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemCompass;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -53,6 +59,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
@@ -63,6 +70,7 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
+import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -83,6 +91,8 @@ public class RegistryHandler
 	public static boolean regenerate = false;
 	public static boolean speed = false;
 
+	public static World world = null;
+
 
 
 	@SubscribeEvent
@@ -96,6 +106,7 @@ public class RegistryHandler
 	{
 		event.getRegistry().registerAll(BlockInit.BLOCKS.toArray(new Block[0]));
 		TileEntityHandler.registerTileEntites();
+
 	}
 
 	@SubscribeEvent
@@ -124,14 +135,12 @@ public class RegistryHandler
 	public static void preInitRegistries()
 	{
 		GameRegistry.registerWorldGenerator(new WorldGenOres(), 0);
-		
-		
+
 		BiomeInit.registerBiomes();
-		
+		DimensionInit.registerDimensions();
+
 		EntityRegistry.registerEntities();
 		RenderHandler.registerEntityRenders();
-
-
 
 	}
 
@@ -148,13 +157,17 @@ public class RegistryHandler
 		GameRegistry.registerWorldGenerator(new WorldGenCustomStructures(), 0);
 	}
 
+	public static void serverRegistries(FMLServerStartingEvent event)
+	{
+		event.registerServerCommand(new CommandDimensionTeleport());
+	}
+
 
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingUpdateEvent event)
 	{
 		//Radiation
 		boolean rubberArmor = false;
-
 
 
 		if ((event.getEntity() instanceof EntityPlayer))
@@ -221,7 +234,7 @@ public class RegistryHandler
 				fire = false;
 
 
-			
+
 		}
 
 		boolean mabelArmor = false;
@@ -285,19 +298,48 @@ public class RegistryHandler
 				player.addPotionEffect(new PotionEffect(Potion.getPotionById(5),10, 2));
 			else if(player.height > 5)
 				player.addPotionEffect(new PotionEffect(Potion.getPotionById(5), 10, 1));
-	//		if(player.height < 5)
-	//			player.removeActivePotionEffect(Potion.getPotionById(5));
+			//		if(player.height < 5)
+			//			player.removeActivePotionEffect(Potion.getPotionById(5));
 
 			//Increases player reach distance depending on how big they are
-		//	if(player.height > 2)
-		//		getMouseOver(player, player.world, (int) player.height * 3);
-			
-			
-			
-			
-		}
+			//	if(player.height > 2)
+			//		getMouseOver(player, player.world, (int) player.height * 3);
 
+
+
+			//Flashlight Handler
+			if(player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.FLASHLIGHT)))
+			{
+				ItemStack heldItem = player.inventory.getCurrentItem();
+
+				FlashLight flashlight = (FlashLight) heldItem.getItem();
+
+				world = flashlight.getWorld();
+
+				if(world != null && world.getWorldTime() % 5 == 0 && flashlight.blocks != null)
+				{
+					for(int i = 0; i < flashlight.blocks.size(); i++)
+					{
+						if(flashlight.blocks.get(i) != null)
+						{
+							BlockPos pos = new BlockPos(flashlight.blocks.get(i).blockPos());
+
+							if(world.getLight(pos) == 15)
+							{
+								world.setLightFor(EnumSkyBlock.BLOCK, pos, 0);
+							}
+							else
+							{
+								flashlight.blocks.remove(i);
+								i--;
+							}
+						}
+					}
+				}
+			}
+		}
 	}
+
 
 	public static boolean getFire()
 	{
@@ -347,7 +389,7 @@ public class RegistryHandler
 		}
 	}
 	 */
-	
+
 
 	public static void getMouseOver(EntityPlayer player, World world, int reach)
 	{
@@ -394,18 +436,18 @@ public class RegistryHandler
 			}
 		}
 	}
-	
+
 	@SubscribeEvent
 	public void changeSize(PlayerTickEvent event)
 	{
 		EntityPlayer player = event.player;
-	//	player.boundingBox.maxY = player.boundingBox.minY + (height);
-		
+		//	player.boundingBox.maxY = player.boundingBox.minY + (height);
+
 	}
-	
+
 	/*
 	ModelBase value;
-	
+
 	@SubscribeEvent
 	public void onRenderPlayerPre(RenderPlayerEvent.Pre pre) {
 		value = ObfuscationReflectionHelper.getPrivateValue(RenderEntity.class, pre.getRenderer(), new String[] { "mainModel", "field_77045_g" });
@@ -428,7 +470,18 @@ public class RegistryHandler
 	}
 
 	}
-*/
+	 */
+	@SideOnly(Side.CLIENT)
+	private static double getFrameRotation(EntityItemFrame p_185094_1_)
+	{
+		return (double)MathHelper.wrapDegrees(180 + p_185094_1_.facingDirection.getHorizontalIndex() * 90);
+	}
 
+	@SideOnly(Side.CLIENT)
+	private static double getSpawnToAngle(World p_185092_1_, Entity p_185092_2_)
+	{
+		BlockPos blockpos = p_185092_1_.getSpawnPoint();
+		return Math.atan2((double)blockpos.getZ() - p_185092_2_.posZ, (double)blockpos.getX() - p_185092_2_.posX);
+	}
 
 }

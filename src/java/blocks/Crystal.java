@@ -35,7 +35,7 @@ public class Crystal extends Block implements IHasModel{
 		this.setRegistryName(name);
 		this.setHardness(2.0F);
 		this.setResistance(10.0F);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setSoundType(SoundType.GLASS);
 		
 		
@@ -53,7 +53,15 @@ public class Crystal extends Block implements IHasModel{
 	@Override
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) 
 	{
-		return ItemInit.CRYSTALSHARD;
+		int random = (int) (Math.random() * 2);
+		
+		if(fortune != 0)
+			return ItemInit.CRYSTALSHARD;
+		if(random == 1)
+			return ItemInit.CRYSTALSHARD;
+		else
+			return null;
+		
 	}
 	
 	@Override

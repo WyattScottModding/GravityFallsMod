@@ -58,7 +58,7 @@ public class MagnetGun extends ItemBow implements IHasModel{
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
 
 		ItemInit.ITEMS.add(this);
 
@@ -95,7 +95,7 @@ public class MagnetGun extends ItemBow implements IHasModel{
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
 
-			RayTraceResult blockPosition = player.rayTrace(100, 1.0F);
+			RayTraceResult blockPosition = player.rayTrace(500, 1.0F);
 
 			IBlockState block = world.getBlockState(blockPosition.getBlockPos());
 
@@ -117,6 +117,8 @@ public class MagnetGun extends ItemBow implements IHasModel{
 					player.motionX = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 					player.motionY = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
 					player.motionZ = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
+					
+					System.out.println("X: " + player.motionX + "Y: " + player.motionY + "Z: " + player.motionZ);
 					
 					player.isAirBorne = true;
 					

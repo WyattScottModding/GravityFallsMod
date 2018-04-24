@@ -48,7 +48,7 @@ public class PortalControl extends Block implements IHasModel{
 		this.setResistance(50.0F);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-//		this.setCreativeTab(GravityFalls.gravityfallstab);
+	//	this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setSoundType(SoundType.STONE);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 

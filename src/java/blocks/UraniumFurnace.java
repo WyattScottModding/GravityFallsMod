@@ -3,7 +3,6 @@ package blocks;
 import java.util.Random;
 
 import init.BlockInit;
-import init.GravityFallsTab;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
@@ -32,6 +31,7 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import tabs.GravityFallsMagic;
 import tileEntities.TileEntityUraniumFurnace;
 
 public class UraniumFurnace extends Block implements ITileEntityProvider, IHasModel
@@ -46,7 +46,7 @@ public class UraniumFurnace extends Block implements ITileEntityProvider, IHasMo
 		this.setResistance(30.0F);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setSoundType(SoundType.METAL);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH).withProperty(BURNING, false));
 	

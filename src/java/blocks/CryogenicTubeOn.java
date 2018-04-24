@@ -27,6 +27,10 @@ public class CryogenicTubeOn extends Block implements IHasModel
 {
 	public static final AxisAlignedBB CRYOGENICTUBE = new AxisAlignedBB(0D, 0D, 0D, 1.0D, 2.00D, 1.0D);
 
+	public double entityX = 0.0;
+	public double entityY = 0.0;
+	public double entityZ = 0.0;
+	
 	public CryogenicTubeOn(String name, Material material)
 	{
 		super(material);
@@ -100,13 +104,17 @@ public class CryogenicTubeOn extends Block implements IHasModel
 	@Override
 	public void onEntityCollidedWithBlock(World worldIn, BlockPos pos, IBlockState state, Entity entityIn) 
 	{
-		boolean inBlock = this.isEntityInsideMaterial(worldIn, pos, this.getDefaultState(), entityIn, 1.8, this.blockMaterial, false);
-
+		boolean inBlock = this.isEntityInsideMaterial(worldIn, pos, this.getDefaultState(), entityIn, 1.0, this.blockMaterial, false);
+		
+		entityX = pos.getX();
+		entityY = pos.getY();
+		entityZ = pos.getZ();
+		
 		if(inBlock)
 		{
-			entityIn.motionX = 0;
-			entityIn.motionY = 0;
-			entityIn.motionZ = 0;
+			entityIn.posX = entityX;
+			entityIn.posY = entityY;
+			entityIn.posZ = entityZ;
 		}
 	}
 

@@ -58,7 +58,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import net.minecraft.init.Items;
 
-public class QuantumDestabilizer extends ItemBow implements IHasModel{
+public class QuantumDestabilizer extends ItemBow implements IHasModel
+{
 
 	public int counter = 0;
 	public boolean aiming = false;
@@ -68,7 +69,8 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel{
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
+		this.setCreativeTab(GravityFalls.gravityfallsmagic);
 
 		ItemInit.ITEMS.add(this);
 	}
@@ -81,8 +83,9 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel{
 			EntityPlayer player = (EntityPlayer) entityIn;
 
 			boolean flag = player.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
-			boolean hasItemStack = player.inventory.hasItemStack(new ItemStack(Items.DIAMOND));
-
+		//	boolean hasItemStack = player.inventory.hasItemStack(new ItemStack(Items.DIAMOND));
+			boolean hasItemStack = true;
+			
 			int i = this.getMaxItemUseDuration(stack);
 			i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, player, i, hasItemStack || flag);
 			if (i < 0) 
@@ -115,7 +118,7 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel{
 					//worldIn.spawnEntity(entityquantum);
 					//quantum = entityquantum;
 
-					itemstack.shrink(1);
+				//	itemstack.shrink(1);
 				}
 
 
@@ -173,9 +176,9 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel{
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
 		ItemStack itemstack = playerIn.getHeldItem(handIn);
-		boolean flag = playerIn.inventory.hasItemStack(new ItemStack(Items.DIAMOND));
-
-
+	//	boolean flag = playerIn.inventory.hasItemStack(new ItemStack(Items.DIAMOND));
+		boolean flag = true;
+		
 		if(!worldIn.isRemote && playerIn instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) playerIn;
@@ -261,7 +264,7 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel{
 	@Override
 	public int getMaxItemUseDuration(ItemStack stack)
 	{
-		return 72000;
+		return 100;
 	}
 
 

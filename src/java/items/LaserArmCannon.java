@@ -5,6 +5,7 @@ import java.util.List;
 import javax.annotation.Nullable;
 
 import org.apache.http.impl.conn.Wire;
+import org.lwjgl.input.Keyboard;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -46,7 +47,8 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
+		this.setMaxDamage(20);
 
 		ItemInit.ITEMS.add(this);
 	}
@@ -59,20 +61,11 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
-		boolean flag = playerIn.capabilities.isCreativeMode;
-		boolean hasItemStack = playerIn.inventory.hasItemStack(new ItemStack(Items.REDSTONE));
-
-		if (hasItemStack || flag)
+		if (!worldIn.isRemote && cooldown == 0)
 		{
-			if (!worldIn.isRemote && cooldown == 0)
-			{
-				ItemStack itemstack = findAmmo(playerIn);
-
-				fired = true;
-
-				itemstack.shrink(1);
-			}
+			fired = true;
 		}
+
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 
@@ -86,11 +79,25 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 		{
 			EntityPlayer player = (EntityPlayer) entityIn;
 
-			if(fired)
+			if(fired && stack.getItemDamage() < 19)
 			{
+		        stack.damageItem(1, player);
 				getMouseOver(player, worldIn);
 				fired = false;
 				cooldown = 30;
+			}
+
+			if(stack.getItemDamage() >= 5 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
+			{
+				System.out.println("stack damage: " + stack.getItemDamage());
+				ItemStack itemstack = findAmmo(player);
+
+				if(itemstack.isItemEqual(new ItemStack(ItemInit.BATTERY)))
+				{
+			        stack.damageItem(-5, player);
+					
+					itemstack.shrink(1);
+				}
 			}
 		}
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
@@ -131,26 +138,23 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 					EntityLivingBase mob = (EntityLivingBase) entity;
 
 					if(mob instanceof EntitySkeleton || mob instanceof EntityZombie || mob instanceof EntityZombieHorse)
-						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 1, 0));
+						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 2, 0));
 					else
-						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 1, 0));
-					
-					
-
+						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 2, 0));
 				}
 			}
 		}
 
 	}
-	
+
 
 	private ItemStack findAmmo(EntityPlayer player)
 	{
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(Items.REDSTONE)))
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(ItemInit.BATTERY)))
 		{
 			return player.getHeldItem(EnumHand.OFF_HAND);
 		}
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(Items.REDSTONE)))
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(ItemInit.BATTERY)))
 		{
 			return player.getHeldItem(EnumHand.MAIN_HAND);
 		}
@@ -160,8 +164,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 			{
 				ItemStack itemstack = player.inventory.getStackInSlot(i);
 
-				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(Items.REDSTONE)))
-
+				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(ItemInit.BATTERY)))
 				{
 					return itemstack;
 				}

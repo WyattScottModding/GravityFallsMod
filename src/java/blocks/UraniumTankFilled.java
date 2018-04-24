@@ -46,7 +46,7 @@ public class UraniumTankFilled extends Block implements IHasModel{
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setLightLevel(1.0F);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setSoundType(SoundType.METAL);
 
 		BlockInit.BLOCKS.add(this);

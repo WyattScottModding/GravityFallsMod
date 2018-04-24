@@ -23,21 +23,23 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public class Uranium extends Block implements IHasModel
+public class ColoredLights extends Block implements IHasModel
 {	
-
-	public Uranium(String name) 
+	//public static final PropertyEnum TYPE = PropertyEnum.create("type", LightTypes.class);
+	
+	public ColoredLights(String name) 
 	{
-		super(Material.ROCK);
+		super(Material.GLASS);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setDefaultState(this.blockState.getBaseState());
-		this.setHardness(5.0F);
-		this.setLightLevel(0.5F);
-		this.setResistance(30.0F);
-
-		this.setSoundType(SoundType.STONE);
+		this.setHardness(0.4F);
+		this.setLightLevel(1.0F);
+		this.setResistance(2F);
+		
+	//	this.setDefaultState(this.blockState.getBaseState().withProperty(TYPE, LightTypes.BLACK));
+		this.setSoundType(SoundType.GLASS);
 
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
@@ -54,4 +56,34 @@ public class Uranium extends Block implements IHasModel
 	{
 		GravityFalls.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
 	}
+	
+	/*
+	@Override
+	protected BlockStateContainer createBlockState() 
+	{
+		return new BlockStateContainer(this, new IProperty[] {TYPE});
+	}
+	
+	@Override
+	public int getMetaFromState(IBlockState state) 
+	{
+		LightTypes type = (LightTypes) state.getValue(TYPE);
+		return type.getID();
+	}
+	
+	@Override
+	public IBlockState getStateFromMeta(int meta)
+	{
+		return this.getDefaultState().withProperty(TYPE, LightTypes.values()[meta]);
+	}
+	
+	@Override
+	public void getSubBlocks(CreativeTabs itemIn, NonNullList<ItemStack> items) 
+	{
+		for(int i = 0; i < LightTypes.values().length; i++)
+		{
+			items.add(new ItemStack(itemIn., 1, i));
+		}
+	}
+	*/
 }

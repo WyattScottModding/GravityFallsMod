@@ -41,7 +41,7 @@ public class UraniumTank extends Block implements IHasModel{
 		this.setResistance(30.0F);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setSoundType(SoundType.METAL);
 
 

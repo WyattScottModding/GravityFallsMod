@@ -25,7 +25,7 @@ public class TimeWish extends ItemFood implements IHasModel{
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
 
 		this.effects = potionEffects;
 		this.itemUseDuration = 32;

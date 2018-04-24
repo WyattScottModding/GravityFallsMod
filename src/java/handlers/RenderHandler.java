@@ -1,19 +1,25 @@
 package handlers;
 
+import entity.EntityEyeBat;
 import entity.EntityForget;
 import entity.EntityGnome;
 import entity.EntityGolfCart;
+import entity.EntityHideBehind;
 import entity.EntityLight;
+import entity.EntitySecurityDroid;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import render.RenderEyeBat;
 import render.RenderFlashlight;
 import render.RenderForget;
 import render.RenderGnome;
 import render.RenderGolfCart;
+import render.RenderHideBehind;
+import render.RenderSecurityDroid;
 import render.RenderTimeCopDundgren;
 import render.RenderTimeCopLolph;
 
@@ -84,5 +90,34 @@ public class RenderHandler {
 			
 		});
 		
+		RenderingRegistry.registerEntityRenderingHandler(EntityEyeBat.class, new IRenderFactory<EntityEyeBat>()
+		{
+			@Override
+			public Render<? super EntityEyeBat> createRenderFor(RenderManager manager)
+			{
+				return new RenderEyeBat(manager);
+			}
+			
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityHideBehind.class, new IRenderFactory<EntityHideBehind>()
+		{
+			@Override
+			public Render<? super EntityHideBehind> createRenderFor(RenderManager manager)
+			{
+				return new RenderHideBehind(manager);
+			}
+			
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntitySecurityDroid.class, new IRenderFactory<EntitySecurityDroid>()
+		{
+			@Override
+			public Render<? super EntitySecurityDroid> createRenderFor(RenderManager manager)
+			{
+				return new RenderSecurityDroid(manager);
+			}
+			
+		});
 	}
 }

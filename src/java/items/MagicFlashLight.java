@@ -72,7 +72,8 @@ public class MagicFlashLight extends Item implements IHasModel{
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
+		this.setCreativeTab(GravityFalls.gravityfallsmagic);
 		init();
 
 		ItemInit.ITEMS.add(this);

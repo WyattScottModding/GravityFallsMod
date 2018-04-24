@@ -8,15 +8,23 @@ import net.minecraftforge.common.BiomeManager.BiomeEntry;
 import net.minecraftforge.common.BiomeManager.BiomeType;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
 import worldgen.BiomeGravityFalls;
+import worldgen.BiomeNightmareRealm;
+import worldgen.BiomeTheFuture;
 
 
 public class BiomeInit 
 {
 	public static final Biome GRAVITYFALLS = new BiomeGravityFalls();
+	public static final Biome THEFUTURE = new BiomeTheFuture();
+	public static final Biome NIGHTMAREREALM = new BiomeNightmareRealm();
+
 	
 	public static void registerBiomes()
 	{
 		initBiome(GRAVITYFALLS, "GravityFalls", BiomeType.COOL, Type.MAGICAL, Type.CONIFEROUS, Type.FOREST, Type.DEAD, Type.DRY);
+		initBiome(THEFUTURE, "TheFuture", BiomeType.COOL, Type.MAGICAL, Type.DEAD, Type.DRY, Type.PLAINS, Type.END);
+		initBiome(NIGHTMAREREALM, "NightmareRealm", BiomeType.DESERT, Type.MAGICAL, Type.HOT, Type.NETHER, Type.SPOOKY);
+
 	}
 
 	private static Biome initBiome(Biome biome, String name, BiomeType biometype, Type... types)
@@ -26,7 +34,7 @@ public class BiomeInit
 		BiomeDictionary.addTypes(biome, types);
 		BiomeManager.addBiome(biometype, new BiomeEntry(biome, 10));
 		BiomeManager.addSpawnBiome(biome);
-
+		
 		
 		return biome;
 	}

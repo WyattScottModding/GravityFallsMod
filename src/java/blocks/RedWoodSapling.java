@@ -2,7 +2,6 @@ package blocks;
 
 import handlers.ItemBlockVariants;
 import init.BlockInit;
-import init.GravityFallsTab;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
@@ -47,6 +46,7 @@ import net.minecraft.world.gen.feature.WorldGenBigTree;
 import net.minecraft.world.gen.feature.WorldGenTrees;
 import net.minecraft.world.gen.feature.WorldGenerator;
 import net.minecraftforge.event.terraingen.TerrainGen;
+import tabs.GravityFallsMagic;
 
 public class RedWoodSapling extends BlockBush implements IGrowable, IHasModel
 {	
@@ -59,7 +59,7 @@ public class RedWoodSapling extends BlockBush implements IGrowable, IHasModel
 		setUnlocalizedName(name);
 		setRegistryName(name);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(STAGE, Integer.valueOf(0)));
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		
 		
 		BlockInit.BLOCKS.add(this);

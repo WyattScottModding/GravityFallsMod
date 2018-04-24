@@ -5,6 +5,8 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
+import org.lwjgl.input.Keyboard;
+
 import entity.EntityForget;
 import init.ItemInit;
 import main.GravityFalls;
@@ -45,13 +47,15 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 public class MemoryGunOld extends ItemBow implements IHasModel{
 
 	public EntityForget forget = null;
+	public ItemStack stack = null;
 
 	public MemoryGunOld(String name)
 	{
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
+		this.setMaxDamage(10);
 
 		ItemInit.ITEMS.add(this);
 	}
@@ -59,13 +63,25 @@ public class MemoryGunOld extends ItemBow implements IHasModel{
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
+		this.stack = stack;
+
 		if (entityIn instanceof EntityPlayerMP && forget != null)
 		{
 			EntityPlayerMP entityPlayer = (EntityPlayerMP)entityIn;
 			Entity entityHit = forget.getEntityHit();
 			if(entityHit != null && entityPlayer != null)
+			{
 				entityHit.removeTrackingPlayer(entityPlayer);
+			}
 
+			if(stack.getItemDamage() >= 1 && Keyboard.isKeyDown(Keyboard.KEY_R))
+			{
+				ItemStack itemstack = findAmmo(entityPlayer);
+
+				stack.damageItem(-1, entityPlayer);
+
+				itemstack.shrink(1);
+			}
 		}
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
@@ -73,27 +89,18 @@ public class MemoryGunOld extends ItemBow implements IHasModel{
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer entityLiving, EnumHand handIn)
 	{
-
 		entityLiving.setActiveHand(handIn);
 
-
-		if (entityLiving instanceof EntityPlayer)
+		if (entityLiving instanceof EntityPlayer && stack != null)
 		{
 			EntityPlayer entityplayer = (EntityPlayer)entityLiving;
 			boolean flag = entityplayer.capabilities.isCreativeMode;
-			ItemStack itemstack = this.findAmmo(entityplayer);
-			
-			if (!itemstack.isEmpty() || flag)
+
+			if (stack.getItemDamage() < 9 || flag)
 			{
 				if (!worldIn.isRemote)
 				{
-					 if (itemstack.isEmpty())
-		                {
-		                    itemstack = new ItemStack(Items.ARROW);
-		                }
-					
 					EntityForget entityforget = new EntityForget(worldIn, entityplayer.posX + Math.sin(-entityplayer.rotationYaw * Math.PI / 180) * 1.5, entityplayer.posY + .5 + Math.sin(-entityplayer.rotationPitch * Math.PI / 180) * 1.5, entityplayer.posZ + Math.cos(-entityplayer.rotationYaw * Math.PI / 180) * 1.5);
-
 
 					entityforget.shoot(entityplayer, entityplayer.rotationPitch, entityplayer.rotationYaw, 3.0F, 0.0F);
 					entityforget.isInvisible();
@@ -101,7 +108,8 @@ public class MemoryGunOld extends ItemBow implements IHasModel{
 					worldIn.spawnEntity(entityforget);
 					forget = entityforget;
 
-					itemstack.shrink(1);
+					if(!flag)
+						stack.damageItem(1, entityplayer);
 				}
 			}
 
@@ -113,11 +121,11 @@ public class MemoryGunOld extends ItemBow implements IHasModel{
 
 	private ItemStack findAmmo(EntityPlayer player)
 	{
-		if (this.isArrow(player.getHeldItem(EnumHand.OFF_HAND)))
+		if (this.isBattery(player.getHeldItem(EnumHand.OFF_HAND)))
 		{
 			return player.getHeldItem(EnumHand.OFF_HAND);
 		}
-		else if (this.isArrow(player.getHeldItem(EnumHand.MAIN_HAND)))
+		else if (this.isBattery(player.getHeldItem(EnumHand.MAIN_HAND)))
 		{
 			return player.getHeldItem(EnumHand.MAIN_HAND);
 		}
@@ -127,7 +135,7 @@ public class MemoryGunOld extends ItemBow implements IHasModel{
 			{
 				ItemStack itemstack = player.inventory.getStackInSlot(i);
 
-				if (this.isArrow(itemstack))
+				if (this.isBattery(itemstack))
 				{
 					return itemstack;
 				}
@@ -138,10 +146,9 @@ public class MemoryGunOld extends ItemBow implements IHasModel{
 	}
 
 
-	@Override
-	protected boolean isArrow(ItemStack stack)
+	protected boolean isBattery(ItemStack stack)
 	{
-		return stack.getItem() instanceof LightBulb;
+		return stack.getItem() instanceof Battery;
 	}
 
 

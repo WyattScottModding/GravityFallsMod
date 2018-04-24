@@ -42,7 +42,7 @@ public class RedWoodLeaves extends Block implements IHasModel
 		this.setHardness(0.2F);
 		this.setResistance(1.0F);
 		this.setSoundType(SoundType.PLANT);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 				
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));

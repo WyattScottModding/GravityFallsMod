@@ -60,7 +60,7 @@ public class PowerCord extends BlockRedstoneWire implements IHasModel{
 		super();
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 
 
 		BlockInit.BLOCKS.add(this);

@@ -51,15 +51,15 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MemoryGun extends Item implements IHasModel{
-
+public class MemoryGun extends Item implements IHasModel
+{
 
 	public MemoryGun(String name)
 	{
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
 
 		ItemInit.ITEMS.add(this);
 	}
@@ -74,10 +74,7 @@ public class MemoryGun extends Item implements IHasModel{
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer entityLiving, EnumHand handIn)
 	{
-
 		entityLiving.setActiveHand(handIn);
-
-
 
 		boolean flag = entityLiving.capabilities.isCreativeMode;
 		ItemStack itemstack = this.findAmmo(entityLiving);
@@ -88,7 +85,7 @@ public class MemoryGun extends Item implements IHasModel{
 			{
 				if (itemstack.isEmpty())
 				{
-					itemstack = new ItemStack(ItemInit.LIGHT_BULB);
+					itemstack = new ItemStack(ItemInit.BATTERY);
 				}
 
 				getMouseOver(entityLiving, worldIn);
@@ -105,11 +102,11 @@ public class MemoryGun extends Item implements IHasModel{
 
 	private ItemStack findAmmo(EntityPlayer player)
 	{
-		if (this.isBulb(player.getHeldItem(EnumHand.OFF_HAND)))
+		if (this.isBattery(player.getHeldItem(EnumHand.OFF_HAND)))
 		{
 			return player.getHeldItem(EnumHand.OFF_HAND);
 		}
-		else if (this.isBulb(player.getHeldItem(EnumHand.MAIN_HAND)))
+		else if (this.isBattery(player.getHeldItem(EnumHand.MAIN_HAND)))
 		{
 			return player.getHeldItem(EnumHand.MAIN_HAND);
 		}
@@ -119,7 +116,7 @@ public class MemoryGun extends Item implements IHasModel{
 			{
 				ItemStack itemstack = player.inventory.getStackInSlot(i);
 
-				if (this.isBulb(itemstack))
+				if (this.isBattery(itemstack))
 				{
 					return itemstack;
 				}
@@ -177,9 +174,9 @@ public class MemoryGun extends Item implements IHasModel{
 		}
 	}
 
-	protected boolean isBulb(ItemStack stack)
+	protected boolean isBattery(ItemStack stack)
 	{
-		return stack.getItem() instanceof LightBulb;
+		return stack.getItem() instanceof Battery;
 	}
 
 	@Override

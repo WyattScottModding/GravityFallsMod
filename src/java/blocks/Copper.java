@@ -1,41 +1,32 @@
 package blocks;
 
-import handlers.ItemBlockVariants;
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import main.IMetaName;
 import net.minecraft.block.Block;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyEnum;
-import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public class Uranium extends Block implements IHasModel
-{	
-
-	public Uranium(String name) 
+public class Copper extends Block implements IHasModel
+{
+	public Copper(String name) 
 	{
 		super(Material.ROCK);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setDefaultState(this.blockState.getBaseState());
-		this.setHardness(5.0F);
-		this.setLightLevel(0.5F);
-		this.setResistance(30.0F);
+		this.setHardness(3.0F);
+		this.setResistance(15.0F);
 
 		this.setSoundType(SoundType.STONE);
 
@@ -48,7 +39,6 @@ public class Uranium extends Block implements IHasModel
 	{
 		return new ItemStack(Item.getItemFromBlock(this));
 	}
-
 	
 	public void registerModels() 
 	{

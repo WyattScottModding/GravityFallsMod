@@ -45,7 +45,7 @@ public class RedWoodLogs extends Block implements IHasModel
 		this.setHardness(2.0F);
 		this.setResistance(10.0F);
 		this.setSoundType(SoundType.WOOD);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));

@@ -33,8 +33,8 @@ public class CryogenicTubeOff extends Block implements IHasModel
 		super(material);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		//this.setCreativeTab(GravityFalls.gravityfallstab);
-		this.setSoundType(SoundType.GLASS);
+	//	this.setCreativeTab(GravityFalls.gravityfallsblocks);
+		this.setSoundType(SoundType.METAL);
 
 
 		BlockInit.BLOCKS.add(this);

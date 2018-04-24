@@ -1,0 +1,40 @@
+{
+    "display": {
+        "title": "The Future",
+        "description": "I Invoke Globnar!",
+        "icon": {
+            "item": "gravityfalls:timetape"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "parent": "gravityfalls:story/book3",
+    "biome": {
+            "trigger": "minecraft:location",
+            "conditions": {
+                "biome": "gravityfalls:thefuture"
+            }
+    },
+    "rewards": {
+        "recipes": [
+            "lightblack",
+            "lightblue",
+            "lightbrown",
+            "lightcyan",
+            "lightgray",
+            "lightgreen",
+            "lightlightblue",
+            "lightlightgray",
+            "lightlime",
+            "lightmagenta",
+            "lightorange",
+            "lightpink",
+            "lightpurple",
+            "lightred",
+            "lightwhite",
+            "lightyellow" 
+        ]
+    }
+}

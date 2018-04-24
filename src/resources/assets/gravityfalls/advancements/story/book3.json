@@ -10,9 +10,9 @@
         "announce_to_chat": true,
         "hidden": false
     },
-    "parent": "gravityfalls:gravityfalls/root",
+    "parent": "gravityfalls:story/root",
     "criteria": {
-        "book1": {
+        "book3": {
             "trigger": "minecraft:inventory_changed",
             "conditions": {
                 "items": [

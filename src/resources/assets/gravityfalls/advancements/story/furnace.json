@@ -10,9 +10,9 @@
         "announce_to_chat": true,
         "hidden": false
     },
-    "parent": "gravityfalls:gravityfalls/book2",
+    "parent": "gravityfalls:story/book2",
     "criteria": {
-        "book1": {
+        "uraniumfurnace": {
             "trigger": "minecraft:inventory_changed",
             "conditions": {
                 "items": [

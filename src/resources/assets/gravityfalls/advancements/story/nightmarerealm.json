@@ -1,0 +1,25 @@
+{
+    "display": {
+        "title": "The NightmareRealm",
+        "description": "The decaying dimension",
+        "icon": {
+            "item": "gravityfalls:infinitysideddie"
+        },
+        "frame": "task",
+        "show_toast": true,
+        "announce_to_chat": true,
+        "hidden": false
+    },
+    "parent": "gravityfalls:story/book1",
+    "biome": {
+            "trigger": "minecraft:location",
+            "conditions": {
+                "biome": "gravityfalls:nightmarerealm"
+            }
+    },
+    "rewards": {
+        "recipes": [
+            "quantum_destabilizer"
+        ]
+    }
+}

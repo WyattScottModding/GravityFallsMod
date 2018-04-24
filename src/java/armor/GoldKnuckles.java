@@ -27,10 +27,10 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 
-public class RegenerationLegs extends ItemArmor implements IHasModel
+public class GoldKnuckles extends ItemArmor implements IHasModel
 {
 
-	public RegenerationLegs(String name, ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
+	public GoldKnuckles(String name, ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
 	{
 		super(materialIn, renderIndexIn, equipmentSlotIn);
 		this.setUnlocalizedName(name);
@@ -41,21 +41,25 @@ public class RegenerationLegs extends ItemArmor implements IHasModel
 
 	}
 
-	
+
 
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
-		if(entityIn instanceof EntityPlayer && RegistryHandler.getRegenerate())
+		if(entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
 
-			player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 5, 2));
-			player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 5, 2));
-			
-			
+
+			if(player.getArmorInventoryList().toString().contains("goldknuckles"))
+			{
+				
+				player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 1, 2));
+
+			}
+
 		}
-		
+
 
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}

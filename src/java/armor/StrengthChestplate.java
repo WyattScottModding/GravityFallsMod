@@ -35,7 +35,7 @@ public class StrengthChestplate extends ItemArmor implements IHasModel
 		super(materialIn, renderIndexIn, equipmentSlotIn);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsarmor);
 
 		ItemInit.ITEMS.add(this);
 

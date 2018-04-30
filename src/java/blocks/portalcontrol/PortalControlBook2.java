@@ -121,7 +121,7 @@ public class PortalControlBook2 extends Block implements IHasModel{
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
 			EntityPlayer player) 
 	{
-		return new ItemStack(Item.getItemFromBlock(this), 1, getMetaFromState(world.getBlockState(pos)));
+		return new ItemStack(Item.getItemFromBlock(this));
 	}
 
 	@Override

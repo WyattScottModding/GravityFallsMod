@@ -69,7 +69,6 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsitems);
 		this.setCreativeTab(GravityFalls.gravityfallsmagic);
 
 		ItemInit.ITEMS.add(this);

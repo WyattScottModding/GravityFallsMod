@@ -4,24 +4,19 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.apache.http.impl.conn.Wire;
 import org.lwjgl.input.Keyboard;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
+import entity.EntityGnome;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -33,85 +28,102 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class LaserArmCannon extends ItemSword implements IHasModel
+public class LeafBlower extends ItemSword implements IHasModel
 {
+	public Entity entity;
 	public boolean fired = false;
-	public int cooldown = 30;
 
-	public LaserArmCannon(String name, ToolMaterial material)
+	public LeafBlower(String name, ToolMaterial material)
 	{
 		super(material);
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
-		this.setMaxDamage(20);
+		this.setMaxDamage(100);
+
 
 		ItemInit.ITEMS.add(this);
-	}
-
-	public void registerModels()
-	{
-		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
-		if (!worldIn.isRemote && cooldown == 0)
+		if (!worldIn.isRemote)
 		{
 			fired = true;
 		}
-
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
 	{
-		if(cooldown > 0)
-			cooldown--;
-
-		if(!worldIn.isRemote && entityIn instanceof EntityPlayer)
+		if(entityIn instanceof EntityPlayerMP)
 		{
-
-			EntityPlayer player = (EntityPlayer) entityIn;
+			EntityPlayerMP player = (EntityPlayerMP) entityIn;
 			boolean flag = player.capabilities.isCreativeMode;
 
-			if(fired && (stack.getItemDamage() < 20 || flag))
+			if(fired && (stack.getItemDamage() < 100 || flag))
 			{
-				if(!flag)
+				fired = false;
+				if(worldIn.getWorldTime() % 10 == 0 && !flag)
 					stack.damageItem(1, player);
 
-				getMouseOver(player, worldIn);
-				fired = false;
-				cooldown = 30;
-			}
+				RayTraceResult blockPosition1 = player.rayTrace(7, 1.0F);
 
-			if(stack.getItemDamage() >= 5 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
+				getMouseOver(player, worldIn);
+
+				if(entity != null)
+				{
+					entity.rotationYaw = player.rotationYaw;
+					entity.rotationPitch = player.rotationPitch;
+
+					double f;
+
+					if(entity instanceof EntityGnome)
+						f = 3.0;
+					else
+						f = 1.0;
+
+					float yaw = player.rotationYaw;
+					float pitch = player.rotationPitch;
+
+					entity.motionX = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
+					entity.motionY = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
+					entity.motionZ = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
+
+					if(entity instanceof EntityLivingBase && entity instanceof EntityGnome)
+						((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 2, 0));					
+					
+					entity = null;
+				}
+			}
+			if(stack.getItemDamage() >= 25 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
 			{
-				if(player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.LASER_ARM_CANNON)))
+				if(player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.LEAFBLOWER)))
 				{
 					ItemStack itemstack = findAmmo(player);
 
 					if(itemstack.isItemEqual(new ItemStack(ItemInit.BATTERY)))
 					{
-						stack.damageItem(-5, player);
+						stack.damageItem(-25, player);
 
 						itemstack.shrink(1);
 					}
 				}
 			}
 		}
+
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
-	public void getMouseOver(EntityPlayer player, World world)
+	public boolean getMouseOver(EntityPlayer player, World world)
 	{
-
 		Vec3d lookVec = player.getLookVec();
 
 		BlockPos pos = player.getPosition();
@@ -119,7 +131,9 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 		float yaw = player.rotationYaw;
 		float pitch = player.rotationPitch;
 
-		for(int f = 1; f <= 80; f++)
+		List<Entity> list = null;
+
+		for(int f = 1; f <= 7; f++)
 		{
 			double x = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 			double y = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
@@ -128,7 +142,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 
 			AxisAlignedBB entityPos = new AxisAlignedBB(pos.getX() + x, pos.getY() + y, pos.getZ() + z, pos.getX() + x + 1, pos.getY() + y + 1, pos.getZ() + z + 1);
 
-			List<Entity> list = world.getEntitiesInAABBexcluding(player, entityPos, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
+			list = world.getEntitiesInAABBexcluding(player, entityPos, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
 			{
 				public boolean apply(@Nullable Entity p_apply_1_)
 				{
@@ -139,20 +153,17 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 			for(int j = 0; j < list.size(); ++j)
 			{
 				Entity entity = list.get(j);
-				if(entity instanceof EntityLivingBase)
-				{
-					EntityLivingBase mob = (EntityLivingBase) entity;
 
-					if(mob instanceof EntitySkeleton || mob instanceof EntityZombie || mob instanceof EntityZombieHorse)
-						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 2, 0));
-					else
-						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 2, 0));
-				}
+				this.entity = entity;
+
 			}
+
 		}
-
+		if(list != null)
+			return list.size() != 0;
+		else
+			return false;
 	}
-
 
 	private ItemStack findAmmo(EntityPlayer player)
 	{
@@ -179,5 +190,9 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 			return ItemStack.EMPTY;
 		}
 	}
-}
 
+	public void registerModels()
+	{
+		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
+	}	
+}

@@ -58,9 +58,6 @@ public class MagicFlashLight extends Item implements IHasModel{
 	public float stepHeight = 1.0F;
 	public float jumpFactor = 0.0F;
 
-	public static KeyBinding shrink;
-	public static KeyBinding grow;
-
 	public double playerX;
 	public double playerY;
 	public double playerZ;
@@ -72,23 +69,11 @@ public class MagicFlashLight extends Item implements IHasModel{
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsitems);
 		this.setCreativeTab(GravityFalls.gravityfallsmagic);
-		init();
 
 		ItemInit.ITEMS.add(this);
 	}
 
-	public static void init()
-	{
-		shrink = new KeyBinding("key.shrink", Keyboard.KEY_V, "key.categories.gravityfalls");
-		ClientRegistry.registerKeyBinding(shrink);
-
-		grow = new KeyBinding("key.grow", Keyboard.KEY_G, "key.categories.gravityfalls");
-		ClientRegistry.registerKeyBinding(grow);
-
-		//Minecraft.getMinecraft().gameSettings.keyBindJump = KeysHandler.jump;
-	}
 
 	public void registerModels()
 	{
@@ -113,7 +98,7 @@ public class MagicFlashLight extends Item implements IHasModel{
 				float stepHeightChange = 0.0083F;
 				float jumpChange = 0.00016F;
 
-				if(grow.isPressed() || shrink.isPressed())
+				if(Keyboard.isKeyDown(Keyboard.KEY_B) || Keyboard.isKeyDown(Keyboard.KEY_V))
 				{
 					playerX = player.posX;
 					playerY = player.posY;
@@ -124,7 +109,7 @@ public class MagicFlashLight extends Item implements IHasModel{
 
 				//	player.setEntityBoundingBox(boundingBox);
 
-				if(grow.isKeyDown())
+				if(Keyboard.isKeyDown(Keyboard.KEY_B))
 				{
 					if(height < 10)
 					{
@@ -149,7 +134,7 @@ public class MagicFlashLight extends Item implements IHasModel{
 					}
 				}
 
-				if(shrink.isKeyDown())
+				if(Keyboard.isKeyDown(Keyboard.KEY_V))
 				{
 					if(height > 0.1)
 					{

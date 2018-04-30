@@ -67,6 +67,30 @@ public class HyperDrive extends Block implements IHasModel{
 	{
 		return new ItemStack(Item.getItemFromBlock(this), 1, getMetaFromState(world.getBlockState(pos)));
 	}
+	
+	@Override
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) 
+	{
+		if(world.getBlockState(pos.west()).getBlock() == BlockInit.URANIUM_TANK_FILLED)
+		{
+			if(world.getBlockState(pos.east()).getBlock() == BlockInit.URANIUM_TANK_FILLED)
+			{
+				System.out.println("East and West");
+			}
+		}
+		if(world.getBlockState(pos).getBlock() == BlockInit.URANIUM_TANK_FILLED)
+		{
+			if(world.getBlockState(pos.south()).getBlock() == BlockInit.URANIUM_TANK_FILLED)
+			{
+				System.out.println("North and South");
+
+			}
+		}
+		
+		
+		
+		super.onNeighborChange(world, pos, neighbor);
+	}
 
 
 }

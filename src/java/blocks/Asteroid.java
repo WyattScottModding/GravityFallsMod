@@ -31,6 +31,7 @@ public class Asteroid extends Block implements IHasModel{
 		this.setSoundType(SoundType.STONE);
 		this.setHardness(2.0F);
 		this.setResistance(10.0F);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		
 		
 		BlockInit.BLOCKS.add(this);

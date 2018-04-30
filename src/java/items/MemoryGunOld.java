@@ -96,7 +96,7 @@ public class MemoryGunOld extends ItemBow implements IHasModel{
 			EntityPlayer entityplayer = (EntityPlayer)entityLiving;
 			boolean flag = entityplayer.capabilities.isCreativeMode;
 
-			if (stack.getItemDamage() < 9 || flag)
+			if (stack.getItemDamage() < 10 || flag)
 			{
 				if (!worldIn.isRemote)
 				{

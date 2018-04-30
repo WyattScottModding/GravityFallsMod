@@ -24,7 +24,6 @@ public class Copper extends Block implements IHasModel
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsblocks);
-		this.setDefaultState(this.blockState.getBaseState());
 		this.setHardness(3.0F);
 		this.setResistance(15.0F);
 
@@ -33,7 +32,7 @@ public class Copper extends Block implements IHasModel
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
 	}
-
+	
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) 
 	{

@@ -27,7 +27,6 @@ public class FlashLight extends ItemSword implements IHasModel
 
 	public boolean clicked = false;
 	public int counter = 0;
-	public BlockPos oldPos;
 	public World world = null;
 
 	public ArrayList<BlockHandler> blocks = new ArrayList<BlockHandler>();
@@ -39,7 +38,7 @@ public class FlashLight extends ItemSword implements IHasModel
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsitems);
+	//	this.setCreativeTab(GravityFalls.gravityfallsitems);
 		this.setMaxDamage(1000);
 
 		ItemInit.ITEMS.add(this);
@@ -69,8 +68,29 @@ public class FlashLight extends ItemSword implements IHasModel
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
 	{	
-		this.world = worldIn;
-		
+		//this.world = worldIn;
+
+		if(worldIn.getWorldTime() % 10 == 0 && blocks != null && !blocks.isEmpty())
+		{
+			for(int i = 0; i < blocks.size(); i++)
+			{
+				if(blocks.get(i) != null)
+				{
+					BlockPos pos = new BlockPos(blocks.get(i).blockPos());
+
+					if(worldIn.getLight(pos) == 15)
+					{
+						worldIn.setLightFor(EnumSkyBlock.BLOCK, pos, 0);
+					}
+					else
+					{
+						blocks.remove(i);
+						i--;
+					}
+				}
+			}
+		}
+
 		if(entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer entityPlayer = (EntityPlayer) entityIn;
@@ -79,26 +99,26 @@ public class FlashLight extends ItemSword implements IHasModel
 			{
 				RayTraceResult blockPosition = entityIn.rayTrace(25, 1.0F);
 
-				if(clicked && world.getWorldTime() % 5 == 0)
+				if(clicked && worldIn.getWorldTime() % 10 == 0)
 				{
-					this.isDamaged(this.getDefaultInstance());
-					blockPosition = entityIn.rayTrace(25, 1.0F);
+					stack.damageItem(1, entityPlayer);
 
-					if(true)//oldPos != null && oldPos != blockPosition.getBlockPos())
+					for(int i = -2; i < 2; i++)
 					{
-				        stack.damageItem(1, entityPlayer);
-
-						for(int i = -3; i < 3; i++)
+						for(int k = -2; k < 2; k++)
 						{
-							for(int k = -3; k < 3; k++)
+							for(int j = -3; j < 3; j++)
 							{
-								for(int j = -3; j < 3; j++)
-								{
-									BlockPos pos = blockPosition.getBlockPos().add(i, j, k);
-									IBlockState block = worldIn.getBlockState(blockPosition.getBlockPos());
-									Block blockType = block.getBlock();
+								BlockPos pos = blockPosition.getBlockPos().add(i, j, k);
+								IBlockState block = worldIn.getBlockState(blockPosition.getBlockPos());
+								Block blockType = block.getBlock();
 
-									if(blockType != Blocks.AIR && blockType != Blocks.TALLGRASS && blockType != Blocks.YELLOW_FLOWER && blockType != Blocks.RED_FLOWER && blockType != Blocks.CHORUS_FLOWER && blockType != Blocks.WATER && blockType != Blocks.FLOWING_WATER)
+								if(blockType != Blocks.AIR && blockType != Blocks.TALLGRASS && blockType != Blocks.YELLOW_FLOWER && blockType != Blocks.RED_FLOWER && blockType != Blocks.CHORUS_FLOWER && blockType != Blocks.WATER && blockType != Blocks.FLOWING_WATER)
+								{
+									IBlockState block2 = worldIn.getBlockState(blockPosition.getBlockPos().up());
+									Block blockType2 = block2.getBlock();
+
+									if(blockType2 != Blocks.YELLOW_FLOWER && blockType2 != Blocks.RED_FLOWER && blockType2 != Blocks.CHORUS_FLOWER && blockType2 != Blocks.WATER && blockType2 != Blocks.FLOWING_WATER)
 									{
 										if(worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) != 15)
 										{
@@ -107,8 +127,6 @@ public class FlashLight extends ItemSword implements IHasModel
 
 											BlockHandler newBlock = new BlockHandler(blockType, pos);
 											blocks.add(newBlock);
-
-											oldPos = blockPosition.getBlockPos();
 										}
 									}
 								}
@@ -117,25 +135,25 @@ public class FlashLight extends ItemSword implements IHasModel
 					}
 				}
 			}
-			
+
 			if(stack.getItemDamage() >= 500 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
 			{
 				ItemStack itemstack = findAmmo(entityPlayer);
-				
+
 				if(itemstack.isItemEqual(new ItemStack(ItemInit.BATTERY)))
 				{
-			        stack.damageItem(-500, entityPlayer);
+					stack.damageItem(-500, entityPlayer);
 					itemstack.shrink(1);
 				}
 			}
 		} 
 	}
-	
+
 	public World getWorld()
 	{
 		return world;
 	}
-	
+
 	private ItemStack findAmmo(EntityPlayer player)
 	{
 		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(ItemInit.BATTERY)))
@@ -153,7 +171,6 @@ public class FlashLight extends ItemSword implements IHasModel
 				ItemStack itemstack = player.inventory.getStackInSlot(i);
 
 				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(ItemInit.BATTERY)))
-
 				{
 					return itemstack;
 				}

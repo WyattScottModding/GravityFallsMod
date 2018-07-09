@@ -37,7 +37,7 @@ public class InfinitySidedDie extends ItemBow implements IHasModel{
 		this.setMaxStackSize(1);
 		this.setRegistryName(name);
 		this.setUnlocalizedName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsmagic);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
 
 		ItemInit.ITEMS.add(this);
 	}

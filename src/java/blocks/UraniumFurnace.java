@@ -31,7 +31,6 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import tabs.GravityFallsMagic;
 import tileEntities.TileEntityUraniumFurnace;
 
 public class UraniumFurnace extends Block implements ITileEntityProvider, IHasModel

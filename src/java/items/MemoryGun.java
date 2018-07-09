@@ -5,8 +5,7 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import org.lwjgl.input.Keyboard;
 
 import entity.EntityForget;
 import init.ItemInit;
@@ -27,7 +26,6 @@ import net.minecraft.entity.projectile.EntityFireball;
 import net.minecraft.entity.projectile.EntityShulkerBullet;
 import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
-import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
@@ -35,24 +33,22 @@ import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemFirework;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MemoryGun extends Item implements IHasModel
+public class MemoryGun extends ItemBow implements IHasModel
 {
+
+	public EntityForget forget = null;
+	public ItemStack stack = null;
 
 	public MemoryGun(String name)
 	{
@@ -60,6 +56,7 @@ public class MemoryGun extends Item implements IHasModel
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
+		this.setMaxDamage(10);
 
 		ItemInit.ITEMS.add(this);
 	}
@@ -67,7 +64,29 @@ public class MemoryGun extends Item implements IHasModel
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
+		this.stack = stack;
 
+		if (entityIn instanceof EntityPlayerMP && forget != null)
+		{
+			EntityPlayerMP entityPlayer = (EntityPlayerMP)entityIn;
+			Entity entityHit = forget.getEntityHit();
+			if(entityHit != null && entityPlayer != null)
+			{
+				entityHit.removeTrackingPlayer(entityPlayer);
+			}
+
+			if(stack.getItemDamage() >= 1 && Keyboard.isKeyDown(Keyboard.KEY_R))
+			{
+				ItemStack itemstack = findAmmo(entityPlayer);
+
+				if(itemstack == new ItemStack(ItemInit.BATTERY))
+				{
+					stack.damageItem(-1, entityPlayer);
+
+					itemstack.shrink(1);
+				}
+			}
+		}
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
@@ -76,26 +95,30 @@ public class MemoryGun extends Item implements IHasModel
 	{
 		entityLiving.setActiveHand(handIn);
 
-		boolean flag = entityLiving.capabilities.isCreativeMode;
-		ItemStack itemstack = this.findAmmo(entityLiving);
-
-		if (!itemstack.isEmpty() || flag)
+		if (entityLiving instanceof EntityPlayer && stack != null)
 		{
-			if (!worldIn.isRemote)
+			EntityPlayer entityplayer = (EntityPlayer)entityLiving;
+			boolean flag = entityplayer.capabilities.isCreativeMode;
+
+			if (stack.getItemDamage() < 10 || flag)
 			{
-				if (itemstack.isEmpty())
+				if (!worldIn.isRemote)
 				{
-					itemstack = new ItemStack(ItemInit.BATTERY);
+					EntityForget entityforget = new EntityForget(worldIn, entityplayer.posX + Math.sin(-entityplayer.rotationYaw * Math.PI / 180) * 1.5, entityplayer.posY + .5 + Math.sin(-entityplayer.rotationPitch * Math.PI / 180) * 1.5, entityplayer.posZ + Math.cos(-entityplayer.rotationYaw * Math.PI / 180) * 1.5);
+
+					entityforget.shoot(entityplayer, entityplayer.rotationPitch, entityplayer.rotationYaw, 3.0F, 0.0F);
+					entityforget.isInvisible();
+					entityforget.isInvisibleToPlayer(entityplayer);
+					worldIn.spawnEntity(entityforget);
+					forget = entityforget;
+
+					if(!flag)
+						stack.damageItem(1, entityplayer);
 				}
-
-				getMouseOver(entityLiving, worldIn);
-
-				itemstack.shrink(1);
 			}
+
+			//     worldIn.playSound((EntityPlayer)null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
 		}
-
-		//     worldIn.playSound((EntityPlayer)null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
-
 		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(ItemInit.MEMORY_GUN));
 	}
 
@@ -126,76 +149,34 @@ public class MemoryGun extends Item implements IHasModel
 		}
 	}
 
-	public void getMouseOver(EntityPlayer player, World world)
-	{
-
-		Vec3d lookVec = player.getLookVec();
-
-		BlockPos pos = player.getPosition();
-
-		float yaw = player.rotationYaw;
-		float pitch = player.rotationPitch;
-
-		for(int f = 1; f <= 10; f++)
-		{
-			double x = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
-			double y = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
-			double z = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
-
-
-			AxisAlignedBB entityPos = new AxisAlignedBB(pos.getX() + x, pos.getY() + y, pos.getZ() + z, pos.getX() + x + 1, pos.getY() + y + 1, pos.getZ() + z + 1);
-
-			List<Entity> list = world.getEntitiesInAABBexcluding(player, entityPos, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
-			{
-				public boolean apply(@Nullable Entity p_apply_1_)
-				{
-					return p_apply_1_ != null && p_apply_1_.canBeCollidedWith();
-				}
-			}));
-
-			for(int j = 0; j < list.size(); ++j)
-			{
-				Entity entity = list.get(j);
-				if(player instanceof EntityPlayerMP)
-				{					
-					EntityPlayerMP entityplayer = (EntityPlayerMP) player;
-
-					entity.removeTrackingPlayer(entityplayer);
-					System.out.println("Removed Tracking");
-
-					if(entity instanceof EntityLivingBase)
-					{
-						EntityLivingBase mob = (EntityLivingBase) entity;
-
-						mob.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 10, 1));
-					}
-				}				
-			}
-		}
-	}
 
 	protected boolean isBattery(ItemStack stack)
 	{
 		return stack.getItem() instanceof Battery;
 	}
 
+
+
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft)
 	{
 
-	}
 
+	}
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack)
 	{
 		return EnumAction.NONE;
 	}
 
+
+
 	@Override
 	public int getItemEnchantability()
 	{
 		return 0;
 	}
+
 
 	public void registerModels()
 	{

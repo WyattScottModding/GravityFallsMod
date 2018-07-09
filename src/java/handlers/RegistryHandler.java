@@ -31,10 +31,14 @@ import models.ModelSize;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.multiplayer.PlayerControllerMP;
 import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.client.renderer.entity.RenderCow;
 import net.minecraft.client.renderer.entity.RenderEntity;
+import net.minecraft.client.renderer.entity.RenderPlayer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
@@ -54,6 +58,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -64,6 +69,7 @@ import net.minecraft.world.GameType;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ModelRegistryEvent;
 import net.minecraftforge.client.event.MouseEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
@@ -92,6 +98,9 @@ public class RegistryHandler
 	public static boolean speed = false;
 
 	public static World world = null;
+	
+	public static boolean portalActive = false;
+	public static int countdown = 18000;
 
 
 
@@ -106,7 +115,6 @@ public class RegistryHandler
 	{
 		event.getRegistry().registerAll(BlockInit.BLOCKS.toArray(new Block[0]));
 		TileEntityHandler.registerTileEntites();
-
 	}
 
 	@SubscribeEvent
@@ -173,6 +181,15 @@ public class RegistryHandler
 		if ((event.getEntity() instanceof EntityPlayer))
 		{
 			EntityPlayer player = (EntityPlayer)event.getEntity();
+			
+			if(player.getArmorInventoryList().toString().contains("mysticamulet"))
+			{
+				player.capabilities.allowFlying = true;
+			}
+			else if(!player.capabilities.isCreativeMode)
+			{
+				player.capabilities.allowFlying = false;
+			}
 
 			if(player.getArmorInventoryList().toString().length() > 91)
 			{
@@ -194,6 +211,10 @@ public class RegistryHandler
 			if(!rubberArmor)
 			{
 				if (player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM_TANK_FILLED))) 
+				{
+					player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
+				}
+				if (player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM_TANK_HALFFILLED))) 
 				{
 					player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
 				}
@@ -306,7 +327,21 @@ public class RegistryHandler
 			//		getMouseOver(player, player.world, (int) player.height * 3);
 
 
-
+			//Portal
+			if(portalActive)
+			{
+				System.out.println("Portal Active");
+			}
+			
+			
+			
+			
+			
+			
+			
+			
+			
+			/*
 			//Flashlight Handler
 			if(player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.FLASHLIGHT)))
 			{
@@ -316,7 +351,7 @@ public class RegistryHandler
 
 				world = flashlight.getWorld();
 
-				if(world != null && world.getWorldTime() % 5 == 0 && flashlight.blocks != null)
+				if(world != null && world.getWorldTime() % 5 == 0 && flashlight.blocks != null && !flashlight.blocks.isEmpty())
 				{
 					for(int i = 0; i < flashlight.blocks.size(); i++)
 					{
@@ -337,6 +372,34 @@ public class RegistryHandler
 					}
 				}
 			}
+			*/
+		}
+	}
+
+	
+	@SubscribeEvent
+	public static void onPlayerRender(RenderPlayerEvent.Pre event)
+	{
+		EntityPlayer player = event.getEntityPlayer();
+		
+		event.getRenderer().getMainModel();
+				
+
+	}
+	
+	@SubscribeEvent
+	@SideOnly(Side.CLIENT)
+	public void onRenderLiving(RenderLivingEvent.Pre event)
+	{
+		if(event.getEntity() instanceof EntityPlayer)
+		{
+			EntityPlayer player = (EntityPlayer)event.getEntity();
+			
+			
+			event.setCanceled(true);
+			
+			final RenderPlayer modelRenderer = new RenderPlayer(event.getRenderer().getRenderManager());
+			modelRenderer.doRender((AbstractClientPlayer) player, event.getX(), event.getY(), event.getZ(), 0F, 0F);
 		}
 	}
 
@@ -359,6 +422,21 @@ public class RegistryHandler
 	public static boolean getSpeed()
 	{
 		return speed;
+	}
+	
+	public static boolean getPortal()
+	{
+		return portalActive;
+	}
+	
+	public static void setPortal(boolean portal)
+	{
+		portalActive = portal;
+	}
+	
+	public static int getCountdown()
+	{
+		return countdown;
 	}
 
 	/*

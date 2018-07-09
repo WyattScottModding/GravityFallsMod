@@ -132,7 +132,15 @@ public class PortalControlBook2Book3 extends Block implements IHasModel{
 
 		if (itemstack.isEmpty())
 		{
-			return true;
+			playerIn.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(ItemInit.BOOK3));
+
+			state = this.getBlockState().getBaseState();
+			EnumFacing face = (EnumFacing)state.getValue(FACING);
+			IBlockState state2 = BlockInit.PORTAL_CONTROLBOOK2.getDefaultState().withProperty(FACING, face);
+			worldIn.setBlockState(pos, state2);
+			
+			return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+
 		}
 		else
 		{

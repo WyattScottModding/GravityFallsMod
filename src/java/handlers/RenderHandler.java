@@ -1,10 +1,14 @@
 package handlers;
 
+import entity.EntityBill;
+import entity.EntityEightBall;
 import entity.EntityEyeBat;
+import entity.EntityEyeBatHuge;
 import entity.EntityForget;
 import entity.EntityGnome;
 import entity.EntityGolfCart;
 import entity.EntityHideBehind;
+import entity.EntityKeyhole;
 import entity.EntityLight;
 import entity.EntitySecurityDroid;
 import entity.EntityTimeCopDundgren;
@@ -13,12 +17,16 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
+import render.RenderBill;
+import render.RenderEightBall;
 import render.RenderEyeBat;
+import render.RenderEyeBatHuge;
 import render.RenderFlashlight;
 import render.RenderForget;
 import render.RenderGnome;
 import render.RenderGolfCart;
 import render.RenderHideBehind;
+import render.RenderKeyhole;
 import render.RenderSecurityDroid;
 import render.RenderTimeCopDundgren;
 import render.RenderTimeCopLolph;
@@ -116,6 +124,46 @@ public class RenderHandler {
 			public Render<? super EntitySecurityDroid> createRenderFor(RenderManager manager)
 			{
 				return new RenderSecurityDroid(manager);
+			}
+			
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityBill.class, new IRenderFactory<EntityBill>()
+		{
+			@Override
+			public Render<? super EntityBill> createRenderFor(RenderManager manager)
+			{
+				return new RenderBill(manager);
+			}
+			
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityEightBall.class, new IRenderFactory<EntityEightBall>()
+		{
+			@Override
+			public Render<? super EntityEightBall> createRenderFor(RenderManager manager)
+			{
+				return new RenderEightBall(manager);
+			}
+			
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityEyeBatHuge.class, new IRenderFactory<EntityEyeBatHuge>()
+		{
+			@Override
+			public Render<? super EntityEyeBatHuge> createRenderFor(RenderManager manager)
+			{
+				return new RenderEyeBatHuge(manager);
+			}
+			
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityKeyhole.class, new IRenderFactory<EntityKeyhole>()
+		{
+			@Override
+			public Render<? super EntityKeyhole> createRenderFor(RenderManager manager)
+			{
+				return new RenderKeyhole(manager);
 			}
 			
 		});

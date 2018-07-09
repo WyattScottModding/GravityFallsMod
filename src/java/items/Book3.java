@@ -1,13 +1,19 @@
 package items;
 
+import org.lwjgl.input.Keyboard;
+
+import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import main.Reference;
-import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBook;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemWrittenBook;
 import net.minecraft.util.EnumActionResult;
@@ -20,16 +26,18 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class Book3 extends ItemWrittenBook implements IHasModel{
 
+	public static final PropertyDirection FACING = BlockHorizontal.FACING;
+	
 	public Book3(String name)
 	{
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
-		
+
 		ItemInit.ITEMS.add(this);
 	}
-	
+
 	public void registerModels()
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
@@ -38,21 +46,52 @@ public class Book3 extends ItemWrittenBook implements IHasModel{
 	@Override
 	public boolean isEnchantable(ItemStack stack) 
 	{
-		
+
 		return false;
 	}
-	
+
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World worldIn, BlockPos pos, EnumHand hand,
+	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
 			EnumFacing facing, float hitX, float hitY, float hitZ) 
 	{
-		if(!worldIn.isRemote)
+		IBlockState state = BlockInit.Book3.getDefaultState().withProperty(FACING, player.getHorizontalFacing());
+
+		IBlockState block1 = world.getBlockState(pos);
+		IBlockState block2 = world.getBlockState(pos.up());
+
+		if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
 		{
-			player.openGui(GravityFalls.instance, Reference.GUI_JOURNAL3, worldIn, (int) player.posX, (int) player.posY, (int) player.posZ);
+			if(player != null && player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.BOOK3)))
+				player.openGui(GravityFalls.instance, Reference.GUI_JOURNAL3, world, (int) player.posX, (int) player.posY, (int) player.posZ);
 		}
-		return super.onItemUse(player, worldIn, pos, hand, facing, hitX, hitY, hitZ);
+		else
+		{
+
+			if(player.isCreative())
+			{
+				if(block1.getBlock() != Blocks.AIR && block2.getBlock() == Blocks.AIR && block1.getBlock() != BlockInit.PORTAL_CONTROL && block1.getBlock() != BlockInit.PORTAL_CONTROLALLBOOKS && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1BOOK2 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1BOOK3 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK2 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK2BOOK3 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK3)
+				{
+					if(block1.isFullBlock())
+					{
+						world.setBlockState(pos.up(), state);
+					}
+				}
+			}
+			else
+			{
+				if(block1.getBlock() != Blocks.AIR && block2.getBlock() == Blocks.AIR && block1.getBlock() != BlockInit.PORTAL_CONTROL && block1.getBlock() != BlockInit.PORTAL_CONTROLALLBOOKS && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1BOOK2 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1BOOK3 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK2 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK2BOOK3 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK3)
+				{
+					if(block1.isFullBlock())
+					{
+						world.setBlockState(pos.up(), state);
+						player.getHeldItemMainhand().shrink(1);
+					}
+				}
+			}
+		}
+
+		return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
 	}
-	
 
 	@Override
 	@SideOnly(Side.CLIENT)

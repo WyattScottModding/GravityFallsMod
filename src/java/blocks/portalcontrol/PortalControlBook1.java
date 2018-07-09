@@ -36,7 +36,7 @@ public class PortalControlBook1 extends Block implements IHasModel{
 
 	public static AxisAlignedBB PORTALCONTROL;
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-	
+
 	public PortalControlBook1(String name, Material material)
 	{
 		super(material);
@@ -54,19 +54,19 @@ public class PortalControlBook1 extends Block implements IHasModel{
 	{
 		GravityFalls.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
 	}
-	
+
 	@Override
 	public boolean isOpaqueCube(IBlockState state) 
 	{
 		return false;
 	}
-	
+
 	@Override
 	public boolean isFullCube(IBlockState state) 
 	{
 		return false;
 	}
-	
+
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) 
 	{
@@ -131,11 +131,19 @@ public class PortalControlBook1 extends Block implements IHasModel{
 
 		if (itemstack.isEmpty())
 		{
-			return true;
+			playerIn.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(ItemInit.BOOK1));
+
+			state = this.getBlockState().getBaseState();
+			EnumFacing face = (EnumFacing)state.getValue(FACING);
+			IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face);
+			worldIn.setBlockState(pos, state2);
+			
+			return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
+
 		}
 		else
 		{
-			
+
 			if(!worldIn.isRemote)
 			{
 				Item item = itemstack.getItem();
@@ -147,7 +155,7 @@ public class PortalControlBook1 extends Block implements IHasModel{
 
 					worldIn.setBlockState(pos, state2);
 
-					
+
 					playerIn.getHeldItemMainhand().shrink(1);
 
 					return true;
@@ -156,18 +164,18 @@ public class PortalControlBook1 extends Block implements IHasModel{
 				{
 					IBlockState state2 = BlockInit.PORTAL_CONTROLBOOK1BOOK3.getDefaultState().withProperty(FACING, face);
 					worldIn.setBlockState(pos, state2);
-					
+
 					playerIn.getHeldItemMainhand().shrink(1);
 
 					return true;
 				}
 			}
-			
+
 
 			return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 		}
 	}
-	
+
 	@Override
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) 
 	{

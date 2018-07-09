@@ -2,6 +2,7 @@ package worldgen;
 
 import java.util.Random;
 
+import entity.EntityEyeBat;
 import entity.EntityGnome;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
@@ -59,20 +60,20 @@ public class BiomeGravityFalls extends Biome
 		this.spawnableMonsterList.clear();
 		//this.spawnableWaterCreatureList.clear();
 		
-		this.spawnableCreatureList.add(new SpawnListEntry(EntityGnome.class, 10, 10, 20));
+		this.spawnableCreatureList.add(new SpawnListEntry(EntityGnome.class, 20, 10, 20));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityGolem.class, 1, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityPigZombie.class, 2, 0, 5));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityParrot.class, 5, 1, 3));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityBat.class, 15, 2, 6));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityRabbit.class, 5, 0, 4));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityLlama.class, 3, 0, 5));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityShulker.class, 1, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityShulker.class, 100, 0, 1));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityWolf.class, 6, 0, 8));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityZombieHorse.class, 1, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntitySkeletonHorse.class, 1, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityWitherSkeleton.class, 1, 0, 1));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityTimeCopDundgren.class, 1, 0, 1));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityTimeCopLolph.class, 1, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityTimeCopDundgren.class, 10, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityTimeCopLolph.class, 10, 0, 1));
 		
 		this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntitySheep.class, 12, 4, 4));
         this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityPig.class, 10, 4, 4));
@@ -85,6 +86,8 @@ public class BiomeGravityFalls extends Biome
         this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntitySlime.class, 100, 4, 4));
         this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityEnderman.class, 10, 1, 4));
         this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityWitch.class, 5, 1, 1));
+        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityEyeBat.class, 2, 5, 10));
+
         this.addDefaultFlowers();
 
 

@@ -1,59 +1,53 @@
-package blocks.portalcontrol;
+package blocks;
 
 import java.util.Random;
 
-import blocks.PowerCord;
-import handlers.RegistryHandler;
+import org.lwjgl.input.Keyboard;
+
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.SoundType;
+import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
-import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.NonNullList;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class PortalControlAllBooks extends Block implements IHasModel
+public class Book_1 extends Block implements IHasModel
 {
-
-	public static AxisAlignedBB PORTALCONTROL;
+	public static final AxisAlignedBB BOOK = new AxisAlignedBB(0.3D, 0D, 0.2D, .7D, 0.30D, .8D);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-	
-	public boolean portalActive = false;
 
 
-	public PortalControlAllBooks(String name, Material material)
+	public Book_1(String name, Material material)
 	{
 		super(material);
-		this.setHardness(10.0F);
-		this.setResistance(50.0F);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-
+		this.setSoundType(SoundType.CLOTH);
+		this.setHardness(1.0F);
+		this.setResistance(2.0F);
+		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
@@ -64,11 +58,13 @@ public class PortalControlAllBooks extends Block implements IHasModel
 		GravityFalls.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
 	}
 
+	
 	@Override
 	public boolean isOpaqueCube(IBlockState state) 
 	{
 		return false;
 	}
+
 
 	@Override
 	public boolean isFullCube(IBlockState state) 
@@ -77,79 +73,22 @@ public class PortalControlAllBooks extends Block implements IHasModel
 	}
 
 	@Override
-	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) 
+	public Item getItemDropped(IBlockState state, Random rand, int fortune) 
 	{
-		EnumFacing face = (EnumFacing)state.getValue(FACING);
-		if (face == EnumFacing.NORTH) 
-			PORTALCONTROL = new AxisAlignedBB(0D, 0D, 0D, 2.0D, 2.00D, 1.0D);
-		else if (face == EnumFacing.SOUTH) 
-			PORTALCONTROL = new AxisAlignedBB(-1.0D, 0D, 0D, 1.0D, 2.00D, 1.0D);
-		else if (face == EnumFacing.WEST) 
-			PORTALCONTROL = new AxisAlignedBB(0D, 0D, -1.0D, 1.0D, 2.00D, 1.0D);
-		else if (face == EnumFacing.EAST) 
-			PORTALCONTROL = new AxisAlignedBB(0D, 0D, 0D, 1.0D, 2.00D, 2.0D);
-
-		return PORTALCONTROL;
+		return ItemInit.BOOK1;
 	}
-
-	@Override
-	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) 
-	{
-		EnumFacing face = (EnumFacing)state.getValue(FACING);
-		if (face == EnumFacing.NORTH) 
-			PORTALCONTROL = new AxisAlignedBB(0D, 0D, 0D, 2.0D, 2.00D, 1.0D);
-		else if (face == EnumFacing.SOUTH) 
-			PORTALCONTROL = new AxisAlignedBB(-1.0D, 0D, 0D, 1.0D, 2.00D, 1.0D);
-		else if (face == EnumFacing.WEST) 
-			PORTALCONTROL = new AxisAlignedBB(0D, 0D, -1.0D, 1.0D, 2.00D, 1.0D);
-		else if (face == EnumFacing.EAST) 
-			PORTALCONTROL = new AxisAlignedBB(0D, 0D, 0D, 1.0D, 2.00D, 2.0D);
-
-		return PORTALCONTROL;
-	}
-
-	@Override
-	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos)
-	{
-		EnumFacing face = (EnumFacing)blockState.getValue(FACING);
-		if (face == EnumFacing.NORTH) 
-			PORTALCONTROL = new AxisAlignedBB(0D, 0D, 0D, 2.0D, 2.00D, 1.0D);
-		else if (face == EnumFacing.SOUTH) 
-			PORTALCONTROL = new AxisAlignedBB(-1.0D, 0D, 0D, 1.0D, 2.00D, 1.0D);
-		else if (face == EnumFacing.WEST) 
-			PORTALCONTROL = new AxisAlignedBB(0D, 0D, -1.0D, 1.0D, 2.00D, 1.0D);
-		else if (face == EnumFacing.EAST) 
-			PORTALCONTROL = new AxisAlignedBB(0D, 0D, 0D, 1.0D, 2.00D, 2.0D);
-
-		return PORTALCONTROL;
-	}
-
 
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
 			EntityPlayer player) 
 	{
-		return new ItemStack(Item.getItemFromBlock(this));
+		return new ItemStack(ItemInit.BOOK1);
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) 
-	{
-		ItemStack itemstack = player.getHeldItem(hand);
-
-		if (itemstack.isEmpty())
-		{
-			player.setHeldItem(EnumHand.MAIN_HAND, new ItemStack(ItemInit.BOOK3));
-
-			state = this.getBlockState().getBaseState();
-			EnumFacing face = (EnumFacing)state.getValue(FACING);
-			IBlockState state2 = BlockInit.PORTAL_CONTROLBOOK1BOOK2.getDefaultState().withProperty(FACING, face);
-			worldIn.setBlockState(pos, state2);
-		}
-
-		return super.onBlockActivated(worldIn, pos, state, player, hand, facing, hitX, hitY, hitZ);
-
+	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) 
+	{	
+		return worldIn.getBlockState(pos.down()).isFullCube();	
 	}
 
 	@Override
@@ -184,12 +123,6 @@ public class PortalControlAllBooks extends Block implements IHasModel
 	}
 
 	@Override
-	public EnumBlockRenderType getRenderType(IBlockState state) 
-	{
-		return EnumBlockRenderType.MODEL;
-	}
-
-	@Override
 	public IBlockState withRotation(IBlockState state, Rotation rot)
 	{
 		return state.withProperty(FACING, rot.rotate((EnumFacing)state.getValue(FACING)));
@@ -215,6 +148,7 @@ public class PortalControlAllBooks extends Block implements IHasModel
 		return this.getDefaultState().withProperty(FACING, facing);
 	}
 
+
 	@Override
 	public int getMetaFromState(IBlockState state) 
 	{
@@ -222,24 +156,20 @@ public class PortalControlAllBooks extends Block implements IHasModel
 	}	
 
 	@Override
-	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) 
+	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) 
 	{
-		IBlockState state = world.getBlockState(neighbor);
-		Block block = state.getBlock();
-		
-		if(block == BlockInit.POWER_CORD)
-		{
-			PowerCord powercord = (PowerCord) block;
-			
-			if(powercord.isPowered())
-			{
-				portalActive = true;
-				RegistryHandler.setPortal(true);
-			}
-			
-		}
-		
-		super.onNeighborChange(world, pos, neighbor);
+		return BOOK;
+
 	}
-	
+	@Override
+	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) 
+	{
+		return BOOK;
+	}
+
+	@Override
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos)
+	{
+		return BOOK;
+	}
 }

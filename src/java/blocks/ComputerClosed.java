@@ -63,6 +63,25 @@ public class ComputerClosed extends Block implements IHasModel
 	{
 		return false;
 	}
+	
+	@Override
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor)
+	{
+		IBlockState blockState = world.getBlockState((BlockPos) pos);
+	
+		if(blockState.getBlock() == BlockInit.POWER_CORD)
+		{
+			PowerCord powerCord = (PowerCord) blockState.getBlock();
+			
+			if(powerCord.isPowered())
+			{
+				IBlockState state2 = BlockInit.COMPUTER_OPEN.getDefaultState();
+				((World) world).setBlockState(pos, state2);
+			}
+		}
+		
+		super.onNeighborChange(world, pos, neighbor);
+	}
 
 	@Override
 	public boolean isFullCube(IBlockState state) 

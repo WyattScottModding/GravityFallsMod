@@ -10,6 +10,7 @@ import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -21,16 +22,20 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
+import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
+import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
+import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 
 public class FlashLight extends ItemSword implements IHasModel
 {
 
 	public boolean clicked = false;
 	public int counter = 0;
-	public World world = null;
+	public static World world = null;
 
-	public ArrayList<BlockHandler> blocks = new ArrayList<BlockHandler>();
-
+	public static SimpleNetworkWrapper network;
 
 	public FlashLight(String name)
 	{
@@ -38,7 +43,7 @@ public class FlashLight extends ItemSword implements IHasModel
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-	//	this.setCreativeTab(GravityFalls.gravityfallsitems);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
 		this.setMaxDamage(1000);
 
 		ItemInit.ITEMS.add(this);
@@ -52,6 +57,8 @@ public class FlashLight extends ItemSword implements IHasModel
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
+		world = worldIn;
+		
 		if(clicked && counter % 2 == 0)
 		{
 			clicked = false;
@@ -68,73 +75,16 @@ public class FlashLight extends ItemSword implements IHasModel
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
 	{	
-		//this.world = worldIn;
-
-		if(worldIn.getWorldTime() % 10 == 0 && blocks != null && !blocks.isEmpty())
-		{
-			for(int i = 0; i < blocks.size(); i++)
-			{
-				if(blocks.get(i) != null)
-				{
-					BlockPos pos = new BlockPos(blocks.get(i).blockPos());
-
-					if(worldIn.getLight(pos) == 15)
-					{
-						worldIn.setLightFor(EnumSkyBlock.BLOCK, pos, 0);
-					}
-					else
-					{
-						blocks.remove(i);
-						i--;
-					}
-				}
-			}
-		}
-
 		if(entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer entityPlayer = (EntityPlayer) entityIn;
 
-			if(entityPlayer.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.FLASHLIGHT)))
+			if(clicked)
 			{
-				RayTraceResult blockPosition = entityIn.rayTrace(25, 1.0F);
-
-				if(clicked && worldIn.getWorldTime() % 10 == 0)
-				{
-					stack.damageItem(1, entityPlayer);
-
-					for(int i = -2; i < 2; i++)
-					{
-						for(int k = -2; k < 2; k++)
-						{
-							for(int j = -3; j < 3; j++)
-							{
-								BlockPos pos = blockPosition.getBlockPos().add(i, j, k);
-								IBlockState block = worldIn.getBlockState(blockPosition.getBlockPos());
-								Block blockType = block.getBlock();
-
-								if(blockType != Blocks.AIR && blockType != Blocks.TALLGRASS && blockType != Blocks.YELLOW_FLOWER && blockType != Blocks.RED_FLOWER && blockType != Blocks.CHORUS_FLOWER && blockType != Blocks.WATER && blockType != Blocks.FLOWING_WATER)
-								{
-									IBlockState block2 = worldIn.getBlockState(blockPosition.getBlockPos().up());
-									Block blockType2 = block2.getBlock();
-
-									if(blockType2 != Blocks.YELLOW_FLOWER && blockType2 != Blocks.RED_FLOWER && blockType2 != Blocks.CHORUS_FLOWER && blockType2 != Blocks.WATER && blockType2 != Blocks.FLOWING_WATER)
-									{
-										if(worldIn.getLightFor(EnumSkyBlock.BLOCK, pos) != 15)
-										{
-											worldIn.setLightFor(EnumSkyBlock.BLOCK, pos, 15);
-											worldIn.notifyLightSet(pos);
-
-											BlockHandler newBlock = new BlockHandler(blockType, pos);
-											blocks.add(newBlock);
-										}
-									}
-								}
-							}
-						}
-					}
-				}
+				network = NetworkRegistry.INSTANCE.newSimpleChannel("flashlight");
+				network.registerMessage(PacketMakeLight.HandlerMakeLightServer.class, PacketMakeLight.class, 1, Side.SERVER);
 			}
+
 
 			if(stack.getItemDamage() >= 500 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
 			{
@@ -177,6 +127,39 @@ public class FlashLight extends ItemSword implements IHasModel
 			}
 
 			return ItemStack.EMPTY;
+		}
+	}
+	
+	public static abstract class HandlerMakeLightClient implements IMessageHandler<PacketMakeLight, IMessage>
+  {
+    public IMessage onMessage(PacketMakeLight message, MessageContext ctx)
+    {
+      World world = FlashLight.world;
+      
+      world.func_72915_b(EnumSkyBlock.BLOCK, message.x, message.y, message.z, Flashlight.instance.getLanternLightValue());
+      world.func_147463_c(EnumSkyBlock.BLOCK, message.oldX, message.oldY, message.oldZ);
+      world.func_147463_c(EnumSkyBlock.BLOCK, message.x, message.y + 1, message.z);
+      world.func_147463_c(EnumSkyBlock.BLOCK, message.x + 1, message.y, message.z);
+      world.func_147463_c(EnumSkyBlock.BLOCK, message.x, message.y, message.z + 1);
+      world.func_147463_c(EnumSkyBlock.BLOCK, message.x - 1, message.y, message.z);
+      world.func_147463_c(EnumSkyBlock.BLOCK, message.x, message.y, message.z - 1);
+      
+      return null;
+    }
+  }
+
+	public static abstract class HandlerMakeLightServer implements IMessageHandler<PacketMakeLight, IMessage>
+	{
+		public IMessage onMessage(PacketMakeLight message, MessageContext ctx)
+		{
+			Lantern.network.sendToAll(message);
+			return null;
+		}
+
+		@Override
+		public IMessage onMessage(PacketMakeLight message, MessageContext ctx) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 	}
 }

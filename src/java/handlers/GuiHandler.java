@@ -1,10 +1,12 @@
 package handlers;
 
 import containers.ContainerBook1;
+import containers.ContainerComputer;
 import containers.ContainerUraniumFurnace;
 import gui.GuiBook1;
 import gui.GuiBook2;
 import gui.GuiBook3;
+import gui.GuiComputer;
 import gui.GuiScope;
 import gui.GuiUraniumFurnace;
 import main.GravityFalls;
@@ -15,6 +17,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import tileEntities.TileEntityBook1;
+import tileEntities.TileEntityComputer;
 import tileEntities.TileEntityUraniumFurnace;
 
 public class GuiHandler implements IGuiHandler
@@ -33,6 +36,8 @@ public class GuiHandler implements IGuiHandler
 			return new ContainerBook1(player.inventory, (TileEntityBook1)world.getTileEntity(new BlockPos(x, y, z)));
 		else if(ID == Reference.SCOPE)
 			return new ContainerBook1(player.inventory, (TileEntityBook1)world.getTileEntity(new BlockPos(x, y, z)));
+		else if(ID == Reference.COMPUTER)
+			return new ContainerComputer(player.inventory, (TileEntityComputer)world.getTileEntity(new BlockPos(x, y, z)));
 		return null;
 	}
 
@@ -49,6 +54,8 @@ public class GuiHandler implements IGuiHandler
 			return new GuiBook3(player.inventory, (TileEntityBook1)world.getTileEntity(new BlockPos(x, y, z)));
 		else if(ID == Reference.SCOPE)
 			return new GuiScope(player.inventory, (TileEntityBook1)world.getTileEntity(new BlockPos(x, y, z)));
+		else if(ID == Reference.COMPUTER)
+			return new GuiComputer(player.inventory, (TileEntityComputer)world.getTileEntity(new BlockPos(x, y, z)));
 		return null;
 	}
 	
@@ -56,5 +63,4 @@ public class GuiHandler implements IGuiHandler
 	{
 		NetworkRegistry.INSTANCE.registerGuiHandler(GravityFalls.instance, new GuiHandler());
 	}
-
 }

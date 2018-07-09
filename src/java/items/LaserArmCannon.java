@@ -91,16 +91,18 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 				cooldown = 30;
 			}
 
-			if(stack.getItemDamage() >= 5 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
+			if(stack.getItemDamage() >= 10 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
 			{
 				if(player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.LASER_ARM_CANNON)))
 				{
 					ItemStack itemstack = findAmmo(player);
 
-					if(itemstack.isItemEqual(new ItemStack(ItemInit.BATTERY)))
+					if(isBattery(itemstack))
 					{
-						stack.damageItem(-5, player);
+						stack.damageItem(-10, player);
 
+						System.out.print("Battery Found");
+						
 						itemstack.shrink(1);
 					}
 				}
@@ -179,5 +181,9 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 			return ItemStack.EMPTY;
 		}
 	}
+	
+	protected boolean isBattery(ItemStack stack)
+	{
+		return stack.getItem() instanceof Battery;
+	}
 }
-

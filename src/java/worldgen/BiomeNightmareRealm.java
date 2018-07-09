@@ -2,6 +2,8 @@ package worldgen;
 
 import java.util.Random;
 
+import entity.EntityEightBall;
+import entity.EntityEyeBatHuge;
 import entity.EntityGnome;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
@@ -55,6 +57,11 @@ public class BiomeNightmareRealm extends Biome
 		this.spawnableCreatureList.clear();
 		this.spawnableMonsterList.clear();
 		this.spawnableWaterCreatureList.clear();
+		
+		
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityEightBall.class, 10, 1, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityEyeBatHuge.class, 10, 3, 10));
+
 
 
 	}

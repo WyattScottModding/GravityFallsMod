@@ -51,6 +51,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 			this.generateStructureUranium(new WorldGenStructure("uranium"), world, random, chunkX, chunkZ);
 			this.generateStructureNowYouSeeIt(new WorldGenStructure("nowyouseeitnowyoudontium"), world, random, chunkX, chunkZ, BiomeGravityFalls.class);
 			this.generateStructureCopper(new WorldGenStructure("copper"), world, random, chunkX, chunkZ);
+			this.generateStructureCrystal(new WorldGenStructure("outhouse"), world, random, chunkX, chunkZ, 40, Blocks.GRASS, BiomeGravityFalls.class);
 			//this.generateStructureGlobnar(new WorldGenStructure("globnar1"), world, random, chunkX, chunkZ, Blocks.GRASS, BiomeTheFuture.class);
 
 
@@ -286,7 +287,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 
 	private void generateStructureCopper(WorldGenerator generator, World world, Random random, int chunkX, int chunkZ)
 	{
-		for(int q = 0; q < 20; q++)
+		for(int q = 0; q < 10; q++)
 		{
 			int x = (chunkX * 16) + random.nextInt(15) + 8;
 			int z = (chunkZ * 16) + random.nextInt(15) + 8;

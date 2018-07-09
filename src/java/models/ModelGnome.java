@@ -8,27 +8,26 @@ import net.minecraft.util.math.MathHelper;
 public class ModelGnome extends ModelBase
 {
   ModelRenderer Arm1;
+  ModelRenderer Arm2;
   ModelRenderer Leg1;
+  ModelRenderer Leg2;
   ModelRenderer Beard1;
   ModelRenderer Beard2;
   ModelRenderer Beard3;
+  ModelRenderer Beard4;
+  ModelRenderer Beard5;
+  ModelRenderer Beard6;
+  ModelRenderer Beard7;
+  ModelRenderer Beard8;
+  ModelRenderer Beard9;
   ModelRenderer Hat1;
   ModelRenderer Hat2;
   ModelRenderer Hat3;
   ModelRenderer Hat4;
-  ModelRenderer Beard4;
-  ModelRenderer Beard5;
   ModelRenderer Eye1;
   ModelRenderer Eye2;
-  ModelRenderer Hat5;
-  ModelRenderer Beard6;
-  ModelRenderer Leg2;
-  ModelRenderer Arm2;
   ModelRenderer Eyebrow1;
   ModelRenderer Eyebrow2;
-  ModelRenderer Beard7;
-  ModelRenderer Beard8;
-  ModelRenderer Beard9;
   ModelRenderer Nose;
   
   public ModelGnome()
@@ -79,13 +78,13 @@ public class ModelGnome extends ModelBase
     this.Hat2.showModel = true;
     setRotation(this.Hat2, 0.0F, 0.0F, 0.0F);
     this.Hat3 = new ModelRenderer(this, 105, 11);
-    this.Hat3.addBox(0.0F, 0.0F, 0.0F, 2, 2, 3);
+    this.Hat3.addBox(0.0F, 0.0F, 2.0F, 2, 2, 2);
     this.Hat3.setRotationPoint(-1.0F, 8.5F, -3.0F);
     this.Hat3.setTextureSize(256, 256);
     this.Hat3.showModel = true;
     setRotation(this.Hat3, 0.0F, 0.0F, 0.0F);
     this.Hat4 = new ModelRenderer(this, 102, 8);
-    this.Hat4.addBox(0.0F, 0.0F, 0.0F, 3, 1, 4);
+    this.Hat4.addBox(1.0F, -1.0F, 3.0F, 1, 1, 1);
     this.Hat4.setRotationPoint(-1.5F, 9.0F, -3.0F);
     this.Hat4.setTextureSize(256, 256);
     this.Hat4.showModel = true;
@@ -114,12 +113,6 @@ public class ModelGnome extends ModelBase
     this.Eye2.setTextureSize(256, 256);
     this.Eye2.showModel = true;
     setRotation(this.Eye2, 0.0F, 0.0F, 0.0F);
-    this.Hat5 = new ModelRenderer(this, 105, 11);
-    this.Hat5.addBox(0.0F, 0.0F, 0.0F, 2, 1, 3);
-    this.Hat5.setRotationPoint(-1.0F, 9.0F, -4.0F);
-    this.Hat5.setTextureSize(256, 256);
-    this.Hat5.showModel = true;
-    setRotation(this.Hat5, 0.0F, 0.0F, 0.0F);
     this.Beard6 = new ModelRenderer(this, 36, 32);
     this.Beard6.addBox(0.0F, 0.0F, 0.0F, 6, 4, 6);
     this.Beard6.setRotationPoint(-3.0F, 16.0F, -3.0F);
@@ -181,27 +174,27 @@ public class ModelGnome extends ModelBase
     super.render(entity, f, f1, f2, f3, f4, f5);
     setRotationAngles(f, f1, f2, f3, f4, f5, entity);
     this.Arm1.renderWithRotation(f5);
+    this.Arm2.renderWithRotation(f5);
     this.Leg1.renderWithRotation(f5);
+    this.Leg2.renderWithRotation(f5);
     this.Beard1.renderWithRotation(f5);
     this.Beard2.renderWithRotation(f5);
     this.Beard3.renderWithRotation(f5);
+    this.Beard4.renderWithRotation(f5);
+    this.Beard5.renderWithRotation(f5);
+    this.Beard6.renderWithRotation(f5);
+    this.Beard7.renderWithRotation(f5);
+    this.Beard8.renderWithRotation(f5);
+    this.Beard9.renderWithRotation(f5);
     this.Hat1.renderWithRotation(f5);
     this.Hat2.renderWithRotation(f5);
     this.Hat3.renderWithRotation(f5);
     this.Hat4.renderWithRotation(f5);
-    this.Beard4.renderWithRotation(f5);
-    this.Beard5.renderWithRotation(f5);
     this.Eye1.renderWithRotation(f5);
     this.Eye2.renderWithRotation(f5);
-    this.Hat5.renderWithRotation(f5);
-    this.Beard6.renderWithRotation(f5);
-    this.Leg2.renderWithRotation(f5);
-    this.Arm2.renderWithRotation(f5);
     this.Eyebrow1.renderWithRotation(f5);
     this.Eyebrow2.renderWithRotation(f5);
-    this.Beard7.renderWithRotation(f5);
-    this.Beard8.renderWithRotation(f5);
-    this.Beard9.renderWithRotation(f5);
+
     this.Nose.renderWithRotation(f5);
   }
   

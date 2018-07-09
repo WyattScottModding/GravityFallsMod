@@ -3,14 +3,24 @@ package init;
 import java.util.ArrayList;
 import java.util.List;
 
-import blocks.Copper;
 import blocks.Asteroid;
+import blocks.BlockTeleporter;
+import blocks.Book_1;
+import blocks.Book_2;
+import blocks.Book_3;
 import blocks.ColoredLights;
+import blocks.ComputerClosed;
+import blocks.ComputerOpen;
+import blocks.Copper;
+import blocks.CopperBlock;
 import blocks.CryogenicTubeOff;
 import blocks.CryogenicTubeOn;
 import blocks.Crystal;
 import blocks.HiddenElement;
+import blocks.HyperDrive;
 import blocks.MetalTree;
+import blocks.OutHouse;
+import blocks.PowerCord;
 import blocks.RedWoodLeaves;
 import blocks.RedWoodLogs;
 import blocks.RedWoodPlanks;
@@ -57,15 +67,15 @@ public class BlockInit
 
 	public static final Block URANIUM_TANK_FILLED = new UraniumTankFilled("uraniumtankfilled", Material.ROCK);
 
-	//public static final Block POWER_CORD = new PowerCord("powercord");
+	public static final Block POWER_CORD = new PowerCord("powercord");
 
 	public static final Block URANIUM_FURNACE = new UraniumFurnace("uranium_furnace");
 
-	//public static final Block HYPER_DRIVE = new HyperDrive("hyperdrive", Material.IRON);
+	public static final Block HYPER_DRIVE = new HyperDrive("hyperdrive", Material.IRON);
 
-	public static final Block CRYOGENIC_TUBE_ON = new CryogenicTubeOn("cryogenictubeon", Material.IRON);
+	public static final Block CRYOGENIC_TUBE_ON = new CryogenicTubeOn("cryogenictube_on", Material.IRON);
 
-	public static final Block CRYOGENIC_TUBE_OFF = new CryogenicTubeOff("cryogenictubeoff", Material.IRON);
+	public static final Block CRYOGENIC_TUBE_OFF = new CryogenicTubeOff("cryogenictube_off", Material.IRON);
 
 	public static final Block METAL_TREE = new MetalTree("metaltree", Material.BARRIER);
 
@@ -73,7 +83,24 @@ public class BlockInit
 
 	public static final Block ASTEROID = new Asteroid("asteroid", Material.ROCK);
 	
-	public static final Block COPPER = new Copper("copper");
+	public static final Block COPPER = new Copper("copper_ore");
+	
+	public static final Block COMPUTER_CLOSED = new ComputerClosed("computer", Material.CLOTH);
+
+	public static final Block COMPUTER_OPEN = new ComputerOpen("computer_open", Material.CLOTH);
+
+	public static final Block BLOCKTELEPORTER = new BlockTeleporter("block_teleporter");
+	
+	public static final Block OUTHOUSE = new OutHouse("out_house", Material.WOOD);
+	
+	public static final Block Book1 = new Book_1("book_1", Material.CLOTH);
+	
+	public static final Block Book2 = new Book_2("book_2", Material.CLOTH);
+	
+	public static final Block Book3 = new Book_3("book_3", Material.CLOTH);
+	
+	public static final Block COPPER_BLOCK = new CopperBlock("copper_block");
+
 
 	//PortalControls
 	public static final Block PORTAL_CONTROL = new PortalControl("portalcontrol", Material.ANVIL);

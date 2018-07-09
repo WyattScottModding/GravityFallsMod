@@ -39,7 +39,9 @@ import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.passive.AbstractHorse;
+import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.passive.EntityAnimal;
+import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityLlama;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -60,36 +62,66 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
-public class EntityGnome extends EntityPigZombie
+public class EntityEyeBat extends EntityBat
 {
 
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
+	
+	private BlockPos spawnPosition;
 
-
-	public EntityGnome(World par1World)
+	public EntityEyeBat(World par1World)
 	{
 		super(par1World);
-		this.setSize(0.3F, 0.85F);
+		this.setSize(2.0F, 0.5F);
+
 	}
 
 
 	@Override
 	protected void applyEntityAttributes() 
 	{
+
 		super.applyEntityAttributes();
 
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(15.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
 
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.25D);
+	//	this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.1D);
 
-		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1.0D);;
+		//this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(15.0D);
+	}
+	
+	@Override
+	protected void updateAITasks()
+	{
+		super.updateAITasks();
+		BlockPos blockpos = new BlockPos(this);
+        BlockPos blockpos1 = blockpos.up();
+		
+        if (this.spawnPosition != null && (!this.world.isAirBlock(this.spawnPosition) || this.spawnPosition.getY() < 1))
+        {
+            this.spawnPosition = null;
+        }
 
-		this.getEntityAttribute(SPAWN_REINFORCEMENTS_CHANCE).setBaseValue(0.5D);
-
+        if (this.spawnPosition == null || this.rand.nextInt(30) == 0 || this.spawnPosition.distanceSq((double)((int)this.posX), (double)((int)this.posY), (double)((int)this.posZ)) < 4.0D)
+        {
+            this.spawnPosition = new BlockPos((int)this.posX + this.rand.nextInt(7) - this.rand.nextInt(7), (int)this.posY + this.rand.nextInt(6) - 2, (int)this.posZ + this.rand.nextInt(7) - this.rand.nextInt(7));
+        }
+        
+		double d0 = (double)this.spawnPosition.getX() + 0.5D - this.posX;
+        double d1 = (double)this.spawnPosition.getY() + 0.1D - this.posY;
+        double d2 = (double)this.spawnPosition.getZ() + 0.5D - this.posZ;
+        this.motionX += (Math.signum(d0) * 0.5D - this.motionX) * 0.10000000149011612D;
+        this.motionY += (Math.signum(d1) * 0.699999988079071D - this.motionY) * 0.10000000149011612D;
+        this.motionZ += (Math.signum(d2) * 0.5D - this.motionZ) * 0.10000000149011612D;
+        float f = (float)(MathHelper.atan2(this.motionZ, this.motionX) * (180D / Math.PI)) - 90.0F;
+        float f1 = MathHelper.wrapDegrees(f - this.rotationYaw);
+        this.moveForward = 0.5F;
+        this.rotationYaw += f1;
 	}
 
 
@@ -104,35 +136,31 @@ public class EntityGnome extends EntityPigZombie
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn)
 	{
 
-		return SoundsHandler.ENTITY_GNOME_HURT;
+		return null;
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() 
 	{
-		return SoundsHandler.ENTITY_GNOME_DEATH;
+		return null;
 	}
 
 	@Override
 	protected void playStepSound(BlockPos pos, Block blockIn)
 	{
-		if(this.isAngry())
-			this.playSound(SoundsHandler.ENTITY_GNOME_ANGRY, 1.0F, 1.0F);
-
 		this.playSound(SoundEvents.ENTITY_CHICKEN_STEP, 0.15F, 1.0F);
 	}
 
 	@Override
-	protected SoundEvent getAmbientSound()
+	public SoundEvent getAmbientSound() 
 	{
-		return SoundsHandler.ENTITY_GNOME_AMBIENT;
+		return super.getAmbientSound();
 	}
-
 
 	@Override
 	protected ResourceLocation getLootTable()
 	{
-		return LootTableHandler.GNOME;
+		return null;
 
 	}
 
@@ -142,74 +170,6 @@ public class EntityGnome extends EntityPigZombie
 		//this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
 	}
 
-	@Override
-	public void onUpdate()
-	{
-		AxisAlignedBB entityArea = new AxisAlignedBB(this.getPosition().getX() - 10, this.getPosition().getY() - 10, this.getPosition().getZ() - 10, this.getPosition().getX() + 10, this.getPosition().getY() + 10, this.getPosition().getZ() + 10);
-
-		if(this.world.getTotalWorldTime() % 5 == 0)
-		{
-			List<Entity> list = world.getEntitiesInAABBexcluding(this, entityArea, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
-			{
-				public boolean apply(@Nullable Entity p_apply_1_)
-				{
-					return p_apply_1_ != null && p_apply_1_.canBeCollidedWith();
-				}
-			}));
-
-
-			double averageX = 0;
-			double averageY = 0;
-			double averageZ = 0;
-
-			for(int i = 0; i < list.size(); i++)
-			{
-				if(list.get(i) instanceof EntityGnome && !world.isRemote)
-				{
-					averageX += list.get(i).getPosition().getX();
-					averageY += list.get(i).getPosition().getY();
-					averageZ += list.get(i).getPosition().getZ();
-				}
-				else
-				{
-					list.remove(i);
-				}
-			}
-
-			if(list.size() >= 10)
-			{
-				int count = list.size();
-
-				int entity = (int) (this.world.getTotalWorldTime() % count);
-
-				averageX /= count - 1;
-				averageY /= count - 1;
-				averageZ /= count - 1;
-
-				System.out.println("averageX: " + averageX);
-				System.out.println("averageY: " + averageY);
-				System.out.println("averageZ: " + averageZ);
-				System.out.println("list count: " + count);
-
-				System.out.println(list.get(entity).toString());
-				if((int)list.get(entity).posX != (int)averageX && (int)list.get(entity).posY!= (int)averageY && (int)list.get(entity).posZ != (int)averageZ)
-				{
-					//list.get(entity).motionX = (averageX - list.get(entity).posX) / 100;
-					//list.get(entity).motionY = (averageY - list.get(entity).posY) / 100;
-					//list.get(entity).motionZ = (averageZ - list.get(entity).posZ) / 100;
-					list.get(entity).setPosition(averageX, averageY, averageZ);
-				}
-
-			}
-
-			//	for(int j = 0; j < list.size(); ++j)
-			//	{
-			//		Entity entity = list.get(j);
-			//		entity.onKillCommand();
-			//	}
-		}
-
-		super.onUpdate();
-	}
+	
 
 }

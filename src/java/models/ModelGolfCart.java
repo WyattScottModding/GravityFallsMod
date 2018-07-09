@@ -4,8 +4,7 @@ import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
 
-public class ModelGolfCart
-  extends ModelBase
+public class ModelGolfCart extends ModelBase
 {
   ModelRenderer MainBody1;
   ModelRenderer Questiony1;
@@ -98,7 +97,6 @@ public class ModelGolfCart
   ModelRenderer BackBeam3;
   ModelRenderer BackBeam4;
   ModelRenderer BackBeam5;
-  ModelRenderer BackFlag1;
   ModelRenderer BackBeam6;
   ModelRenderer BackBeam7;
   ModelRenderer BackBeam8;
@@ -754,13 +752,6 @@ public class ModelGolfCart
     this.BackBeam5.showModel = true;
     setRotation(this.BackBeam5, 0.0F, 0.0F, 0.0F);
     
-    this.BackFlag1 = new ModelRenderer(this, 135, 98);
-    this.BackFlag1.addBox(0.0F, -24.0F, 6.0F, 0, 2, 2);
-    this.BackFlag1.setRotationPoint(-22.0F, 4.0F, 41.0F);
-    this.BackFlag1.setTextureSize(256, 256);
-    this.BackFlag1.showModel = true;
-    setRotation(this.BackFlag1, -0.2792527F, 0.0F, 0.0F);
-    
     this.BackBeam6 = new ModelRenderer(this, 75, 53);
     this.BackBeam6.addBox(0.0F, 0.0F, 0.0F, 2, 10, 2);
     this.BackBeam6.setRotationPoint(-22.5F, 3.0F, 41.0F);
@@ -941,7 +932,6 @@ public class ModelGolfCart
     this.BackBeam3.renderWithRotation(f5);
     this.BackBeam4.renderWithRotation(f5);
     this.BackBeam5.renderWithRotation(f5);
-    this.BackFlag1.renderWithRotation(f5);
     this.BackBeam6.renderWithRotation(f5);
     this.BackBeam7.renderWithRotation(f5);
     this.BackBeam8.renderWithRotation(f5);

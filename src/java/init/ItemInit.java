@@ -19,22 +19,26 @@ import armor.StrengthChestplate;
 import food.InfinityPizza;
 import food.SmileDip;
 import handlers.SoundsHandler;
-import items.CopperIngot;
+import items.Battery;
 import items.Book1;
 import items.Book2;
 import items.Book3;
+import items.CopperIngot;
 import items.CrystalShard;
 import items.CustomRecords;
 import items.FlashLight;
+import items.GolfCart;
 import items.GrapplingHook;
 import items.InfinitySidedDie;
 import items.LaserArmCannon;
 import items.Latex;
+import items.LeafBlower;
 import items.LightBulb;
 import items.MagicFlashLight;
 import items.MagnetGun;
-import items.MemoryGunOld;
+import items.MemoryGun;
 import items.QuantumDestabilizer;
+import items.Rift;
 import items.Rubber;
 import items.TimeTape;
 import items.TimeWish;
@@ -60,9 +64,10 @@ public class ItemInit {
 	public static final ArmorMaterial DIPPER = EnumHelper.addArmorMaterial("dipper", Reference.MODID + ":dipper", 20, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
 	public static final ArmorMaterial MABEL = EnumHelper.addArmorMaterial("mabel", Reference.MODID + ":mabel", 20, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
 	public static final ArmorMaterial RUBBER = EnumHelper.addArmorMaterial("rubber", Reference.MODID + ":rubber", 10, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
-	public static final ArmorMaterial MAGIC = EnumHelper.addArmorMaterial("magic", Reference.MODID + ":magic", 99, new int[]{6, 7, 8, 5}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
+	public static final ArmorMaterial MAGIC = EnumHelper.addArmorMaterial("magic", Reference.MODID + ":magic", 40, new int[]{7, 8, 9, 6}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
 	public static final ArmorMaterial CLOAK = EnumHelper.addArmorMaterial("cloak", Reference.MODID + ":cloak", 99, new int[]{6, 7, 8, 5}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
 	public static final ArmorMaterial KNUCKLES = EnumHelper.addArmorMaterial("knuckles", Reference.MODID + ":knuckles", 30, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
+	public static final ArmorMaterial AMULET = EnumHelper.addArmorMaterial("amulet", Reference.MODID + ":amulet", 30, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, 0.0F);
 
 
 	//Armor
@@ -90,7 +95,7 @@ public class ItemInit {
 
 	public static final Item GOLD_KNUCKLES = new GoldKnuckles("goldknuckles", KNUCKLES, 1, EntityEquipmentSlot.CHEST);
 
-	public static final Item MYSTIC_AMULET = new MysticAmulet("mysticamulet", MAGIC, 1, EntityEquipmentSlot.CHEST);
+	public static final Item MYSTIC_AMULET = new MysticAmulet("mysticamulet", AMULET, 1, EntityEquipmentSlot.CHEST);
 
 	//Items
 	public static final Item CRYSTALSHARD = new CrystalShard("crystalshard");
@@ -109,7 +114,7 @@ public class ItemInit {
 
 	public static final Item GRAPPLING_HOOK = new GrapplingHook("grapplinghook");
 
-	public static final Item MEMORY_GUN = new MemoryGunOld("memorygun");
+	public static final Item MEMORY_GUN = new MemoryGun("memorygun");
 
 	public static final Item SMILE_DIP = new SmileDip("smiledip", 2, 4.0F, false, new PotionEffect(Potion.getPotionById(1), 3000, 0), new PotionEffect(Potion.getPotionById(3), 3000, 0), new PotionEffect(Potion.getPotionById(9), 3000, 0));
 
@@ -135,9 +140,14 @@ public class ItemInit {
 
 	public static final Item COPPER_INGOT = new CopperIngot("copper_ingot");
 
-	public static final Item BATTERY = new CopperIngot("battery");
+	public static final Item BATTERY = new Battery("battery");
+	
+	public static final Item LEAFBLOWER = new LeafBlower("leafblower", ToolMaterial.IRON);
+	
+	public static final Item RIFT = new Rift("rift");
 
-	//public static final Item GOLF_CART = new GolfCart("golfcart");
+
+	public static final Item GOLF_CART = new GolfCart("golfcart");
 
 	//public static final Item FORDS_RAZOR = new FordsRazor("fordsrazor", ToolMaterial.IRON);
 

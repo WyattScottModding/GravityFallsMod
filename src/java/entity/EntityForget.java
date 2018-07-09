@@ -3,7 +3,7 @@ package entity;
 import javax.annotation.Nullable;
 
 import handlers.RegistryHandler;
-import items.MemoryGunOld;
+import items.MemoryGun;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -67,17 +67,18 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import potions.CustomPotions;
 
 public class EntityForget extends EntityFireball{
 
 	private EntityLivingBase owner;
-	public Entity entityHit;
+	public Entity entity;
 	int ticksAlive;
 	private int ticksInAir;
 	public double accelerationX;
 	public double accelerationY;
 	public double accelerationZ;
-	public MemoryGunOld hit;
+	public MemoryGun hit;
 	public World world;
 
 	public EntityForget(World worldIn)
@@ -109,45 +110,41 @@ public class EntityForget extends EntityFireball{
 	@Override
 	protected void onImpact(RayTraceResult result) 
 	{
-
-		if (result.entityHit instanceof EntityLivingBase)
+		if (result.entityHit instanceof EntityLiving && !(result.entityHit instanceof EntityBill) && !(result.entityHit instanceof EntitySecurityDroid))
 		{
-			entityHit = (EntityLivingBase)result.entityHit;
+			entity = (EntityLivingBase)result.entityHit;
+
+			EntityLiving entityLiving = (EntityLiving) result.entityHit;
 			((EntityLivingBase)result.entityHit).addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 6000));
 			((EntityLivingBase)result.entityHit).addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 6000));
 			((EntityLivingBase)result.entityHit).addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 6000));
 			((EntityLivingBase)result.entityHit).addPotionEffect(new PotionEffect(MobEffects.GLOWING, 20));
 
+			entityLiving.setNoAI(true);
+			entityLiving.setSilent(true);
+			
 			if(world.isRemote)
 			{
 				for(int i = 0; i < world.playerEntities.size(); i++)
 				{
 					if(world.playerEntities.get(i) instanceof EntityPlayerMP)
 					{
-						if(entityHit instanceof EntityMob)
+
+						entityLiving.targetTasks.taskEntries.iterator().remove();
+						while(entityLiving.targetTasks.taskEntries.iterator().hasNext())
 						{
-							System.out.println("EntityMob");
-							//if(!(entityHit instanceof EntityDragon || entityHit instanceof EntityWither))
-							//{
+							entityLiving.targetTasks.taskEntries.iterator().next();
+							entityLiving.targetTasks.taskEntries.iterator().remove();
 
 
-							//	}
-							EntityLiving entity = (EntityLiving) entityHit;
-							entity.targetTasks.taskEntries.iterator().remove();
-							while(entity.targetTasks.taskEntries.iterator().hasNext())
-							{
-								entity.targetTasks.taskEntries.iterator().next();
-								entity.targetTasks.taskEntries.iterator().remove();
-							}
 						}
-						System.out.println("Removed Tracking");
-						result.entityHit.removeTrackingPlayer((EntityPlayerMP)world.playerEntities.get(i));
-						result.entityHit.setSilent(true);
-
-
-
-						//Use EntityLiving to erase the memory of all entites
 					}
+					result.entityHit.removeTrackingPlayer((EntityPlayerMP)world.playerEntities.get(i));
+
+
+
+					//Use EntityLiving to erase the memory of all entites
+
 				}
 			}
 		}
@@ -159,7 +156,7 @@ public class EntityForget extends EntityFireball{
 
 	public Entity getEntityHit()
 	{
-		return entityHit;
+		return entity;
 	}
 
 	public void shoot(Entity shooter, float pitch, float yaw, float velocity, float inaccuracy)

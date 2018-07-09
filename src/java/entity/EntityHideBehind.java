@@ -1,9 +1,12 @@
 package entity;
 
+import java.util.List;
+
 import javax.annotation.Nullable;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 
 import handlers.LootTableHandler;
 import handlers.SoundsHandler;
@@ -45,9 +48,11 @@ import net.minecraft.entity.passive.EntityAnimal;
 import net.minecraft.entity.passive.EntityLlama;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumDyeColor;
@@ -58,23 +63,25 @@ import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.pathfinding.PathNodeType;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.datafix.DataFixer;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
-public class EntityTimeCopDundgren extends EntityEnderman
+public class EntityHideBehind extends EntityEnderman
 {
 
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
 
-
-	public EntityTimeCopDundgren(World par1World)
+	public EntityHideBehind(World par1World)
 	{
 		super(par1World);
 		this.setSize(1.0F, 3.0F);
@@ -87,7 +94,7 @@ public class EntityTimeCopDundgren extends EntityEnderman
 		this.tasks.addTask(2, new EntityAIAttackMelee(this, 1.0D, false));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(8, new EntityAILookIdle(this));
-		this.targetTasks.addTask(1, new EntityTimeCopDundgren.AIFindPlayer(this));
+		this.targetTasks.addTask(1, new EntityHideBehind.AIFindPlayer(this));
 		this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false, new Class[0]));
 
 
@@ -99,14 +106,26 @@ public class EntityTimeCopDundgren extends EntityEnderman
 
 		super.applyEntityAttributes();
 
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(60.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100.0D);
 
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
-
-		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(8.0D);;
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
 
 	}
 
+	@Override
+	public void onUpdate() 
+	{
+		shouldTeleport();
+
+		super.onUpdate();
+
+	}
+
+	@Override
+	public void setAttackTarget(EntityLivingBase entitylivingbaseIn)
+	{
+
+	}
 
 	@Override
 	public boolean getCanSpawnHere()
@@ -145,7 +164,7 @@ public class EntityTimeCopDundgren extends EntityEnderman
 	@Override
 	protected ResourceLocation getLootTable()
 	{
-		return LootTableHandler.TIMECOP;
+		return null;
 	}
 
 	@Override
@@ -187,16 +206,16 @@ public class EntityTimeCopDundgren extends EntityEnderman
 
 	static class AIFindPlayer extends EntityAINearestAttackableTarget<EntityPlayer>
 	{
-		private final EntityTimeCopDundgren timeCop;
+		private final EntityHideBehind hideBehind;
 		/** The player */
-		private EntityPlayer player;
+		public EntityPlayer player;
 		private int aggroTime;
 		private int teleportTime;
 
-		public AIFindPlayer(EntityTimeCopDundgren timecop)
+		public AIFindPlayer(EntityHideBehind hidebehind)
 		{
-			super(timecop, EntityPlayer.class, false);
-			this.timeCop = timecop;
+			super(hidebehind, EntityPlayer.class, false);
+			this.hideBehind = hidebehind;
 		}
 
 		/**
@@ -205,7 +224,7 @@ public class EntityTimeCopDundgren extends EntityEnderman
 		public boolean shouldExecute()
 		{
 			double d0 = this.getTargetDistance();
-			this.player = this.timeCop.world.getNearestAttackablePlayer(this.timeCop.posX, this.timeCop.posY, this.timeCop.posZ, d0, d0, (Function)null, new Predicate<EntityPlayer>()
+			this.player = this.hideBehind.world.getNearestAttackablePlayer(this.hideBehind.posX, this.hideBehind.posY, this.hideBehind.posZ, d0, d0, (Function)null, new Predicate<EntityPlayer>()
 			{
 				public boolean apply(@Nullable EntityPlayer p_apply_1_)
 				{
@@ -255,6 +274,7 @@ public class EntityTimeCopDundgren extends EntityEnderman
 		{
 			if (this.player != null)
 			{
+
 				if (--this.aggroTime <= 0)
 				{
 					this.targetEntity = this.player;
@@ -274,6 +294,29 @@ public class EntityTimeCopDundgren extends EntityEnderman
 				super.updateTask();
 			}
 		}
+	}
+
+	public void shouldTeleport()
+	{
+		List<Entity> list = world.getLoadedEntityList();
+
+		for(int j = 0; j < list.size(); ++j)
+		{
+			Entity entity = list.get(j);
+			if(entity instanceof EntityPlayerMP)
+			{					
+				EntityPlayerMP player = (EntityPlayerMP) entity;
+
+				if(!player.capabilities.isCreativeMode && player.canEntityBeSeen(this))
+				{
+					this.teleportRandomly();
+				}
+
+			}
+
+		}
+
+
 	}
 
 }

@@ -1,0 +1,9 @@
+{
+    "variants":
+    {
+        "facing=north": {"model": "gravityfalls:computer"},
+        "facing=east": {"model": "gravityfalls:computer", "y": 90},
+        "facing=south": {"model": "gravityfalls:computer", "y": 180},
+        "facing=west": {"model": "gravityfalls:computer", "y": 270}
+     }
+}

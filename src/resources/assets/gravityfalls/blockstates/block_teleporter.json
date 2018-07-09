@@ -1,0 +1,6 @@
+{
+    "variants": {
+        "axis=z": { "model": "gravityfalls:block_teleporter_ew" },
+        "axis=x": { "model": "gravityfalls:block_teleporter_ns" }
+    }
+}

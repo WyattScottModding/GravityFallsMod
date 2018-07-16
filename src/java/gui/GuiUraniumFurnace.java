@@ -4,6 +4,7 @@ import containers.ContainerUraniumFurnace;
 import main.Reference;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.util.ResourceLocation;
@@ -20,7 +21,6 @@ public class GuiUraniumFurnace extends GuiContainer
 		super(new ContainerUraniumFurnace(player, tileentity));
 		this.player = player;
 		this.tileentity = tileentity;
-		
 	}
 	
 	@Override
@@ -65,10 +65,6 @@ public class GuiUraniumFurnace extends GuiContainer
 	{
 		int j = this.tileentity.getField(3);
 
-		return j != 0 ? j * pixels / 500 : 0;
-		
-		
+		return j != 0 ? j * pixels / 500 : 0;	
 	}
-	
-	
 }

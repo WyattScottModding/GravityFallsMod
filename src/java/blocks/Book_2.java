@@ -4,6 +4,8 @@ import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
 
+import entity.EntityBill;
+import handlers.RegistryHandler;
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
@@ -20,6 +22,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -171,5 +174,30 @@ public class Book_2 extends Block implements IHasModel
 	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos)
 	{
 		return Book;
+	}
+	
+	@Override
+	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) 
+	{
+		super.updateTick(world, pos, state, rand);
+		
+		System.out.println("Update Tick");
+
+		if(world.getBlockState(pos.west()).getBlock() == Blocks.TORCH && !RegistryHandler.billSummoned)
+		{
+			if(world.getBlockState(pos.north()).getBlock() == Blocks.TORCH)
+			{
+				if(world.getBlockState(pos.south()).getBlock() == Blocks.TORCH)
+				{
+					if(world.getBlockState(pos.east()).getBlock() == Blocks.TORCH)
+					{
+						EntityBill bill = new EntityBill(world);
+						world.spawnEntity(bill);
+						RegistryHandler.billSummoned = true;
+						System.out.println("Bill Summoned");
+					}
+				}
+			}
+		}
 	}
 }

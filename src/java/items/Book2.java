@@ -19,6 +19,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemWrittenBook;
+import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
@@ -54,10 +55,11 @@ public class Book2 extends ItemWrittenBook implements IHasModel{
 	}
 
 	@Override
-	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
-			EnumFacing facing, float hitX, float hitY, float hitZ) 
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
 		IBlockState state = BlockInit.Book2.getDefaultState().withProperty(FACING, player.getHorizontalFacing());
+
+		BlockPos pos = player.getPosition();
 
 		IBlockState block1 = world.getBlockState(pos);
 		IBlockState block2 = world.getBlockState(pos.up());
@@ -67,9 +69,22 @@ public class Book2 extends ItemWrittenBook implements IHasModel{
 			if(player != null && player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.BOOK2)))
 				player.openGui(GravityFalls.instance, Reference.GUI_JOURNAL2, world, (int) player.posX, (int) player.posY, (int) player.posZ);
 		}
-		else
-		{
+		
 
+		return super.onItemRightClick(world, player, hand);
+	}
+	
+	@Override
+	public EnumActionResult onItemUse(EntityPlayer player, World world, BlockPos pos, EnumHand hand,
+			EnumFacing facing, float hitX, float hitY, float hitZ) 
+	{
+		IBlockState state = BlockInit.Book2.getDefaultState().withProperty(FACING, player.getHorizontalFacing());
+
+		IBlockState block1 = world.getBlockState(pos);
+		IBlockState block2 = world.getBlockState(pos.up());
+		
+		if(!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+		{
 			if(player.isCreative())
 			{
 				if(block1.getBlock() != Blocks.AIR && block2.getBlock() == Blocks.AIR && block1.getBlock() != BlockInit.PORTAL_CONTROL && block1.getBlock() != BlockInit.PORTAL_CONTROLALLBOOKS && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1BOOK2 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1BOOK3 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK2 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK2BOOK3 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK3)
@@ -92,7 +107,7 @@ public class Book2 extends ItemWrittenBook implements IHasModel{
 				}
 			}
 		}
-
+		
 		return super.onItemUse(player, world, pos, hand, facing, hitX, hitY, hitZ);
 	}
 

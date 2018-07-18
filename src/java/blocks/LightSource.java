@@ -16,6 +16,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockAir;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -26,6 +28,7 @@ import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
+import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
@@ -33,26 +36,107 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import tileEntities.TileEntityLightSource;
 
-public class LightSource extends BlockAir implements ITileEntityProvider, IHasModel
+public class LightSource extends Block implements ITileEntityProvider, IHasModel
 {
+	public static List<Item> lightSourceList = new ArrayList<Item>() 
+	{
+		{
+			add(ItemInit.FLASHLIGHT);			
+		}
+	};
 
 	public LightSource(String name)
 	{
-		this.setRegistryName(name);
+		super(Material.AIR);
 		this.setUnlocalizedName(name);
+		this.setRegistryName(name);
+		this.setTickRandomly(false);
+		this.setDefaultState(this.blockState.getBaseState());
 		this.setLightLevel(1.0F);
-		
+
+
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
 	}
 
-	public boolean isTranslucent()
+	public static boolean isLightEmittingItem(Item item)
+	{
+		return lightSourceList.contains(item);
+	}
+
+
+	@Override
+	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos) 
+	{
+		return NULL_AABB;
+	}
+
+	@Override
+	public boolean isOpaqueCube(IBlockState state)
+	{
+		return false;
+	}
+
+	@Override
+	public boolean isFullCube(IBlockState state) 
+	{
+		return false;
+	}
+	@Override
+	public boolean canPlaceBlockAt(World worldIn, BlockPos pos)
 	{
 		return true;
 	}
 
-	
+	@Override
+	public boolean canCollideCheck(IBlockState state, boolean hitIfLiquid)
+	{
+		return false;
+	}
+
+	@Override
+	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
+	{
+		return BlockFaceShape.UNDEFINED;
+	}
+
+	@Override
+	public EnumBlockRenderType getRenderType(IBlockState state) 
+	{
+		return EnumBlockRenderType.INVISIBLE;
+	}
+
+	@Override
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) 
+	{
+		return;
+	}
+
+	@Override
+	public IBlockState getStateFromMeta(int meta)
+	{
+		return getDefaultState();
+	}
+
+	@Override
+	public int getMetaFromState(IBlockState state)
+	{
+		return 0;
+	}
+
+	@Override
+	public void onFallenUpon(World worldIn, BlockPos pos, Entity entityIn, float fallDistance)
+	{
+		return;
+	}
+
+	@Override
+	public void onLanded(World worldIn, Entity entityIn)
+	{
+		return;
+	}
 
 	public void registerModels()
 	{
@@ -62,8 +146,14 @@ public class LightSource extends BlockAir implements ITileEntityProvider, IHasMo
 	@Override
 	public TileEntity createNewTileEntity(World worldIn, int meta) 
 	{
-		
-		return null;
+		return new TileEntityLightSource();
 	}
+
+	@Override
+	protected BlockStateContainer createBlockState()
+	{	
+		return new BlockStateContainer(this);
+	}
+
 
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import org.lwjgl.input.Keyboard;
 
 import handlers.BlockHandler;
+import handlers.RegistryHandler;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
@@ -27,6 +28,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
+import net.minecraftforge.fml.relauncher.Side;
 
 public class FlashLight extends ItemSword implements IHasModel
 {
@@ -34,8 +36,6 @@ public class FlashLight extends ItemSword implements IHasModel
 	public boolean clicked = false;
 	public int counter = 0;
 	public static World world = null;
-
-	public static SimpleNetworkWrapper network;
 
 	public FlashLight(String name)
 	{
@@ -58,7 +58,7 @@ public class FlashLight extends ItemSword implements IHasModel
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
 		world = worldIn;
-		
+
 		if(clicked && counter % 2 == 0)
 		{
 			clicked = false;
@@ -79,12 +79,7 @@ public class FlashLight extends ItemSword implements IHasModel
 		{
 			EntityPlayer entityPlayer = (EntityPlayer) entityIn;
 
-			if(clicked)
-			{
-				network = NetworkRegistry.INSTANCE.newSimpleChannel("flashlight");
-				network.registerMessage(PacketMakeLight.HandlerMakeLightServer.class, PacketMakeLight.class, 1, Side.SERVER);
-			}
-
+			RegistryHandler.clicked = clicked;
 
 			if(stack.getItemDamage() >= 500 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
 			{
@@ -129,37 +124,6 @@ public class FlashLight extends ItemSword implements IHasModel
 			return ItemStack.EMPTY;
 		}
 	}
-	
-	public static abstract class HandlerMakeLightClient implements IMessageHandler<PacketMakeLight, IMessage>
-  {
-    public IMessage onMessage(PacketMakeLight message, MessageContext ctx)
-    {
-      World world = FlashLight.world;
-      
-      world.func_72915_b(EnumSkyBlock.BLOCK, message.x, message.y, message.z, Flashlight.instance.getLanternLightValue());
-      world.func_147463_c(EnumSkyBlock.BLOCK, message.oldX, message.oldY, message.oldZ);
-      world.func_147463_c(EnumSkyBlock.BLOCK, message.x, message.y + 1, message.z);
-      world.func_147463_c(EnumSkyBlock.BLOCK, message.x + 1, message.y, message.z);
-      world.func_147463_c(EnumSkyBlock.BLOCK, message.x, message.y, message.z + 1);
-      world.func_147463_c(EnumSkyBlock.BLOCK, message.x - 1, message.y, message.z);
-      world.func_147463_c(EnumSkyBlock.BLOCK, message.x, message.y, message.z - 1);
-      
-      return null;
-    }
-  }
 
-	public static abstract class HandlerMakeLightServer implements IMessageHandler<PacketMakeLight, IMessage>
-	{
-		public IMessage onMessage(PacketMakeLight message, MessageContext ctx)
-		{
-			Lantern.network.sendToAll(message);
-			return null;
-		}
 
-		@Override
-		public IMessage onMessage(PacketMakeLight message, MessageContext ctx) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-	}
 }

@@ -21,7 +21,6 @@ import render.RenderBill;
 import render.RenderEightBall;
 import render.RenderEyeBat;
 import render.RenderEyeBatHuge;
-import render.RenderFlashlight;
 import render.RenderForget;
 import render.RenderGnome;
 import render.RenderGolfCart;
@@ -56,17 +55,6 @@ public class RenderHandler {
 			
 		});
 
-
-		
-		RenderingRegistry.registerEntityRenderingHandler(EntityLight.class, new IRenderFactory<EntityLight>()
-		{
-			@Override
-			public Render<? super EntityLight> createRenderFor(RenderManager manager)
-			{
-				return new RenderFlashlight(manager);
-			}
-			
-		});
 		
 		RenderingRegistry.registerEntityRenderingHandler(EntityTimeCopLolph.class, new IRenderFactory<EntityTimeCopLolph>()
 		{

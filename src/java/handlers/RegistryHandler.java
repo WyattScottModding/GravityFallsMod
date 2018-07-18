@@ -17,6 +17,7 @@ import armor.FireHelmet;
 import armor.RegenerationLegs;
 import armor.SpeedBoots;
 import armor.StrengthChestplate;
+import blocks.LightSource;
 import commands.CommandDimensionTeleport;
 import entity.EntityRegistry;
 import init.BiomeInit;
@@ -101,6 +102,8 @@ public class RegistryHandler
 	
 	public static boolean portalActive = false;
 	public static int countdown = 18000;
+	
+	public static boolean clicked = false;
 
 
 
@@ -335,44 +338,33 @@ public class RegistryHandler
 			
 			
 			
-			
-			
-			
-			
-			
-			
-			/*
-			//Flashlight Handler
-			if(player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.FLASHLIGHT)))
-			{
-				ItemStack heldItem = player.inventory.getCurrentItem();
+			if (!player.world.isRemote && clicked)
+		    {
+		        if (player.getHeldItemMainhand() != null)
+		        {
+		            if (LightSource.isLightEmittingItem(player.getHeldItemMainhand().getItem()))
+		            {
+		                int blockX = MathHelper.floor(player.posX);
+		                int blockY = MathHelper.floor(player.posY-0.2D - player.getYOffset());
+		                int blockZ = MathHelper.floor(player.posZ);
+		                // place light at head level
+		                BlockPos blockLocation = new BlockPos(blockX, blockY, blockZ).up();
+		                if (player.world.getBlockState(blockLocation).getBlock() == Blocks.AIR)
+		                {
+		                    player.world.setBlockState(blockLocation, BlockInit.LIGHT_SOURCE.getDefaultState());
+		                    
+		                }
+		                else if (player.world.getBlockState(blockLocation.add(player.getLookVec().x, 
+		                            player.getLookVec().y, player.getLookVec().z)).getBlock() == Blocks.AIR)
+		                {
 
-				FlashLight flashlight = (FlashLight) heldItem.getItem();
-
-				world = flashlight.getWorld();
-
-				if(world != null && world.getWorldTime() % 5 == 0 && flashlight.blocks != null && !flashlight.blocks.isEmpty())
-				{
-					for(int i = 0; i < flashlight.blocks.size(); i++)
-					{
-						if(flashlight.blocks.get(i) != null)
-						{
-							BlockPos pos = new BlockPos(flashlight.blocks.get(i).blockPos());
-
-							if(world.getLight(pos) == 15)
-							{
-								world.setLightFor(EnumSkyBlock.BLOCK, pos, 0);
-							}
-							else
-							{
-								flashlight.blocks.remove(i);
-								i--;
-							}
-						}
-					}
-				}
-			}
-			*/
+		                    player.world.setBlockState(blockLocation.add(player.getLookVec().x, player.getLookVec().y, 
+		                               player.getLookVec().z), BlockInit.LIGHT_SOURCE.getDefaultState());
+		                    
+		                }
+		            }
+		        }
+		    }
 		}
 	}
 
@@ -439,35 +431,7 @@ public class RegistryHandler
 		return countdown;
 	}
 
-	/*
-	@SubscribeEvent(priority=EventPriority.NORMAL, receiveCanceled=true)
-	public void onEvent(LivingUpdateEvent event)
-	{
-		EntityLivingBase theEntityLiving = event.getEntityLiving();
-
-		if (!theEntityLiving.world.isRemote)
-		{
-			if (theEntityLiving.isBurning())
-			{
-				int blockX = MathHelper.floor(theEntityLiving.posX);
-				int blockY = MathHelper.floor(theEntityLiving.posY-0.2D - event.getEntityLiving().getYOffset());
-				int blockZ = MathHelper.floor(theEntityLiving.posZ);
-
-				BlockPos blockLocation = new BlockPos(blockX, blockY, blockZ).up();
-				Block blockAtLocation = theEntityLiving.world.getBlockState(blockLocation).getBlock();
-
-				if (blockAtLocation == Blocks.AIR)
-				{
-					theEntityLiving.world.setBlockState(
-							blockLocation, 
-							BlockInit.LIGHT_SOURCE.getDefaultState()
-							);
-				}        		
-			}
-		}
-	}
-	 */
-
+	
 
 	public static void getMouseOver(EntityPlayer player, World world, int reach)
 	{
@@ -522,8 +486,8 @@ public class RegistryHandler
 		//	player.boundingBox.maxY = player.boundingBox.minY + (height);
 
 	}
-
 	/*
+	
 	ModelBase value;
 
 	@SubscribeEvent

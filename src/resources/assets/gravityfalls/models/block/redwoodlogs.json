@@ -3,7 +3,7 @@
     "textures": {
        "0": "gravityfalls:blocks/redwoodlogs_top",
        "1": "gravityfalls:blocks/redwoodlogs_side",
-        "particle": "gravityfalls:blocks/redwoodlogs"
+        "particle": "gravityfalls:blocks/redwoodlogs_side"
     },
     "elements": [
         {

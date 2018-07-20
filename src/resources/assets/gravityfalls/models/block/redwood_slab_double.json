@@ -1,0 +1,11 @@
+{
+    "parent": "block/upper_slab",
+    "textures": {
+        "bottom": "gravityfalls:blocks/redwoodplanks",
+        "top": "gravityfalls:blocks/redwoodplanks",
+        "side": "gravityfalls:blocks/redwoodplanks",
+        "particle": "gravityfalls:blocks/redwoodplanks"
+        
+    }
+    
+}

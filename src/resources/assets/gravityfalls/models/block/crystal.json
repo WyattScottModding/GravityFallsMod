@@ -2,7 +2,7 @@
     "parent": "block/block",
     "textures": {
         "0": "gravityfalls:blocks/crystal",
-        "particle": "blocks/ice"
+        "particle": "gravityfalls:blocks/crystal"
     },
      "elements": [
         {

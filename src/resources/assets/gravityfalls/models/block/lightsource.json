@@ -1,21 +1,22 @@
-{      
-
-    "textures": 
-    {
-        "pole": "blocks/log_big_oak"
+{
+    "parent": "block/block",
+    "textures": {
+        "0": "gravityfalls:blocks/lightsource",
+        "particle": "gravityfalls:blocks/lightsource"
     },
-   "elements":[  
-      {  
-         "from":[ 0.5, 0.5, 0.5 ],
-         "to":[ 0.5, 0.5, 0.5 ],
-         "faces":{  
-            "down":{ "uv": [ 0, 0, 15, 15 ], "texture":"#pole" },
-            "up":{ "uv": [ 0, 0, 15, 15 ], "texture": "#pole" },
-            "north":{ "uv": [ 0, 0, 15, 15 ], "texture":"#pole" },
-            "south":{ "uv": [ 0, 0, 15, 15 ], "texture":"#pole" },
-            "west":{ "uv": [ 0, 0, 15, 15 ], "texture":"#pole" },
-            "east":{ "uv": [ 0, 0, 15, 15 ], "texture":"#pole" }
-         }
-      }
-   ]
+    "elements": [
+        {
+            "name": "Cube",
+            "from": [ 0.0, 0.0, 0.0 ], 
+            "to": [ 16.0, 16.0, 16.0 ], 
+            "faces": {
+                "north": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+                "east": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+                "south": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+                "west": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+                "up": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+                "down": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 16.0 ] }
+            }
+        }
+    ]
 }

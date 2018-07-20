@@ -1,6 +1,8 @@
 {
     "parent": "block/cross",
     "textures": {
-        "cross": "gravityfalls:blocks/redwoodsapling"
+        "cross": "gravityfalls:blocks/redwoodsapling",
+        "particle": "gravityfalls:blocks/redwoodsapling"
+        
     }
 }

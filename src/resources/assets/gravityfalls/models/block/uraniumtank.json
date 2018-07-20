@@ -3,7 +3,7 @@
     "textures": {
         "0": "gravityfalls:blocks/uranium_warning",
         "1": "gravityfalls:blocks/uraniumtank",
-        "particle": "blocks/stone"
+        "particle": "gravityfalls:blocks/uraniumtank"
     },
     "elements": [
         {

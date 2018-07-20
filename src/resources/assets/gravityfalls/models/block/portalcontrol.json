@@ -2,7 +2,9 @@
     "textures": {
         "0": "gravityfalls:blocks/black",
         "1": "gravityfalls:blocks/controltopfrontright",
-        "2": "gravityfalls:blocks/controltopfrontleft"
+        "2": "gravityfalls:blocks/controltopfrontleft",
+        "particle": "blocks/black"
+        
     },
     "elements": [
         {

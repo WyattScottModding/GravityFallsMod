@@ -2,7 +2,7 @@
     "parent": "block/block",
     "textures": {
         "0": "gravityfalls:blocks/uranium",
-        "particle": "blocks/stone"
+        "particle": "gravityfalls:blocks/uranium"
     },
     "elements": [
         {

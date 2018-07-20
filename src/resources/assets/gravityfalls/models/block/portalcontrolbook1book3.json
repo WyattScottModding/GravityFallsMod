@@ -3,8 +3,9 @@
         "0": "gravityfalls:blocks/black",
         "1": "gravityfalls:blocks/controltopfrontright",
         "2": "gravityfalls:blocks/controltopfrontleft",
-        "3": "gravityfalls:blocks/journal1",
-        "4": "gravityfalls:blocks/journal3"
+        "3": "gravityfalls:gui/journal1_portal",
+        "4": "gravityfalls:gui/journal3_portal",
+        "particle": "blocks/black"
     },
     "elements": [
         {

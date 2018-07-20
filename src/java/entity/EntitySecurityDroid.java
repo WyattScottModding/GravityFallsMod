@@ -1,6 +1,7 @@
 package entity;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -34,6 +35,8 @@ import net.minecraft.entity.ai.EntityAITempt;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
@@ -68,7 +71,10 @@ public class EntitySecurityDroid extends EntityPigZombie
 {
     public static final net.minecraft.entity.ai.attributes.IAttribute REACH_DISTANCE = new net.minecraft.entity.ai.attributes.RangedAttribute(null, "generic.reachDistance", 20.0D, 0.0D, 1024.0D).setShouldWatch(true);
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
-
+	private static final UUID ATTACK_SPEED_BOOST_MODIFIER_UUID = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
+	private static final AttributeModifier ATTACK_SPEED_BOOST_MODIFIER = (new AttributeModifier(ATTACK_SPEED_BOOST_MODIFIER_UUID, "Attacking speed boost", 0.05D, 0)).setSaved(false);
+	private int angerLevel;
+    private UUID angerTargetUUID;
 
 	public EntitySecurityDroid(World par1World)
 	{
@@ -94,6 +100,35 @@ public class EntitySecurityDroid extends EntityPigZombie
 		
         this.getAttributeMap().registerAttribute(REACH_DISTANCE);
 
+	}
+	
+	@Override
+	protected void updateAITasks()
+	{
+		IAttributeInstance iattributeinstance = this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+
+		if (this.isAngry())
+		{
+			if (!this.isChild() && !iattributeinstance.hasModifier(ATTACK_SPEED_BOOST_MODIFIER))
+			{
+				iattributeinstance.applyModifier(ATTACK_SPEED_BOOST_MODIFIER);
+			}
+
+			--this.angerLevel;
+		}
+		else if (iattributeinstance.hasModifier(ATTACK_SPEED_BOOST_MODIFIER))
+		{
+			iattributeinstance.removeModifier(ATTACK_SPEED_BOOST_MODIFIER);
+		}
+
+
+		if (this.angerLevel > 0 && this.angerTargetUUID != null && this.getRevengeTarget() == null)
+		{
+			EntityPlayer entityplayer = this.world.getPlayerEntityByUUID(this.angerTargetUUID);
+			this.setRevengeTarget(entityplayer);
+			this.attackingPlayer = entityplayer;
+			this.recentlyHit = this.getRevengeTimer();
+		}
 	}
 
 

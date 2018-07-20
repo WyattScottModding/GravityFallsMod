@@ -32,7 +32,6 @@ import net.minecraftforge.fml.relauncher.Side;
 
 public class FlashLight extends ItemSword implements IHasModel
 {
-
 	public boolean clicked = false;
 	public int counter = 0;
 	public static World world = null;
@@ -44,7 +43,7 @@ public class FlashLight extends ItemSword implements IHasModel
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
-		this.setMaxDamage(1000);
+		this.setMaxDamage(100);
 
 		ItemInit.ITEMS.add(this);
 	}
@@ -73,21 +72,30 @@ public class FlashLight extends ItemSword implements IHasModel
 	}
 
 	@Override
-	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
+	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected)
 	{	
-		if(entityIn instanceof EntityPlayer)
+		if(entity instanceof EntityPlayer)
 		{
-			EntityPlayer entityPlayer = (EntityPlayer) entityIn;
+			EntityPlayer player = (EntityPlayer) entity;
 
-			RegistryHandler.clicked = clicked;
+			if(stack.getItemDamage() >= 99)
+				RegistryHandler.clicked = false;
+			else
+				RegistryHandler.clicked = clicked;
 
-			if(stack.getItemDamage() >= 500 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
+			if(clicked && world.getWorldTime() % 60 == 0)
 			{
-				ItemStack itemstack = findAmmo(entityPlayer);
+				stack.damageItem(1, player);
+			}
+			
+			
+			if(stack.getItemDamage() >= 50 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
+			{
+				ItemStack itemstack = findAmmo(player);
 
-				if(itemstack.isItemEqual(new ItemStack(ItemInit.BATTERY)))
+				if(itemstack.getItem() instanceof Battery)
 				{
-					stack.damageItem(-500, entityPlayer);
+					stack.setItemDamage(stack.getItemDamage() - 50);
 					itemstack.shrink(1);
 				}
 			}

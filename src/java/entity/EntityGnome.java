@@ -1,6 +1,8 @@
 package entity;
 
+import java.rmi.registry.Registry;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -8,7 +10,9 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import handlers.LootTableHandler;
+import handlers.RegistryHandler;
 import handlers.SoundsHandler;
+import init.BlockInit;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -34,6 +38,8 @@ import net.minecraft.entity.ai.EntityAITempt;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
@@ -44,6 +50,7 @@ import net.minecraft.entity.passive.EntityLlama;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -66,9 +73,11 @@ import net.minecraft.world.World;
 
 public class EntityGnome extends EntityPigZombie
 {
-
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
-
+	private static final UUID ATTACK_SPEED_BOOST_MODIFIER_UUID = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
+	private static final AttributeModifier ATTACK_SPEED_BOOST_MODIFIER = (new AttributeModifier(ATTACK_SPEED_BOOST_MODIFIER_UUID, "Attacking speed boost", 0.05D, 0)).setSaved(false);
+	private int angerLevel;
+    private UUID angerTargetUUID;
 
 	public EntityGnome(World par1World)
 	{
@@ -90,6 +99,35 @@ public class EntityGnome extends EntityPigZombie
 
 		this.getEntityAttribute(SPAWN_REINFORCEMENTS_CHANCE).setBaseValue(0.5D);
 
+	}
+	
+	@Override
+	protected void updateAITasks()
+	{
+		IAttributeInstance iattributeinstance = this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+
+		if (this.isAngry())
+		{
+			if (!this.isChild() && !iattributeinstance.hasModifier(ATTACK_SPEED_BOOST_MODIFIER))
+			{
+				iattributeinstance.applyModifier(ATTACK_SPEED_BOOST_MODIFIER);
+			}
+
+			--this.angerLevel;
+		}
+		else if (iattributeinstance.hasModifier(ATTACK_SPEED_BOOST_MODIFIER))
+		{
+			iattributeinstance.removeModifier(ATTACK_SPEED_BOOST_MODIFIER);
+		}
+
+
+		if (this.angerLevel > 0 && this.angerTargetUUID != null && this.getRevengeTarget() == null)
+		{
+			EntityPlayer entityplayer = this.world.getPlayerEntityByUUID(this.angerTargetUUID);
+			this.setRevengeTarget(entityplayer);
+			this.attackingPlayer = entityplayer;
+			this.recentlyHit = this.getRevengeTimer();
+		}
 	}
 
 
@@ -209,7 +247,51 @@ public class EntityGnome extends EntityPigZombie
 			//	}
 		}
 
+		unicornDefence();		
+
 		super.onUpdate();
 	}
 
+	public void unicornDefence()
+	{
+		Block blockNorth = world.getBlockState(this.getPosition().north()).getBlock();
+		Block blockSouth = world.getBlockState(this.getPosition().south()).getBlock();
+		Block blockEast = world.getBlockState(this.getPosition().east()).getBlock();
+		Block blockWest = world.getBlockState(this.getPosition().west()).getBlock();
+
+		Block hair = BlockInit.UNICORNHAIR;
+
+
+		if(blockNorth == hair && blockSouth == hair && blockEast == hair && blockWest == hair)
+		{
+			this.motionX = 0.0;
+			this.motionY = 0.0;
+			this.motionZ = 0.0;
+		}
+		
+		for(int i = 3; i >= -10; i--)
+		{	
+			Block blockNorth2 = world.getBlockState(this.getPosition().north().add(0, i, 0)).getBlock();
+			Block blockSouth2 = world.getBlockState(this.getPosition().south().add(0, i, 0)).getBlock();
+			Block blockEast2 = world.getBlockState(this.getPosition().east().add(0, i, 0)).getBlock();
+			Block blockWest2 = world.getBlockState(this.getPosition().west().add(0, i, 0)).getBlock();
+			
+			if(blockNorth2 == hair)
+			{
+				this.motionZ = 3.0;
+			}
+			if(blockSouth2 == hair)
+			{
+				this.motionZ = -3.0;
+			}
+			if(blockWest2 == hair)
+			{
+				this.motionX = 3.0;
+			}
+			if(blockEast2 == hair)
+			{
+				this.motionX = -3.0;
+			}
+		}
+	}
 }

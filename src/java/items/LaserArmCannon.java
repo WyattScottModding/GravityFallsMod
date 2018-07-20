@@ -13,6 +13,9 @@ import com.google.common.base.Predicates;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.monster.EntityPigZombie;
@@ -30,6 +33,7 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -40,6 +44,8 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 {
 	public boolean fired = false;
 	public int cooldown = 30;
+	public static final PropertyBool FIRED = PropertyBool.create("fired");
+
 
 	public LaserArmCannon(String name, ToolMaterial material)
 	{
@@ -93,21 +99,20 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 
 			if(stack.getItemDamage() >= 10 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
 			{
-				if(player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.LASER_ARM_CANNON)))
+				if(player.getHeldItemMainhand().getItem() instanceof LaserArmCannon)
 				{
 					ItemStack itemstack = findAmmo(player);
 
 					if(isBattery(itemstack))
 					{
-						stack.damageItem(-10, player);
-
-						System.out.print("Battery Found");
+						stack.setItemDamage(stack.getItemDamage() - 10);
 						
 						itemstack.shrink(1);
 					}
 				}
 			}
 		}
+		
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
@@ -186,4 +191,5 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 	{
 		return stack.getItem() instanceof Battery;
 	}
+
 }

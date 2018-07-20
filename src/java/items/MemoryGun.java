@@ -46,9 +46,9 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MemoryGun extends ItemBow implements IHasModel
 {
-
 	public EntityForget forget = null;
-	public ItemStack stack = null;
+	public boolean fired = false;
+	private int cooldown = 10;
 
 	public MemoryGun(String name)
 	{
@@ -64,28 +64,41 @@ public class MemoryGun extends ItemBow implements IHasModel
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
-		this.stack = stack;
-
+		if(cooldown > 0)
+			cooldown--;
+		
 		if (entityIn instanceof EntityPlayerMP && forget != null)
 		{
-			EntityPlayerMP entityPlayer = (EntityPlayerMP)entityIn;
+			EntityPlayerMP player = (EntityPlayerMP)entityIn;
 			Entity entityHit = forget.getEntityHit();
-			if(entityHit != null && entityPlayer != null)
+			if(entityHit != null && player != null)
 			{
-				entityHit.removeTrackingPlayer(entityPlayer);
+				entityHit.removeTrackingPlayer(player);
 			}
+			
+			boolean flag = player.capabilities.isCreativeMode;
+			
+			if(fired && (stack.getItemDamage() < 10 || flag))
+			{
+				if(!flag)
+					stack.damageItem(1, player);
 
+				fired = false;
+				cooldown = 10;
+			}
+			
 			if(stack.getItemDamage() >= 1 && Keyboard.isKeyDown(Keyboard.KEY_R))
 			{
-				ItemStack itemstack = findAmmo(entityPlayer);
+				ItemStack itemstack = findAmmo(player);
 
-				if(itemstack == new ItemStack(ItemInit.BATTERY))
+				if(itemstack.getItem() instanceof Battery)
 				{
-					stack.damageItem(-1, entityPlayer);
+					stack.setItemDamage(stack.getItemDamage() - 1);
 
 					itemstack.shrink(1);
 				}
 			}
+			
 		}
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
@@ -94,13 +107,14 @@ public class MemoryGun extends ItemBow implements IHasModel
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer entityLiving, EnumHand handIn)
 	{
 		entityLiving.setActiveHand(handIn);
+		
+		ItemStack stack = entityLiving.getHeldItemMainhand();
 
-		if (entityLiving instanceof EntityPlayer && stack != null)
+		if (entityLiving instanceof EntityPlayer && stack.getItem() instanceof MemoryGun && cooldown == 0)
 		{
 			EntityPlayer entityplayer = (EntityPlayer)entityLiving;
-			boolean flag = entityplayer.capabilities.isCreativeMode;
 
-			if (stack.getItemDamage() < 10 || flag)
+			if (stack.getItemDamage() < 10)
 			{
 				if (!worldIn.isRemote)
 				{
@@ -111,15 +125,12 @@ public class MemoryGun extends ItemBow implements IHasModel
 					entityforget.isInvisibleToPlayer(entityplayer);
 					worldIn.spawnEntity(entityforget);
 					forget = entityforget;
-
-					if(!flag)
-						stack.damageItem(1, entityplayer);
+					fired = true;
 				}
 			}
-
 			//     worldIn.playSound((EntityPlayer)null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
 		}
-		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(ItemInit.MEMORY_GUN));
+        return new ActionResult<ItemStack>(EnumActionResult.PASS, entityLiving.getHeldItem(handIn));
 	}
 
 
@@ -160,7 +171,8 @@ public class MemoryGun extends ItemBow implements IHasModel
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft)
 	{
-
+		if(stack.getItemDamage() < 10)
+			stack.damageItem(1, entityLiving);
 
 	}
 	@Override

@@ -22,22 +22,27 @@ public class GolfCart extends Item implements IHasModel{
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
-		
+
 		ItemInit.ITEMS.add(this);
 	}
-	
+
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
-		ItemStack itemstack = playerIn.getHeldItem(EnumHand.MAIN_HAND);
-		
-		EntityGolfCart golfcart = new EntityGolfCart(worldIn, playerIn.posX, playerIn.posY, playerIn.posZ);
-		worldIn.spawnEntity(golfcart);
-		
-		itemstack.shrink(1);
-		return super.onItemRightClick(worldIn, playerIn, handIn);
+		ItemStack itemstack = player.getHeldItem(EnumHand.MAIN_HAND);
+
+		if(!world.isRemote)
+		{
+			EntityGolfCart golfcart = new EntityGolfCart(world, player.posX, player.posY, player.posZ);
+			world.spawnEntity(golfcart);
+
+			if(!player.isCreative())
+				itemstack.shrink(1);
+		}
+
+		return super.onItemRightClick(world, player, hand);
 	}
-	
+
 	public void registerModels()
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");

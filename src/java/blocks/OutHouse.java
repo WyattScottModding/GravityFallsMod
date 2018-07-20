@@ -34,7 +34,7 @@ public class OutHouse extends Block implements IHasModel
 		super(material);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsblocks);
+		//this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setSoundType(SoundType.WOOD);
 
 

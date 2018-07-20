@@ -69,7 +69,8 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import potions.CustomPotions;
 
-public class EntityForget extends EntityFireball{
+public class EntityForget extends EntityFireball
+{
 
 	private EntityLivingBase owner;
 	public Entity entity;
@@ -122,6 +123,17 @@ public class EntityForget extends EntityFireball{
 
 			entityLiving.setNoAI(true);
 			entityLiving.setSilent(true);
+			
+			if(entity instanceof EntityPlayer)
+			{
+				EntityPlayer player = (EntityPlayer) entity;
+				
+				for(int i = 0; i < player.inventory.getSizeInventory(); i++)
+				{
+					if(player.inventory.getStackInSlot(i).isEmpty())
+						player.inventory.removeStackFromSlot(i);
+				}
+			}
 			
 			if(world.isRemote)
 			{

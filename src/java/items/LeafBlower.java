@@ -105,13 +105,13 @@ public class LeafBlower extends ItemSword implements IHasModel
 			}
 			if(stack.getItemDamage() >= 25 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
 			{
-				if(player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.LEAFBLOWER)))
+				if(player.getHeldItemMainhand().getItem() instanceof LeafBlower)
 				{
 					ItemStack itemstack = findAmmo(player);
 
-					if(itemstack.isItemEqual(new ItemStack(ItemInit.BATTERY)))
+					if(itemstack.getItem() instanceof Battery)
 					{
-						stack.damageItem(-25, player);
+						stack.setItemDamage(stack.getItemDamage() - 25);
 
 						itemstack.shrink(1);
 					}

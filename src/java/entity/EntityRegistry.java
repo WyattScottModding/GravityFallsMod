@@ -7,7 +7,6 @@ import net.minecraft.util.ResourceLocation;
 
 public class EntityRegistry 
 {
-
 	public static void registerEntities()
 	{
 		registerEntity("gnome", EntityGnome.class, Reference.ENTITY_GNOME, 40, 15532032, 16777215);
@@ -18,16 +17,14 @@ public class EntityRegistry
 		registerEntity("hidebehind", EntityHideBehind.class, Reference.ENTITY_HIDEBEHIND, 100, 00000000, 00000000);
 		registerEntity("securitydroid", EntitySecurityDroid.class, Reference.ENTITY_SECURITYDROID, 100, 10000000, 00000000);
 		registerEntity("bill", EntityBill.class, Reference.ENTITY_BILL, 300, 16774985, 00000000);
-		registerEntity("eightball", EntityEightBall.class, Reference.ENTITY_EIGHTBALL, 40, 15234485, 20004000);
+		registerEntity("eightball", EntityEightBall.class, Reference.ENTITY_EIGHTBALL, 40, 4472596, 16711543);
 		registerEntity("eyebathuge", EntityEyeBatHuge.class, Reference.ENTITY_EYEBATHUGE, 40, 00000000, 10944522);
 		registerEntity("keyhole", EntityKeyhole.class, Reference.ENTITY_KEYHOLE, 40, 7403753, 14898591);
-
+		registerEntity("unicorn", EntityUnicorn.class, Reference.ENTITY_UNICORN, 60, 9669872, 16747519);
 	}
 
 	public static void registerEntity(String name, Class<? extends Entity> entity, int id, int range, int color1, int color2)
 	{
 		net.minecraftforge.fml.common.registry.EntityRegistry.registerModEntity(new ResourceLocation(Reference.MODID + ":" + name), entity, name, id, GravityFalls.instance, range, 1, true, color1, color2);
 	}
-
-
 }

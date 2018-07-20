@@ -1,6 +1,7 @@
 package entity;
 
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -9,6 +10,7 @@ import com.google.common.base.Predicates;
 
 import handlers.LootTableHandler;
 import handlers.SoundsHandler;
+import init.BlockInit;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -36,6 +38,8 @@ import net.minecraft.entity.ai.EntityAITempt;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -73,10 +77,13 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
-public class EntityBill extends EntityTimeCopLolph
+public class EntityBill extends EntityPigZombie
 {
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
-
+	private static final UUID ATTACK_SPEED_BOOST_MODIFIER_UUID = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
+	private static final AttributeModifier ATTACK_SPEED_BOOST_MODIFIER = (new AttributeModifier(ATTACK_SPEED_BOOST_MODIFIER_UUID, "Attacking speed boost", 0.05D, 0)).setSaved(false);
+	private int angerLevel;
+    private UUID angerTargetUUID;
 	int level = 1;
 
 	public EntityBill(World par1World)
@@ -117,6 +124,35 @@ public class EntityBill extends EntityTimeCopLolph
 	}
 	
 	@Override
+	protected void updateAITasks()
+	{
+		IAttributeInstance iattributeinstance = this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+
+		if (this.isAngry())
+		{
+			if (!this.isChild() && !iattributeinstance.hasModifier(ATTACK_SPEED_BOOST_MODIFIER))
+			{
+				iattributeinstance.applyModifier(ATTACK_SPEED_BOOST_MODIFIER);
+			}
+
+			--this.angerLevel;
+		}
+		else if (iattributeinstance.hasModifier(ATTACK_SPEED_BOOST_MODIFIER))
+		{
+			iattributeinstance.removeModifier(ATTACK_SPEED_BOOST_MODIFIER);
+		}
+
+
+		if (this.angerLevel > 0 && this.angerTargetUUID != null && this.getRevengeTarget() == null)
+		{
+			EntityPlayer entityplayer = this.world.getPlayerEntityByUUID(this.angerTargetUUID);
+			this.setRevengeTarget(entityplayer);
+			this.attackingPlayer = entityplayer;
+			this.recentlyHit = this.getRevengeTimer();
+		}
+	}
+	
+	@Override
 	public EnumActionResult applyPlayerInteraction(EntityPlayer player, Vec3d vec, EnumHand hand) 
 	{
 		return super.applyPlayerInteraction(player, vec, hand);
@@ -144,8 +180,7 @@ public class EntityBill extends EntityTimeCopLolph
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn)
 	{
-
-		return SoundsHandler.ENTITY_GNOME_HURT;
+		return SoundEvents.ENTITY_PLAYER_HURT;
 	}
 
 	@Override
@@ -180,13 +215,54 @@ public class EntityBill extends EntityTimeCopLolph
 	}
 
 	@Override
-	public void onUpdate()
+	public void onUpdate() 
 	{
+		unicornDefence();
 		
-
 		super.onUpdate();
 	}
 	
-	
+	public void unicornDefence()
+	{
+		Block blockNorth = world.getBlockState(this.getPosition().north()).getBlock();
+		Block blockSouth = world.getBlockState(this.getPosition().south()).getBlock();
+		Block blockEast = world.getBlockState(this.getPosition().east()).getBlock();
+		Block blockWest = world.getBlockState(this.getPosition().west()).getBlock();
+
+		Block hair = BlockInit.UNICORNHAIR;
+
+
+		if(blockNorth == hair && blockSouth == hair && blockEast == hair && blockWest == hair)
+		{
+			this.motionX = 0.0;
+			this.motionY = 0.0;
+			this.motionZ = 0.0;
+		}
+		
+		for(int i = 3; i >= -10; i--)
+		{	
+			Block blockNorth2 = world.getBlockState(this.getPosition().north().add(0, i, 0)).getBlock();
+			Block blockSouth2 = world.getBlockState(this.getPosition().south().add(0, i, 0)).getBlock();
+			Block blockEast2 = world.getBlockState(this.getPosition().east().add(0, i, 0)).getBlock();
+			Block blockWest2 = world.getBlockState(this.getPosition().west().add(0, i, 0)).getBlock();
+			
+			if(blockNorth2 == hair)
+			{
+				this.motionZ = 3.0;
+			}
+			if(blockSouth2 == hair)
+			{
+				this.motionZ = -3.0;
+			}
+			if(blockWest2 == hair)
+			{
+				this.motionX = 3.0;
+			}
+			if(blockEast2 == hair)
+			{
+				this.motionX = -3.0;
+			}
+		}
+	}
 
 }

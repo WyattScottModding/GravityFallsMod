@@ -15,7 +15,7 @@ public class Rift extends Item implements IHasModel
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsblocks);
+		//this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		
 		ItemInit.ITEMS.add(this);
 	}

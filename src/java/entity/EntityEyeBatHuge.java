@@ -9,6 +9,7 @@ import com.google.common.base.Predicates;
 
 import handlers.LootTableHandler;
 import handlers.SoundsHandler;
+import init.BlockInit;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -168,6 +169,57 @@ public class EntityEyeBatHuge extends EntityEyeBat
 	protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty)
 	{
 		//this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
+	}
+	
+	@Override
+	public void onUpdate() 
+	{
+		unicornDefence();
+		
+		super.onUpdate();
+	}
+	
+	public void unicornDefence()
+	{
+		Block blockNorth = world.getBlockState(this.getPosition().north()).getBlock();
+		Block blockSouth = world.getBlockState(this.getPosition().south()).getBlock();
+		Block blockEast = world.getBlockState(this.getPosition().east()).getBlock();
+		Block blockWest = world.getBlockState(this.getPosition().west()).getBlock();
+
+		Block hair = BlockInit.UNICORNHAIR;
+
+
+		if(blockNorth == hair && blockSouth == hair && blockEast == hair && blockWest == hair)
+		{
+			this.motionX = 0.0;
+			this.motionY = 0.0;
+			this.motionZ = 0.0;
+		}
+		
+		for(int i = 3; i >= -15; i--)
+		{	
+			Block blockNorth2 = world.getBlockState(this.getPosition().north().add(0, i, 0)).getBlock();
+			Block blockSouth2 = world.getBlockState(this.getPosition().south().add(0, i, 0)).getBlock();
+			Block blockEast2 = world.getBlockState(this.getPosition().east().add(0, i, 0)).getBlock();
+			Block blockWest2 = world.getBlockState(this.getPosition().west().add(0, i, 0)).getBlock();
+			
+			if(blockNorth2 == hair)
+			{
+				this.motionZ = 3.0;
+			}
+			if(blockSouth2 == hair)
+			{
+				this.motionZ = -3.0;
+			}
+			if(blockWest2 == hair)
+			{
+				this.motionX = 3.0;
+			}
+			if(blockEast2 == hair)
+			{
+				this.motionX = -3.0;
+			}
+		}
 	}
 
 	

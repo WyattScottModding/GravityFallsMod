@@ -1,6 +1,8 @@
 package entity;
 
+import java.rmi.registry.Registry;
 import java.util.List;
+import java.util.UUID;
 
 import javax.annotation.Nullable;
 
@@ -8,6 +10,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import handlers.LootTableHandler;
+import handlers.RegistryHandler;
 import handlers.SoundsHandler;
 import init.BlockInit;
 import net.minecraft.block.Block;
@@ -35,18 +38,19 @@ import net.minecraft.entity.ai.EntityAITempt;
 import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityBoat;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.passive.AbstractHorse;
-import net.minecraft.entity.passive.EntityAmbientCreature;
 import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityLlama;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.projectile.EntityArrow;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -63,66 +67,69 @@ import net.minecraft.util.SoundEvent;
 import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.sound.SoundSetupEvent;
 
-public class EntityEyeBat extends EntityBat
+public class EntityUnicorn extends EntityPigZombie
 {
-
+	private static final UUID ATTACK_SPEED_BOOST_MODIFIER_UUID = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
+	private static final AttributeModifier ATTACK_SPEED_BOOST_MODIFIER = (new AttributeModifier(ATTACK_SPEED_BOOST_MODIFIER_UUID, "Attacking speed boost", 0.05D, 0)).setSaved(false);
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
-	
-	private BlockPos spawnPosition;
+	private int angerLevel;
+    private UUID angerTargetUUID;
 
-	public EntityEyeBat(World par1World)
+
+	public EntityUnicorn(World par1World)
 	{
 		super(par1World);
-		this.setSize(2.0F, 0.5F);
-
+		this.setSize(1.0F, 1.9F);
 	}
 
 
 	@Override
 	protected void applyEntityAttributes() 
 	{
-
 		super.applyEntityAttributes();
 
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40.0D);
 
-	//	this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.1D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.2D);
 
-		//this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(15.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(4.0D);;
+
+		this.getEntityAttribute(SPAWN_REINFORCEMENTS_CHANCE).setBaseValue(0.5D);
+
 	}
-	
+
 	@Override
 	protected void updateAITasks()
 	{
-		super.updateAITasks();
-		BlockPos blockpos = new BlockPos(this);
-        BlockPos blockpos1 = blockpos.up();
-		
-        if (this.spawnPosition != null && (!this.world.isAirBlock(this.spawnPosition) || this.spawnPosition.getY() < 1))
-        {
-            this.spawnPosition = null;
-        }
+		IAttributeInstance iattributeinstance = this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
 
-        if (this.spawnPosition == null || this.rand.nextInt(30) == 0 || this.spawnPosition.distanceSq((double)((int)this.posX), (double)((int)this.posY), (double)((int)this.posZ)) < 4.0D)
-        {
-            this.spawnPosition = new BlockPos((int)this.posX + this.rand.nextInt(7) - this.rand.nextInt(7), (int)this.posY + this.rand.nextInt(6) - 2, (int)this.posZ + this.rand.nextInt(7) - this.rand.nextInt(7));
-        }
-        
-		double d0 = (double)this.spawnPosition.getX() + 0.5D - this.posX;
-        double d1 = (double)this.spawnPosition.getY() + 0.1D - this.posY;
-        double d2 = (double)this.spawnPosition.getZ() + 0.5D - this.posZ;
-        this.motionX += (Math.signum(d0) * 0.5D - this.motionX) * 0.10000000149011612D;
-        this.motionY += (Math.signum(d1) * 0.699999988079071D - this.motionY) * 0.10000000149011612D;
-        this.motionZ += (Math.signum(d2) * 0.5D - this.motionZ) * 0.10000000149011612D;
-        float f = (float)(MathHelper.atan2(this.motionZ, this.motionX) * (180D / Math.PI)) - 90.0F;
-        float f1 = MathHelper.wrapDegrees(f - this.rotationYaw);
-        this.moveForward = 0.5F;
-        this.rotationYaw += f1;
+		if (this.isAngry())
+		{
+			if (!this.isChild() && !iattributeinstance.hasModifier(ATTACK_SPEED_BOOST_MODIFIER))
+			{
+				iattributeinstance.applyModifier(ATTACK_SPEED_BOOST_MODIFIER);
+			}
+
+			--this.angerLevel;
+		}
+		else if (iattributeinstance.hasModifier(ATTACK_SPEED_BOOST_MODIFIER))
+		{
+			iattributeinstance.removeModifier(ATTACK_SPEED_BOOST_MODIFIER);
+		}
+
+
+		if (this.angerLevel > 0 && this.angerTargetUUID != null && this.getRevengeTarget() == null)
+		{
+			EntityPlayer entityplayer = this.world.getPlayerEntityByUUID(this.angerTargetUUID);
+			this.setRevengeTarget(entityplayer);
+			this.attackingPlayer = entityplayer;
+			this.recentlyHit = this.getRevengeTimer();
+		}
 	}
 
 
@@ -136,32 +143,32 @@ public class EntityEyeBat extends EntityBat
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn)
 	{
-
-		return null;
+		return SoundEvents.ENTITY_HORSE_HURT;
 	}
 
 	@Override
 	protected SoundEvent getDeathSound() 
 	{
-		return null;
+		return SoundEvents.ENTITY_HORSE_DEATH;
 	}
 
 	@Override
 	protected void playStepSound(BlockPos pos, Block blockIn)
 	{
-		this.playSound(SoundEvents.ENTITY_CHICKEN_STEP, 0.15F, 1.0F);
+		this.playSound(SoundEvents.ENTITY_HORSE_STEP, 0.15F, 1.0F);
 	}
 
 	@Override
-	public SoundEvent getAmbientSound() 
+	protected SoundEvent getAmbientSound()
 	{
-		return super.getAmbientSound();
+		return SoundsHandler.ENTITY_UNICORN_AMBIENT;
 	}
+
 
 	@Override
 	protected ResourceLocation getLootTable()
 	{
-		return null;
+		return LootTableHandler.UNICORN;
 
 	}
 
@@ -169,56 +176,5 @@ public class EntityEyeBat extends EntityBat
 	protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty)
 	{
 		//this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
-	}
-	
-	@Override
-	public void onUpdate() 
-	{
-		unicornDefence();
-		
-		super.onUpdate();
-	}
-
-	public void unicornDefence()
-	{
-		Block blockNorth = world.getBlockState(this.getPosition().north()).getBlock();
-		Block blockSouth = world.getBlockState(this.getPosition().south()).getBlock();
-		Block blockEast = world.getBlockState(this.getPosition().east()).getBlock();
-		Block blockWest = world.getBlockState(this.getPosition().west()).getBlock();
-
-		Block hair = BlockInit.UNICORNHAIR;
-
-
-		if(blockNorth == hair && blockSouth == hair && blockEast == hair && blockWest == hair)
-		{
-			this.motionX = 0.0;
-			this.motionY = 0.0;
-			this.motionZ = 0.0;
-		}
-		
-		for(int i = 3; i >= -15; i--)
-		{	
-			Block blockNorth2 = world.getBlockState(this.getPosition().north().add(0, i, 0)).getBlock();
-			Block blockSouth2 = world.getBlockState(this.getPosition().south().add(0, i, 0)).getBlock();
-			Block blockEast2 = world.getBlockState(this.getPosition().east().add(0, i, 0)).getBlock();
-			Block blockWest2 = world.getBlockState(this.getPosition().west().add(0, i, 0)).getBlock();
-			
-			if(blockNorth2 == hair)
-			{
-				this.motionZ = 3.0;
-			}
-			if(blockSouth2 == hair)
-			{
-				this.motionZ = -3.0;
-			}
-			if(blockWest2 == hair)
-			{
-				this.motionX = 3.0;
-			}
-			if(blockEast2 == hair)
-			{
-				this.motionX = -3.0;
-			}
-		}
 	}
 }

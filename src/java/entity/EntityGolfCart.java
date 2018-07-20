@@ -289,6 +289,16 @@ public class EntityGolfCart extends EntityMob
 			player = null;
 		}
 
+		if(getAttackingEntity() instanceof EntityPlayer)
+		{
+			EntityPlayer player = (EntityPlayer) getAttackingEntity();
+
+			if(!player.isCreative())
+				this.dropItem(ItemInit.GOLF_CART, 1);
+			
+			this.setDead();
+		}
+
 		super.onUpdate();
 	}
 

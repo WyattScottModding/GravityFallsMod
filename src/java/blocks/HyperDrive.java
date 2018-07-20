@@ -43,7 +43,7 @@ public class HyperDrive extends Block implements IHasModel{
 		this.setLightOpacity(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsblocks);
+	//	this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setSoundType(SoundType.GLASS);
 
 

@@ -19,6 +19,8 @@ public class SoundsHandler
 	
 	public static SoundEvent ENTITY_DROID_AMBIENT;
 	public static SoundEvent ENTITY_DROID_DEATH;
+	
+	public static SoundEvent ENTITY_UNICORN_AMBIENT;
 
 	public static final SoundEvent RECORD_THEMESONG;
 	public static final SoundEvent RECORD_THEMESONG2;
@@ -52,6 +54,8 @@ public class SoundsHandler
 		
 		ENTITY_DROID_AMBIENT = registerSound("entity.securitydroid.ambient");
 		ENTITY_DROID_DEATH = registerSound("entity.securitydroid.death");
+		
+		ENTITY_UNICORN_AMBIENT = registerSound("entity.unicorn.ambient");
 		
 		BLOCK_PASSWORD = registerSound("block.password");
 		

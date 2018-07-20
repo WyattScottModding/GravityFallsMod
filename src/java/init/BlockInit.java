@@ -18,6 +18,7 @@ import blocks.CryogenicTubeOn;
 import blocks.Crystal;
 import blocks.HiddenElement;
 import blocks.HyperDrive;
+import blocks.LightSource;
 import blocks.MetalTree;
 import blocks.OutHouse;
 import blocks.PowerCord;
@@ -41,6 +42,7 @@ import blocks.portalcontrol.PortalControlBook2Book3;
 import blocks.portalcontrol.PortalControlBook3;
 import blocks.slabs.RedWoodDoubleSlab;
 import blocks.slabs.RedWoodHalfSlab;
+import blocks.UnicornHair;
 import main.GravityFalls;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -55,7 +57,7 @@ public class BlockInit
 
 	public static final List<Block> BLOCKS = new ArrayList<Block>();
 
-	//public static final Block LIGHT_SOURCE = new LightSource("lightsource");
+	public static final Block LIGHT_SOURCE = new LightSource("lightsource");
 
 	public static final Block CRYSTAL = new Crystal("crystal", Material.ROCK);
 
@@ -100,7 +102,9 @@ public class BlockInit
 	public static final Block Book3 = new Book_3("book_3", Material.CLOTH);
 	
 	public static final Block COPPER_BLOCK = new CopperBlock("copper_block");
-
+	
+	public static final Block UNICORNHAIR = new UnicornHair("unicornhair");
+	
 
 	//PortalControls
 	public static final Block PORTAL_CONTROL = new PortalControl("portalcontrol", Material.ANVIL);

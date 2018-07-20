@@ -4,12 +4,14 @@ import java.io.IOException;
 
 import containers.ContainerBook1;
 import containers.ContainerUraniumFurnace;
+import init.ItemInit;
 import main.Reference;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.relauncher.Side;
@@ -27,6 +29,8 @@ public class GuiBook3 extends GuiContainer
 	private static final ResourceLocation PAGE5 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page5.png");
 	private static final ResourceLocation PAGE6 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page6.png");
 	private static final ResourceLocation PAGE7 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page7.png");
+
+	private static final ResourceLocation PAGE3_2 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page3-2.png");
 
 	private final InventoryPlayer playerInv;
 	public TileEntityBook1 tileBook3;
@@ -88,7 +92,12 @@ public class GuiBook3 extends GuiContainer
 		else if(currentPage == 2)
 			this.mc.getTextureManager().bindTexture(PAGE2);
 		else if(currentPage == 3)
-			this.mc.getTextureManager().bindTexture(PAGE3);
+		{
+			if(playerInv.hasItemStack(new ItemStack(ItemInit.BLACK_LIGHT)))
+				this.mc.getTextureManager().bindTexture(PAGE3_2);
+			else
+				this.mc.getTextureManager().bindTexture(PAGE3);
+		}
 		else if(currentPage == 4)
 			this.mc.getTextureManager().bindTexture(PAGE4);
 		else if(currentPage == 5)

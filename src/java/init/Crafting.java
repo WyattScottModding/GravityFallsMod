@@ -39,6 +39,12 @@ public class Crafting {
 		GameRegistry.addShapelessRecipe(new ResourceLocation("copper_ingot"), new ResourceLocation("item"), new ItemStack(ItemInit.COPPER_INGOT, 9), new Ingredient[]{Ingredient.fromStacks(new ItemStack(BlockInit.COPPER_BLOCK))});
 
 		GameRegistry.addShapedRecipe(new ResourceLocation("golfcart"), new ResourceLocation("item"), new ItemStack(ItemInit.GOLF_CART, 1), new Object[]{"CCC", "LLL", "IBI", 'C',BlockInit.COPPER_BLOCK, 'B', ItemInit.BATTERY, 'I', Blocks.IRON_BLOCK, 'L', Items.LEATHER});
+		GameRegistry.addShapedRecipe(new ResourceLocation("presidentkey1"), new ResourceLocation("item"), new ItemStack(ItemInit.PRESIDENT_KEY, 1), new Object[]{"GIG", "   ", "   ",'G', Items.GOLD_INGOT, 'I', Items.IRON_INGOT});
+		GameRegistry.addShapedRecipe(new ResourceLocation("presidentkey2"), new ResourceLocation("item"), new ItemStack(ItemInit.PRESIDENT_KEY, 1), new Object[]{"   ", "GIG", "   ", 'G', Items.GOLD_INGOT, 'I', Items.IRON_INGOT});
+		GameRegistry.addShapedRecipe(new ResourceLocation("presidentkey3"), new ResourceLocation("item"), new ItemStack(ItemInit.PRESIDENT_KEY, 1), new Object[]{"   ", "   ", "GIG", 'G', Items.GOLD_INGOT, 'I', Items.IRON_INGOT});
+
+		GameRegistry.addShapedRecipe(new ResourceLocation("blacklight1"), new ResourceLocation("item"), new ItemStack(ItemInit.BLACK_LIGHT, 1), new Object[]{"OOO", "LLL", "   ", 'L', BlockInit.LIGHT_PURPLE, 'O', Blocks.OBSIDIAN});
+		GameRegistry.addShapedRecipe(new ResourceLocation("blacklight2"), new ResourceLocation("item"), new ItemStack(ItemInit.BLACK_LIGHT, 1), new Object[]{"   ", "OOO", "LLL", 'L', BlockInit.LIGHT_PURPLE, 'O', Blocks.OBSIDIAN});
 
 		
 		//Time Wishes

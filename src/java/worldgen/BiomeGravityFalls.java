@@ -6,6 +6,7 @@ import entity.EntityEyeBat;
 import entity.EntityGnome;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
+import entity.EntityUnicorn;
 import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.effect.EntityWeatherEffect;
 import net.minecraft.entity.monster.EntityCreeper;
@@ -74,6 +75,7 @@ public class BiomeGravityFalls extends Biome
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityWitherSkeleton.class, 1, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityTimeCopDundgren.class, 10, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityTimeCopLolph.class, 10, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityUnicorn.class, 1, 1, 5));
 		
 		this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntitySheep.class, 12, 4, 4));
         this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityPig.class, 10, 4, 4));

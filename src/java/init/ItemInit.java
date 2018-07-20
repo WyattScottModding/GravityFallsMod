@@ -20,6 +20,7 @@ import food.InfinityPizza;
 import food.SmileDip;
 import handlers.SoundsHandler;
 import items.Battery;
+import items.BlackLight;
 import items.Book1;
 import items.Book2;
 import items.Book3;
@@ -37,6 +38,7 @@ import items.LightBulb;
 import items.MagicFlashLight;
 import items.MagnetGun;
 import items.MemoryGun;
+import items.PresidentKey;
 import items.QuantumDestabilizer;
 import items.Rift;
 import items.Rubber;
@@ -44,6 +46,7 @@ import items.TimeTape;
 import items.TimeWish;
 import items.UraniumBucket;
 import main.Reference;
+import net.minecraft.block.material.Material;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -68,7 +71,6 @@ public class ItemInit {
 	public static final ArmorMaterial CLOAK = EnumHelper.addArmorMaterial("cloak", Reference.MODID + ":cloak", 99, new int[]{6, 7, 8, 5}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
 	public static final ArmorMaterial KNUCKLES = EnumHelper.addArmorMaterial("knuckles", Reference.MODID + ":knuckles", 30, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
 	public static final ArmorMaterial AMULET = EnumHelper.addArmorMaterial("amulet", Reference.MODID + ":amulet", 30, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, 0.0F);
-
 
 	//Armor
 	public static final Item PINE_HAT = new Dipper("pinehat", DIPPER, 1, EntityEquipmentSlot.HEAD);
@@ -97,6 +99,7 @@ public class ItemInit {
 
 	public static final Item MYSTIC_AMULET = new MysticAmulet("mysticamulet", AMULET, 1, EntityEquipmentSlot.CHEST);
 
+	
 	//Items
 	public static final Item CRYSTALSHARD = new CrystalShard("crystalshard");
 
@@ -146,9 +149,12 @@ public class ItemInit {
 	
 	public static final Item RIFT = new Rift("rift");
 
-
 	public static final Item GOLF_CART = new GolfCart("golfcart");
-
+	
+	public static final Item BLACK_LIGHT = new BlackLight("blacklight");
+	
+	public static final Item PRESIDENT_KEY	= new PresidentKey("presidentkey", ToolMaterial.IRON);
+	
 	//public static final Item FORDS_RAZOR = new FordsRazor("fordsrazor", ToolMaterial.IRON);
 
 

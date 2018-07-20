@@ -27,11 +27,12 @@ public class GuiBook1 extends GuiContainer
 	private static final ResourceLocation PAGE5 = new ResourceLocation(Reference.MODID + ":textures/gui/journal1/page5.png");
 	private static final ResourceLocation PAGE6 = new ResourceLocation(Reference.MODID + ":textures/gui/journal1/page6.png");
 	private static final ResourceLocation PAGE7 = new ResourceLocation(Reference.MODID + ":textures/gui/journal1/page7.png");
+	private static final ResourceLocation PAGE8 = new ResourceLocation(Reference.MODID + ":textures/gui/journal1/page8.png");
 
 	private final InventoryPlayer playerInv;
 	public TileEntityBook1 tileBook1;
 	public int currentPage = 1;
-	public final int pageCount = 7;
+	public final int pageCount = 8;
 
 	public GuiBook1(InventoryPlayer playerInventory, TileEntityBook1 furnaceInventory) 
 	{
@@ -98,6 +99,8 @@ public class GuiBook1 extends GuiContainer
 			this.mc.getTextureManager().bindTexture(PAGE6);
 		else if(currentPage == 7)
 			this.mc.getTextureManager().bindTexture(PAGE7);
+		else if(currentPage == 8)
+			this.mc.getTextureManager().bindTexture(PAGE8);
 
 		int i = (this.width - this.xSize) / 2;
 		int j = (this.height - this.ySize) / 2;

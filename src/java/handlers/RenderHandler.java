@@ -13,6 +13,7 @@ import entity.EntityLight;
 import entity.EntitySecurityDroid;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
+import entity.EntityUnicorn;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
@@ -29,6 +30,7 @@ import render.RenderKeyhole;
 import render.RenderSecurityDroid;
 import render.RenderTimeCopDundgren;
 import render.RenderTimeCopLolph;
+import render.RenderUnicorn;
 
 public class RenderHandler {
 	
@@ -152,6 +154,16 @@ public class RenderHandler {
 			public Render<? super EntityKeyhole> createRenderFor(RenderManager manager)
 			{
 				return new RenderKeyhole(manager);
+			}
+			
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, new IRenderFactory<EntityUnicorn>()
+		{
+			@Override
+			public Render<? super EntityUnicorn> createRenderFor(RenderManager manager)
+			{
+				return new RenderUnicorn(manager);
 			}
 			
 		});

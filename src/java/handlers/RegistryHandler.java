@@ -105,6 +105,7 @@ public class RegistryHandler
 	
 	public static boolean clicked = false;
 
+	public static boolean billSummoned = false;
 
 
 	@SubscribeEvent
@@ -176,196 +177,204 @@ public class RegistryHandler
 
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingUpdateEvent event)
-	{
-		//Radiation
-		boolean rubberArmor = false;
-
-
+	{		
 		if ((event.getEntity() instanceof EntityPlayer))
 		{
 			EntityPlayer player = (EntityPlayer)event.getEntity();
+			RegistryHandler.world = player.world;
 			
-			if(player.getArmorInventoryList().toString().contains("mysticamulet"))
-			{
-				player.capabilities.allowFlying = true;
-			}
-			else if(!player.capabilities.isCreativeMode)
-			{
-				player.capabilities.allowFlying = false;
-			}
-
-			if(player.getArmorInventoryList().toString().length() > 91)
-			{
-				if(player.getArmorInventoryList().toString().substring(8, 19).equals("rubberboots"))
-				{
-					if(player.getArmorInventoryList().toString().substring(30, 44).equals("rubberleggings"))
-					{
-						if(player.getArmorInventoryList().toString().substring(55, 71).equals("rubberchestplate"))
-						{
-							if(player.getArmorInventoryList().toString().substring(82, 91).equals("rubberhat"))
-							{
-								rubberArmor = true;
-
-							}
-						}
-					}
-				}
-			}
-			if(!rubberArmor)
-			{
-				if (player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM_TANK_FILLED))) 
-				{
-					player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
-				}
-				if (player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM_TANK_HALFFILLED))) 
-				{
-					player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
-				}
-				if (player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM)))
-				{
-					player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
-				}
-				if (player.inventory.hasItemStack(new ItemStack(ItemInit.URANIUM_BUCKET)))
-				{
-					player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
-
-				}
-			}
-
-			//OP Armor
-
-			if(player.getArmorInventoryList().iterator().next().getItem() instanceof SpeedBoots)
-				speed = true;
-			else
-				speed = false;
-
-
-			if(player.getArmorInventoryList().toString().contains("regenerationlegs"))
-				regenerate = true;
-			else
-				regenerate = false;
-
-
-			if(player.getArmorInventoryList().toString().contains("strengthchestplate"))
-				strength = true;
-			else
-				strength = false;
-
-
-			if(player.getArmorInventoryList().toString().contains("firehelmet"))
-				fire = true;
-			else
-				fire = false;
-
-
-
-		}
-
-		boolean mabelArmor = false;
-
-		boolean dipperArmor = false;
-
-		if ((event.getEntity() instanceof EntityPlayer))
-		{
-			EntityPlayer player = (EntityPlayer)event.getEntity();
-
-			//Mabel
-			if(player.getArmorInventoryList().toString().length() > 85)
-			{
-				if(player.getArmorInventoryList().toString().contains("mabelshoes"))
-				{
-					if(player.getArmorInventoryList().toString().contains("mabelpants"))
-					{
-						if(player.getArmorInventoryList().toString().contains("mabelsweater"))
-						{
-							if(player.getArmorInventoryList().toString().contains("mabelbandana"))
-							{
-								mabelArmor = true;
-
-							}
-						}
-					}
-				}
-			}
-			if(mabelArmor)
-			{
-				player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 10, 1));
-			}
-
-
-			//Dipper
-			if(player.getArmorInventoryList().toString().length() > 60)
-			{
-				if(player.getArmorInventoryList().toString().contains("pineshoes"))
-				{
-					if(player.getArmorInventoryList().toString().contains("pinepants"))
-					{
-						if(player.getArmorInventoryList().toString().contains("pinevest"))
-						{
-							if(player.getArmorInventoryList().toString().contains("pinehat"))
-							{
-								dipperArmor = true;
-							}
-						}
-					}
-				}
-			}
-
-			if(dipperArmor)
-			{
-				player.addPotionEffect(new PotionEffect(MobEffects.LUCK, 10, 1));
-			}
-
-
-			//Gives strength if the player is huge
-			if(player.height > 9)
-				player.addPotionEffect(new PotionEffect(Potion.getPotionById(5),10, 2));
-			else if(player.height > 5)
-				player.addPotionEffect(new PotionEffect(Potion.getPotionById(5), 10, 1));
-			//		if(player.height < 5)
-			//			player.removeActivePotionEffect(Potion.getPotionById(5));
-
-			//Increases player reach distance depending on how big they are
-			//	if(player.height > 2)
-			//		getMouseOver(player, player.world, (int) player.height * 3);
-
+			armorRender(player);
+			uraniumRender(player);
+			flashlightRender(player);
+			heightRender(player);
+			
 
 			//Portal
 			if(portalActive)
 			{
 				System.out.println("Portal Active");
 			}
-			
-			
-			
-			if (!player.world.isRemote && clicked)
-		    {
-		        if (player.getHeldItemMainhand() != null)
-		        {
-		            if (LightSource.isLightEmittingItem(player.getHeldItemMainhand().getItem()))
-		            {
-		                int blockX = MathHelper.floor(player.posX);
-		                int blockY = MathHelper.floor(player.posY-0.2D - player.getYOffset());
-		                int blockZ = MathHelper.floor(player.posZ);
-		                // place light at head level
-		                BlockPos blockLocation = new BlockPos(blockX, blockY, blockZ).up();
-		                if (player.world.getBlockState(blockLocation).getBlock() == Blocks.AIR)
-		                {
-		                    player.world.setBlockState(blockLocation, BlockInit.LIGHT_SOURCE.getDefaultState());
-		                    
-		                }
-		                else if (player.world.getBlockState(blockLocation.add(player.getLookVec().x, 
-		                            player.getLookVec().y, player.getLookVec().z)).getBlock() == Blocks.AIR)
-		                {
-
-		                    player.world.setBlockState(blockLocation.add(player.getLookVec().x, player.getLookVec().y, 
-		                               player.getLookVec().z), BlockInit.LIGHT_SOURCE.getDefaultState());
-		                    
-		                }
-		            }
-		        }
-		    }
 		}
+	}
+	
+	
+	public static void uraniumRender(EntityPlayer player)
+	{
+		boolean rubberArmor = false;
+		
+		if(player.getArmorInventoryList().toString().length() > 91)
+		{
+			if(player.getArmorInventoryList().toString().substring(8, 19).equals("rubberboots"))
+			{
+				if(player.getArmorInventoryList().toString().substring(30, 44).equals("rubberleggings"))
+				{
+					if(player.getArmorInventoryList().toString().substring(55, 71).equals("rubberchestplate"))
+					{
+						if(player.getArmorInventoryList().toString().substring(82, 91).equals("rubberhat"))
+						{
+							rubberArmor = true;
+
+						}
+					}
+				}
+			}
+		}
+		if(!rubberArmor)
+		{
+			if (player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM_TANK_FILLED))) 
+			{
+				player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
+			}
+			if (player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM_TANK_HALFFILLED))) 
+			{
+				player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
+			}
+			if (player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM)))
+			{
+				player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
+			}
+			if (player.inventory.hasItemStack(new ItemStack(ItemInit.URANIUM_BUCKET)))
+			{
+				player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
+
+			}
+		}
+	}
+	
+
+	public static void armorRender(EntityPlayer player)
+	{
+		//Amulet
+		if(player.getArmorInventoryList().toString().contains("mysticamulet"))
+		{
+			player.capabilities.allowFlying = true;
+		}
+		else if(!player.capabilities.isCreativeMode)
+		{
+			player.capabilities.allowFlying = false;
+		}
+		
+		//Mabel
+		boolean mabelArmor = false;
+
+		if(player.getArmorInventoryList().toString().length() > 85)
+		{
+			if(player.getArmorInventoryList().toString().contains("mabelshoes"))
+			{
+				if(player.getArmorInventoryList().toString().contains("mabelpants"))
+				{
+					if(player.getArmorInventoryList().toString().contains("mabelsweater"))
+					{
+						if(player.getArmorInventoryList().toString().contains("mabelbandana"))
+						{
+							mabelArmor = true;
+
+						}
+					}
+				}
+			}
+		}
+		if(mabelArmor)
+		{
+			player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 10, 1));
+		}
+
+
+		//Dipper
+		boolean dipperArmor = false;
+
+		if(player.getArmorInventoryList().toString().length() > 60)
+		{
+			if(player.getArmorInventoryList().toString().contains("pineshoes"))
+			{
+				if(player.getArmorInventoryList().toString().contains("pinepants"))
+				{
+					if(player.getArmorInventoryList().toString().contains("pinevest"))
+					{
+						if(player.getArmorInventoryList().toString().contains("pinehat"))
+						{
+							dipperArmor = true;
+						}
+					}
+				}
+			}
+		}
+
+		if(dipperArmor)
+		{
+			player.addPotionEffect(new PotionEffect(MobEffects.LUCK, 10, 1));
+		}
+		
+		//OP Armor
+		if(player.getArmorInventoryList().iterator().next().getItem() instanceof SpeedBoots)
+			speed = true;
+		else
+			speed = false;
+
+
+		if(player.getArmorInventoryList().toString().contains("regenerationlegs"))
+			regenerate = true;
+		else
+			regenerate = false;
+
+
+		if(player.getArmorInventoryList().toString().contains("strengthchestplate"))
+			strength = true;
+		else
+			strength = false;
+
+
+		if(player.getArmorInventoryList().toString().contains("firehelmet"))
+			fire = true;
+		else
+			fire = false;
+	}
+	
+	public static void flashlightRender(EntityPlayer player)
+	{
+		if (!player.world.isRemote && clicked)
+	    {
+	        if (player.getHeldItemMainhand() != null)
+	        {
+	            if (LightSource.isLightEmittingItem(player.getHeldItemMainhand().getItem()))
+	            {
+	                int blockX = MathHelper.floor(player.posX);
+	                int blockY = MathHelper.floor(player.posY-0.2D - player.getYOffset());
+	                int blockZ = MathHelper.floor(player.posZ);
+	                // place light at head level
+	                BlockPos blockLocation = new BlockPos(blockX, blockY, blockZ).up();
+	                if (player.world.getBlockState(blockLocation).getBlock() == Blocks.AIR)
+	                {
+	                    player.world.setBlockState(blockLocation, BlockInit.LIGHT_SOURCE.getDefaultState());
+	                    
+	                }
+	                else if (player.world.getBlockState(blockLocation.add(player.getLookVec().x, 
+	                            player.getLookVec().y, player.getLookVec().z)).getBlock() == Blocks.AIR)
+	                {
+
+	                    player.world.setBlockState(blockLocation.add(player.getLookVec().x, player.getLookVec().y, 
+	                               player.getLookVec().z), BlockInit.LIGHT_SOURCE.getDefaultState());
+	                    
+	                }
+	            }
+	        }
+	    }
+	}
+	
+	public static void heightRender(EntityPlayer player)
+	{
+		//Gives strength if the player is huge
+		if(player.height > 9)
+			player.addPotionEffect(new PotionEffect(Potion.getPotionById(5),10, 2));
+		else if(player.height > 5)
+			player.addPotionEffect(new PotionEffect(Potion.getPotionById(5), 10, 1));
+		//		if(player.height < 5)
+		//			player.removeActivePotionEffect(Potion.getPotionById(5));
+
+		//Increases player reach distance depending on how big they are
+		//	if(player.height > 2)
+		//		getMouseOver(player, player.world, (int) player.height * 3);
+
 	}
 
 	
@@ -431,7 +440,6 @@ public class RegistryHandler
 		return countdown;
 	}
 
-	
 
 	public static void getMouseOver(EntityPlayer player, World world, int reach)
 	{

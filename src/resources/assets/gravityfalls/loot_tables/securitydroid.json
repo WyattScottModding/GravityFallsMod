@@ -1,0 +1,29 @@
+{
+    "pools": [
+        {
+            "name": "UnicornMain",
+            "rolls": {
+                "min": 1,
+                "max": 8
+            },
+            "bonus_rolls": {
+                "min": 0,
+                "max": 5
+            },
+            "entries": [
+                {
+                    "type": "item",
+                    "weight": 4,
+                    "name": "minecraft:iron_ingot",
+                    "quality": 5
+                },
+                {
+                    "type": "item",
+                    "weight": 1,
+                    "name": "gravityfalls:battery",
+                    "quality": 10
+                }
+            ]
+        }
+    ]
+}

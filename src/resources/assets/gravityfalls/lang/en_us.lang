@@ -25,6 +25,7 @@ item.copper_ingot.name=Copper Ingot
 item.battery.name=Battery
 item.leafblower.name=Leaf Blower
 item.rift.name=Interdimensional Rift
+item.presidentkey.name=President's Key
 
 item.themesong.name=Music Disc
 item.themesong2.name=Music Disc
@@ -117,6 +118,8 @@ tile.book_1.name=Journal 1
 tile.book_2.name=Journal 2
 tile.book_3.name=Journal 3
 tile.copper_block.name=Copper Block
+tile.lightsource.name=Light Source
+tile.unicornhair.name=Unicorn Hair
 
 itemGroup.tabGravityFallsBlocks=Gravity Falls Blocks
 itemGroup.tabGravityFallsArmor=Gravity Falls Armor
@@ -137,5 +140,6 @@ entity.bill.name=Bill Cipher
 entity.eightball.name=8 Ball
 entity.eyebathuge.name=Huge Eye Bat
 entity.keyhole.name=Keyhole
+entity.unicorn.name=Unicorn
 
 container.uranium_furnace=Uranium Furnace

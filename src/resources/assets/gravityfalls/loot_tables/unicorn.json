@@ -1,0 +1,28 @@
+{
+    "pools": [
+        {
+            "name": "UnicornMain",
+            "rolls": {
+                "min": 5,
+                "max": 10
+            },
+            "bonus_rolls": {
+                "min": 0,
+                "max": 3
+            },
+            "conditions": [
+                {
+                    "condition": "killed_by_player"
+                }
+            ],
+            "entries": [
+                {
+                    "type": "item",
+                    "weight": 1,
+                    "name": "gravityfalls:unicornhair",
+                    "quality": 5
+                }
+            ]
+        }
+    ]
+}

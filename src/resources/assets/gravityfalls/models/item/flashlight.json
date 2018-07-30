@@ -2,5 +2,13 @@
     "parent": "item/generated",
     "textures": {
         "layer0": "gravityfalls:items/flashlight"
-    }
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "on": 1
+            },
+            "model": "gravityfalls:item/flashlight_on"
+        }
+    ]
 }

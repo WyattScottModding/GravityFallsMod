@@ -2,5 +2,44 @@
     "parent": "item/generated",
     "textures": {
         "layer0": "gravityfalls:items/laser_arm_cannon"
-    }
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "fired": 0.1
+            },
+            "model": "gravityfalls:item/laser_arm_cannon_charging1"
+        },
+        {
+            "predicate": {
+                "fired": 0.2
+            },
+            "model": "gravityfalls:item/laser_arm_cannon_charging2"
+        },
+        {
+            "predicate": {
+                "fired": 0.3
+            },
+            "model": "gravityfalls:item/laser_arm_cannon_charging3"
+        },
+        {
+            "predicate": {
+                "fired": 0.4
+            },
+            "model": "gravityfalls:item/laser_arm_cannon_charging4"
+        },
+        {
+            "predicate": {
+                "fired": 0.5
+            },
+            "model": "gravityfalls:item/laser_arm_cannon_charging5"
+        },
+        {
+            "predicate": {
+                "fired": 0.6
+            },
+            "model": "gravityfalls:item/laser_arm_cannon_charging6"
+        }
+        
+    ]
 }

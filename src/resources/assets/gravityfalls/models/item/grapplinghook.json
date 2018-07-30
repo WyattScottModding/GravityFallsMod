@@ -2,5 +2,13 @@
     "parent": "item/generated",
     "textures": {
         "layer0": "gravityfalls:items/grapplinghook"
-    }
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "fired": 1
+            },
+            "model": "gravityfalls:item/grapplinghook_fired"
+        }
+    ]
 }

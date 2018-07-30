@@ -67,7 +67,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class MagnetGun extends ItemBow implements IHasModel{
+public class MagnetGun extends ItemBow implements IHasModel
+{
 
 	public boolean active = false;
 	public double prevY1 = -5;
@@ -100,6 +101,15 @@ public class MagnetGun extends ItemBow implements IHasModel{
 
 		ItemInit.ITEMS.add(this);
 
+		this.addPropertyOverride(new ResourceLocation("fired"), new IItemPropertyGetter()
+        {
+            @SideOnly(Side.CLIENT)
+            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+            {
+                return !active ? 0.0F : 1.0F;
+            }
+        });
+		
 		this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter()
 		{
 			@SideOnly(Side.CLIENT)

@@ -10,6 +10,8 @@ import org.lwjgl.input.Keyboard;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
+import akka.japi.pf.FI.Apply;
+import entity.EntityGideonBot;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
@@ -18,15 +20,19 @@ import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
+import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
+import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.potion.PotionEffect;
@@ -39,12 +45,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LaserArmCannon extends ItemSword implements IHasModel
 {
-	public boolean fired = false;
+	public boolean charging = false;
 	public int cooldown = 30;
-	public static final PropertyBool FIRED = PropertyBool.create("fired");
 
 
 	public LaserArmCannon(String name, ToolMaterial material)
@@ -55,7 +62,26 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
 		this.setMaxDamage(20);
-
+		this.addPropertyOverride(new ResourceLocation("fired"), new IItemPropertyGetter()
+        {
+            @SideOnly(Side.CLIENT)
+            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+            {
+            	if(cooldown >= 0 && cooldown < 5)
+            		return 0.6F;
+            	else if(cooldown >= 5 && cooldown < 10)
+            		return 0.5F;
+            	else if(cooldown >= 10 && cooldown < 15)
+            		return 0.4F;
+            	else if(cooldown >= 15 && cooldown < 20)
+            		return 0.3F;
+            	else if(cooldown >= 20 && cooldown < 25)
+            		return 0.2F;
+            	else//if(cooldown >= 25 && cooldown <= 30)
+            		return 0.1F;
+            }
+        });
+		
 		ItemInit.ITEMS.add(this);
 	}
 
@@ -64,12 +90,13 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
 
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
 	{
 		if (!worldIn.isRemote && cooldown == 0)
 		{
-			fired = true;
+			charging = false;
 		}
 
 		return super.onItemRightClick(worldIn, playerIn, handIn);
@@ -80,6 +107,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 	{
 		if(cooldown > 0)
 			cooldown--;
+		
 
 		if(!worldIn.isRemote && entityIn instanceof EntityPlayer)
 		{
@@ -87,13 +115,13 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 			EntityPlayer player = (EntityPlayer) entityIn;
 			boolean flag = player.capabilities.isCreativeMode;
 
-			if(fired && (stack.getItemDamage() < 20 || flag))
+			if(!charging && (stack.getItemDamage() < 20 || flag))
 			{
 				if(!flag)
 					stack.damageItem(1, player);
 
 				getMouseOver(player, worldIn);
-				fired = false;
+				charging = true;
 				cooldown = 30;
 			}
 
@@ -106,13 +134,13 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 					if(isBattery(itemstack))
 					{
 						stack.setItemDamage(stack.getItemDamage() - 10);
-						
+
 						itemstack.shrink(1);
 					}
 				}
 			}
 		}
-		
+
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
@@ -186,7 +214,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 			return ItemStack.EMPTY;
 		}
 	}
-	
+
 	protected boolean isBattery(ItemStack stack)
 	{
 		return stack.getItem() instanceof Battery;

@@ -69,6 +69,15 @@ public class GrapplingHook extends ItemBow implements IHasModel{
 
 		ItemInit.ITEMS.add(this);
 
+		this.addPropertyOverride(new ResourceLocation("fired"), new IItemPropertyGetter()
+        {
+            @SideOnly(Side.CLIENT)
+            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+            {
+                return !active ? 0.0F : 1.0F;
+            }
+        });
+		
 		this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter()
 		{
 			@SideOnly(Side.CLIENT)

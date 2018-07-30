@@ -2,6 +2,7 @@ package blocks.portalcontrol;
 
 import java.util.Random;
 
+import blocks.HyperDrive;
 import blocks.PowerCord;
 import handlers.RegistryHandler;
 import init.BlockInit;
@@ -18,6 +19,7 @@ import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
@@ -42,9 +44,9 @@ public class PortalControlAllBooks extends Block implements IHasModel
 
 	public static AxisAlignedBB PORTALCONTROL;
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-	
-	public boolean portalActive = false;
 
+	public boolean portalActive = false;
+	private boolean isPowered = false;
 
 	public PortalControlAllBooks(String name, Material material)
 	{
@@ -224,22 +226,58 @@ public class PortalControlAllBooks extends Block implements IHasModel
 	@Override
 	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) 
 	{
-		IBlockState state = world.getBlockState(neighbor);
-		Block block = state.getBlock();
-		
+		BlockPos posNorth = pos.north();
+		BlockPos posSouth = pos.south();
+		BlockPos posWest = pos.west();
+		BlockPos posEast = pos.east();
+
+		if(shouldBePowered(world, posNorth) || shouldBePowered(world, posSouth) || shouldBePowered(world, posWest) || shouldBePowered(world, posEast))
+		{
+			this.isPowered = true;
+			RegistryHandler.portalActive = true;
+		}
+		else
+		{
+			this.isPowered = false;
+			RegistryHandler.portalActive = false;
+		}
+
+
+		super.onNeighborChange(world, pos, neighbor);
+	}
+
+	public static boolean isConnectedTo(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing direction)
+	{
+		BlockPos blockpos = pos.offset(direction);
+		IBlockState iblockstate = worldIn.getBlockState(blockpos);
+		Block block = iblockstate.getBlock();
+
+		return block == BlockInit.POWER_CORD;
+	}
+
+	public boolean shouldBePowered(IBlockAccess world, BlockPos pos)
+	{
+		IBlockState iblockstate = world.getBlockState(pos);
+		Block block = iblockstate.getBlock();
+
+		this.isPowered = false;
+
 		if(block == BlockInit.POWER_CORD)
 		{
 			PowerCord powercord = (PowerCord) block;
-			
+
 			if(powercord.isPowered())
 			{
-				portalActive = true;
-				RegistryHandler.setPortal(true);
+				this.isPowered = true;
+				return true;
 			}
-			
 		}
-		
-		super.onNeighborChange(world, pos, neighbor);
+
+		return false;
 	}
-	
+
+	public boolean isPowered()
+	{
+		return isPowered;
+	}
 }

@@ -43,8 +43,8 @@ public class HyperDrive extends Block implements IHasModel{
 		this.setLightOpacity(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-	//	this.setCreativeTab(GravityFalls.gravityfallsblocks);
-		this.setSoundType(SoundType.GLASS);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
+		this.setSoundType(SoundType.METAL);
 
 
 		BlockInit.BLOCKS.add(this);
@@ -74,16 +74,9 @@ public class HyperDrive extends Block implements IHasModel{
 		return new ItemStack(Item.getItemFromBlock(this));
 	}
 
-	@Override
-	public void onBlockClicked(World world, BlockPos pos, EntityPlayer player) 
-	{
-
-	}
-
 
 	@Override
-	public boolean onBlockActivated(World world, BlockPos pos, IBlockState state, EntityPlayer player,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) 
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) 
 	{
 		BlockPos pos1 = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ());
 		BlockPos pos2 = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ());
@@ -96,17 +89,13 @@ public class HyperDrive extends Block implements IHasModel{
 		Block block4 = world.getBlockState(pos4).getBlock();
 		
 		Block uranium = BlockInit.URANIUM_TANK_FILLED;
-		Block powerCord = BlockInit.POWER_CORD;
 
-		if((block1 == uranium && block2 == uranium) || (block3 == uranium && block4 == uranium))
-		{
-			System.out.println("Uranium Found");
-			
+		if((block1 == uranium && block2 == uranium) || (block3 == uranium && block4 == uranium))	
 			power = true;
-		}
+		else
+			power = false;
 		
-		
-		return super.onBlockActivated(world, pos, state, player, hand, facing, hitX, hitY, hitZ);
+		super.neighborChanged(state, world, pos, blockIn, fromPos);
 	}
 	
 	public boolean isOn()
@@ -148,6 +137,7 @@ public class HyperDrive extends Block implements IHasModel{
 			worldIn.setBlockState(pos, state.withProperty(FACING, face), 2);
 		}
 	}
+	
 
 	@Override
 	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) 

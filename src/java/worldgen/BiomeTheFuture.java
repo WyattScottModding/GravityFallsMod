@@ -36,30 +36,31 @@ import net.minecraft.world.gen.feature.WorldGenBigTree;
 
 public class BiomeTheFuture extends Biome
 {
-	
+
 	protected static final WorldGenAbstractTree TREE = new WorldGenBigTree(true);
 
 	public BiomeTheFuture()
 	{
 		super(new BiomeProperties("TheFuture").setBaseHeight(0.4F).setRainDisabled().setHeightVariation(0.005F).setTemperature(0.8F));
-	
 		topBlock = Blocks.STONE.getDefaultState();
 		fillerBlock = Blocks.STONE.getDefaultState();
-		
-			//adds a block in place of another block
+
+		//adds a block in place of another block
 		//this.decorator.coalGen = new WorldGenMinable(BlockInit.EXAMPLE.getDefualtState(), 10);
 		this.decorator.treesPerChunk = 0;
-		
-			//Clears all mobs that noramlly spawn here
+
+		//Clears all mobs that noramlly spawn here
 		this.spawnableCaveCreatureList.clear();
 		this.spawnableCreatureList.clear();
 		this.spawnableMonsterList.clear();
 		this.spawnableWaterCreatureList.clear();
-		
+
 
 
 	}
-	
+
+
+
 	@Override
 	public WorldGenAbstractTree getRandomTreeFeature(Random rand)
 	{

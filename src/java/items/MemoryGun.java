@@ -28,6 +28,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
@@ -38,6 +39,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
@@ -57,6 +59,15 @@ public class MemoryGun extends ItemBow implements IHasModel
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
 		this.setMaxDamage(10);
+		
+		this.addPropertyOverride(new ResourceLocation("fired"), new IItemPropertyGetter()
+        {
+            @SideOnly(Side.CLIENT)
+            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+            {
+                return cooldown == 0 ? 0.0F : 1.0F;
+            }
+        });
 
 		ItemInit.ITEMS.add(this);
 	}
@@ -84,14 +95,13 @@ public class MemoryGun extends ItemBow implements IHasModel
 					stack.damageItem(1, player);
 
 				fired = false;
-				cooldown = 10;
 			}
 			
 			if(stack.getItemDamage() >= 1 && Keyboard.isKeyDown(Keyboard.KEY_R))
 			{
 				ItemStack itemstack = findAmmo(player);
 
-				if(itemstack.getItem() instanceof Battery)
+				if(itemstack.getItem() instanceof Battery && player.getHeldItemMainhand().getItem() instanceof MemoryGun)
 				{
 					stack.setItemDamage(stack.getItemDamage() - 1);
 
@@ -118,7 +128,7 @@ public class MemoryGun extends ItemBow implements IHasModel
 			{
 				if (!worldIn.isRemote)
 				{
-					EntityForget entityforget = new EntityForget(worldIn, entityplayer.posX + Math.sin(-entityplayer.rotationYaw * Math.PI / 180) * 1.5, entityplayer.posY + .5 + Math.sin(-entityplayer.rotationPitch * Math.PI / 180) * 1.5, entityplayer.posZ + Math.cos(-entityplayer.rotationYaw * Math.PI / 180) * 1.5);
+					EntityForget entityforget = new EntityForget(worldIn, entityplayer.posX + Math.sin(-entityplayer.rotationYaw * Math.PI / 180) * 1.5, entityplayer.posY + .5 + Math.sin(-entityplayer.rotationPitch * Math.PI / 180) * 1.5, entityplayer.posZ + Math.cos(-entityplayer.rotationYaw * Math.PI / 180) * 1.5, entityplayer);
 
 					entityforget.shoot(entityplayer, entityplayer.rotationPitch, entityplayer.rotationYaw, 3.0F, 0.0F);
 					entityforget.isInvisible();
@@ -126,6 +136,7 @@ public class MemoryGun extends ItemBow implements IHasModel
 					worldIn.spawnEntity(entityforget);
 					forget = entityforget;
 					fired = true;
+					cooldown = 10;
 				}
 			}
 			//     worldIn.playSound((EntityPlayer)null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
@@ -171,8 +182,6 @@ public class MemoryGun extends ItemBow implements IHasModel
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft)
 	{
-		if(stack.getItemDamage() < 10)
-			stack.damageItem(1, entityLiving);
 
 	}
 	@Override

@@ -18,6 +18,7 @@ import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -25,17 +26,22 @@ import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LeafBlower extends ItemSword implements IHasModel
 {
 	public Entity entity;
-	public boolean fired = false;
+	public boolean clicked = false;
+	public int counter = 0;
+
 
 	public LeafBlower(String name, ToolMaterial material)
 	{
@@ -46,6 +52,15 @@ public class LeafBlower extends ItemSword implements IHasModel
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
 		this.setMaxDamage(100);
 
+		this.addPropertyOverride(new ResourceLocation("on"), new IItemPropertyGetter()
+		{
+			@SideOnly(Side.CLIENT)
+			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+			{
+				return !clicked ? 0.0F : 1.0F;
+			}
+		});
+
 
 		ItemInit.ITEMS.add(this);
 	}
@@ -55,7 +70,16 @@ public class LeafBlower extends ItemSword implements IHasModel
 	{
 		if (!worldIn.isRemote)
 		{
-			fired = true;
+			if(clicked && counter == 0)
+			{
+				clicked = false;
+				counter = 4;
+			}
+			else if(!clicked && counter == 0)
+			{
+				clicked = true;
+				counter = 4;
+			}
 		}
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
@@ -63,14 +87,16 @@ public class LeafBlower extends ItemSword implements IHasModel
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
 	{
+		if(counter > 0)
+			counter--;
+		
 		if(entityIn instanceof EntityPlayerMP)
 		{
 			EntityPlayerMP player = (EntityPlayerMP) entityIn;
 			boolean flag = player.capabilities.isCreativeMode;
 
-			if(fired && (stack.getItemDamage() < 100 || flag))
+			if(clicked && (stack.getItemDamage() < 100 || flag))
 			{
-				fired = false;
 				if(worldIn.getWorldTime() % 10 == 0 && !flag)
 					stack.damageItem(1, player);
 
@@ -83,12 +109,10 @@ public class LeafBlower extends ItemSword implements IHasModel
 					entity.rotationYaw = player.rotationYaw;
 					entity.rotationPitch = player.rotationPitch;
 
-					double f;
+					double f = 2.0;
 
 					if(entity instanceof EntityGnome)
-						f = 3.0;
-					else
-						f = 1.0;
+						f = 5.0;
 
 					float yaw = player.rotationYaw;
 					float pitch = player.rotationPitch;
@@ -99,7 +123,7 @@ public class LeafBlower extends ItemSword implements IHasModel
 
 					if(entity instanceof EntityLivingBase && entity instanceof EntityGnome)
 						((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 2, 0));					
-					
+
 					entity = null;
 				}
 			}

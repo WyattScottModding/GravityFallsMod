@@ -44,7 +44,7 @@ public class TimeTape extends Item implements IHasModel
 			{
 				pos = playerIn.getPosition();
 
-				Teleport.teleportToDimension(playerIn, 2, 0, 67, 0);
+				Teleport.teleportToDimension(playerIn, 2, -18.5, 61, -18.5);
 			}
 			else if(playerIn.dimension == 2)
 			{

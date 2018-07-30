@@ -5,6 +5,7 @@ import java.util.Random;
 import entity.EntityEightBall;
 import entity.EntityEyeBatHuge;
 import entity.EntityGnome;
+import entity.EntityKeyhole;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
 import net.minecraft.entity.monster.EntityEnderman;
@@ -59,8 +60,10 @@ public class BiomeNightmareRealm extends Biome
 		this.spawnableWaterCreatureList.clear();
 		
 		
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityEightBall.class, 10, 1, 1));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityEyeBatHuge.class, 10, 3, 10));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityEightBall.class, 1, 1, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityEyeBatHuge.class, 1, 3, 10));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityKeyhole.class, 1, 1, 1));
+
 
 
 

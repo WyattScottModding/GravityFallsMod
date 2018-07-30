@@ -135,7 +135,7 @@ public class Book1 extends ItemWrittenBook implements IHasModel
 
 				if (validBookTagContents(nbttagcompound))
 				{
-					NBTTagList nbttaglist = nbttagcompound.getTagList("pages", 8);
+					NBTTagList nbttaglist = nbttagcompound.getTagList("pages", 9);
 
 					for (int i = 0; i < nbttaglist.tagCount(); ++i)
 					{

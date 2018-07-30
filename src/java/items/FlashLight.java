@@ -2,6 +2,8 @@ package items;
 
 import java.util.ArrayList;
 
+import javax.annotation.Nullable;
+
 import org.lwjgl.input.Keyboard;
 
 import handlers.BlockHandler;
@@ -13,12 +15,15 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
+import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.EnumSkyBlock;
@@ -29,6 +34,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class FlashLight extends ItemSword implements IHasModel
 {
@@ -44,6 +50,17 @@ public class FlashLight extends ItemSword implements IHasModel
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
 		this.setMaxDamage(100);
+		
+
+		this.addPropertyOverride(new ResourceLocation("on"), new IItemPropertyGetter()
+        {
+            @SideOnly(Side.CLIENT)
+            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+            {
+                return !clicked ? 0.0F : 1.0F;
+            }
+        });
+		
 
 		ItemInit.ITEMS.add(this);
 	}
@@ -58,22 +75,28 @@ public class FlashLight extends ItemSword implements IHasModel
 	{
 		world = worldIn;
 
-		if(clicked && counter % 2 == 0)
+		if (!worldIn.isRemote)
 		{
-			clicked = false;
+			if(clicked && counter == 0)
+			{
+				clicked = false;
+				counter = 4;
+			}
+			else if(!clicked && counter == 0)
+			{
+				clicked = true;
+				counter = 4;
+			}
 		}
-		else if(!clicked && counter % 2 == 0)
-		{
-			clicked = true;
-		}
-		counter++;
-
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected)
 	{	
+		if(counter > 0)
+			counter--;
+		
 		if(entity instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) entity;
@@ -83,7 +106,7 @@ public class FlashLight extends ItemSword implements IHasModel
 			else
 				RegistryHandler.clicked = clicked;
 
-			if(clicked && world.getWorldTime() % 60 == 0)
+			if(clicked && world.getWorldTime() % 120 == 0)
 			{
 				stack.damageItem(1, player);
 			}
@@ -93,7 +116,7 @@ public class FlashLight extends ItemSword implements IHasModel
 			{
 				ItemStack itemstack = findAmmo(player);
 
-				if(itemstack.getItem() instanceof Battery)
+				if(itemstack.getItem() instanceof Battery && player.getHeldItemMainhand().getItem() instanceof MemoryGun)
 				{
 					stack.setItemDamage(stack.getItemDamage() - 50);
 					itemstack.shrink(1);

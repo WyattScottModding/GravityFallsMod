@@ -50,6 +50,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import scala.reflect.internal.Trees.This;
 
 public class PowerCord extends Block implements IHasModel
 {
@@ -69,43 +70,9 @@ public class PowerCord extends Block implements IHasModel
 		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(NORTH, Boolean.valueOf(false)).withProperty(EAST, Boolean.valueOf(false)).withProperty(SOUTH, Boolean.valueOf(false)).withProperty(WEST, Boolean.valueOf(false)));
 		this.setTickRandomly(true);
-		
+
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
-	}
-
-	@Override
-	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) 
-	{
-
-		Block block = world.getBlockState(neighbor).getBlock();
-
-		System.out.println("Neighbor Change");
-		
-		if(block == BlockInit.HYPER_DRIVE)
-		{
-			System.out.println("Found Hyper Drive");
-			HyperDrive hyperDrive = (HyperDrive) block;
-
-			if(hyperDrive.isOn())
-			{
-				isPowered = true;
-				System.out.println("Is Powered");
-			}
-		}
-		if(block == BlockInit.POWER_CORD)
-		{
-			PowerCord powercord = (PowerCord) block;
-			
-			if(powercord.isPowered())
-			{
-				isPowered = true;
-				System.out.println("Is Powered");
-			}
-		}
-
-
-		super.onNeighborChange(world, pos, neighbor);
 	}
 
 
@@ -146,16 +113,44 @@ public class PowerCord extends Block implements IHasModel
 	{
 		isPowered = power;
 	}
-	
+
 	public static boolean isConnectedTo(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing direction)
 	{
 		BlockPos blockpos = pos.offset(direction);
 		IBlockState iblockstate = worldIn.getBlockState(blockpos);
 		Block block = iblockstate.getBlock();
 
-		return block == BlockInit.POWER_CORD;
+		return (block == BlockInit.POWER_CORD) || (block == BlockInit.HYPER_DRIVE) || (block == BlockInit.PORTAL_CONTROLALLBOOKS);
 	}
-	
+
+	public boolean shouldBePowered(IBlockAccess world, BlockPos pos)
+	{
+		IBlockState iblockstate = world.getBlockState(pos);
+		Block block = iblockstate.getBlock();
+
+
+		if(block == BlockInit.HYPER_DRIVE)
+		{
+			HyperDrive hyperdrive = (HyperDrive) block;
+
+			if(hyperdrive.isOn())
+			{
+				return true;
+			}
+		}
+		else if(block == BlockInit.POWER_CORD)
+		{
+			PowerCord powercord = (PowerCord) block;
+
+			if(powercord.isPowered)
+			{
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	/**
 	 * Get the actual Block state of this Block at the given position. This applies properties not visible in the
 	 * metadata, such as fence connections.
@@ -212,15 +207,15 @@ public class PowerCord extends Block implements IHasModel
 	{
 		return 0;
 	}
-	
+
 	@Override
 	public IBlockState getStateForPlacement(World worldIn, BlockPos pos, EnumFacing facing, float hitX, float hitY,
 			float hitZ, int meta, EntityLivingBase placer) 
 	{
 		return this.getDefaultState().withProperty(NORTH, false).withProperty(SOUTH, false).withProperty(EAST, false).withProperty(WEST, false);
 	}
-	
-	
+
+
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) 
 	{
@@ -245,24 +240,38 @@ public class PowerCord extends Block implements IHasModel
 		return new ItemStack(Item.getItemFromBlock(this));
 	}
 
+	@Override
+	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) 
+	{
+
+		super.updateTick(world, pos, state, rand);
+	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos) 
+	public boolean requiresUpdates()
 	{
-		if(world.getBlockState(fromPos).getBlock() != null)
-		{
-			if(world.getBlockState(fromPos).getBlock() instanceof PowerCord)
-			{
-				PowerCord cord = (PowerCord) world.getBlockState(fromPos).getBlock();
-
-				if(cord.isPowered)
-				{
-					this.setPower(true);
-					this.setLightLevel(15.0F);
-				}
-			}
-		}
-
-		super.neighborChanged(state, world, pos, block, fromPos);
+		return true;
 	}
+
+	@Override
+	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) 
+	{
+		BlockPos posNorth = pos.north();
+		BlockPos posSouth = pos.south();
+		BlockPos posWest = pos.west();
+		BlockPos posEast = pos.east();
+
+
+		if(shouldBePowered(world, posNorth) || shouldBePowered(world, posSouth) || shouldBePowered(world, posWest) || shouldBePowered(world, posEast))
+			this.isPowered = true;
+		else
+			this.isPowered = false;
+
+		System.out.println("Update Cord");
+
+
+		super.onNeighborChange(world, pos, neighbor);
+	}
+
+
 }

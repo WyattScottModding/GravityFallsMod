@@ -7,6 +7,7 @@ import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
+import main.Reference;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.settings.KeyBinding;
@@ -31,9 +32,6 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 {
 	public float speed = 1.0F;
 
-	public static KeyBinding faster;
-	public static KeyBinding slower;
-
 	public double prevX1 = -5;
 	public double prevX2 = -5;
 	public double prevX3 = -5;
@@ -49,6 +47,8 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 	
 	public double motionX;
 	public double motionZ;
+	
+	private int counter = 0;
 
 	public SpeedBoots(String name, ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
 	{
@@ -56,26 +56,19 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsarmor);
-		init();
 
 		ItemInit.ITEMS.add(this);
-
 	}
 
-	public static void init()
-	{
-		faster = new KeyBinding("key.faster", Keyboard.KEY_N, "key.categories.gravityfalls");
-		ClientRegistry.registerKeyBinding(faster);
-
-		slower = new KeyBinding("key.slower", Keyboard.KEY_B, "key.categories.gravityfalls");
-		ClientRegistry.registerKeyBinding(slower);
-
-		//Minecraft.getMinecraft().gameSettings.keyBindJump = KeysHandler.jump;
-	}
 
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
+		if(counter < 10)
+			counter++;
+		else if(counter == 10)
+			counter = 0;
+		
 		if(entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
@@ -86,20 +79,18 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 
 			Block blockType = block.getBlock();
 
-			if(faster.isKeyDown() && speed < 100)
+			if(Keyboard.isKeyDown(Keyboard.KEY_N) && speed < 100)
 				speed += .4F;
-			else if(slower.isKeyDown() && speed > 2)
+			else if(Keyboard.isKeyDown(Keyboard.KEY_B) && speed > 2)
 				speed -= .4F;
 
 			if(RegistryHandler.getSpeed())
 			{
-
 				float yaw = player.rotationYaw;
 				float pitch = player.rotationPitch;
 
 
 				//Amount of movement
-
 				player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 5, (int)speed));
 
 				this.motionX = player.motionX;
@@ -125,6 +116,8 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 				{
 					player.motionY = (double) speed / 15;
 					onWall = true;
+					
+					
 				}
 				else if(onWall)
 				{
@@ -177,41 +170,45 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 				this.prevZ2 = this.prevZ1;
 				this.prevZ1 = player.posZ;
 
-				/*
-				
 				//Running on Water
-				BlockPos pos5 = new BlockPos(player.posX, player.posY - 1, player.posZ);
-				BlockPos pos6 = new BlockPos(player.posX, player.posY, player.posZ);
-				
-				boolean waterBelow = world.getBlockState(pos5).getBlock() == Blocks.WATER && world.getBlockState(pos6).getBlock() == Blocks.AIR;
-				
-				double speedVector = Math.sqrt(Math.pow(player.motionX, 2) + Math.pow(player.motionZ, 2));
-				
-				if(waterBelow && speed > 15 && speedVector > 1)
+				if(player.isOverWater() && speed > 15 && Keyboard.isKeyDown(Keyboard.KEY_W) && world.getBlockState(player.getPosition().down()).getBlock() != Blocks.AIR)
 				{
-					player.motionY = 0;
-					player.motionZ = this.motionZ * 1.1;
-					player.motionX = this.motionX * 1.1;
-				}
-				*/
-			}
-			
-			
-			
-		}
-		
+					if(world.getBlockState(player.getPosition()).getBlock() == Blocks.WATER)
+						player.motionY = 1.0F;
+					else
+						player.motionY = 0.0F;
 
+					float f = speed / 30;
+					float yaw2 = player.rotationYaw;
+					float pitch2 = player.rotationPitch;
+
+					player.motionX = (double)(-MathHelper.sin(yaw2 / 180.0F * (float)Math.PI) * MathHelper.cos(pitch2 / 180.0F * (float)Math.PI) * f);
+					player.motionZ = (double)(MathHelper.cos(yaw2 / 180.0F * (float)Math.PI) * MathHelper.cos(pitch2 / 180.0F * (float)Math.PI) * f);
+				}
+
+			}	
+		}
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}
 
-
-
-
+	@Override
+	public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) 
+	{		
+		if(counter == 0 || counter == 1)
+			return Reference.MODID + ":textures/models/armor/magic_layer_1-1.png";
+		else if(counter == 2 || counter == 3)
+			return Reference.MODID + ":textures/models/armor/magic_layer_1-2.png";
+		else if(counter == 4 || counter == 5)
+			return Reference.MODID + ":textures/models/armor/magic_layer_1-3.png";
+		else if(counter == 6 || counter == 7)
+			return Reference.MODID + ":textures/models/armor/magic_layer_1-4.png";
+		else //if(counter == 8 || counter == 9)
+			return Reference.MODID + ":textures/models/armor/magic_layer_1-5.png";
+	}
+	
 	@Override
 	public void registerModels() 
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
-
 	}
-
 }

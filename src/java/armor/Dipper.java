@@ -17,13 +17,13 @@ public class Dipper extends ItemArmor implements IHasModel{
 		
 		ItemInit.ITEMS.add(this);
 		
+		//this.renderHelmetOverlay(stack, player, resolution, partialTicks);
 	}
 
 	@Override
 	public void registerModels() 
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
-		
 	}
 
 }

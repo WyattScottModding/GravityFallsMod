@@ -9,7 +9,7 @@ import entity.EntityGnome;
 import entity.EntityGolfCart;
 import entity.EntityHideBehind;
 import entity.EntityKeyhole;
-import entity.EntityLight;
+import entity.EntityGideonBot;
 import entity.EntitySecurityDroid;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
@@ -27,6 +27,7 @@ import render.RenderGnome;
 import render.RenderGolfCart;
 import render.RenderHideBehind;
 import render.RenderKeyhole;
+import render.RenderGideonBot;
 import render.RenderSecurityDroid;
 import render.RenderTimeCopDundgren;
 import render.RenderTimeCopLolph;
@@ -164,6 +165,16 @@ public class RenderHandler {
 			public Render<? super EntityUnicorn> createRenderFor(RenderManager manager)
 			{
 				return new RenderUnicorn(manager);
+			}
+			
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityGideonBot.class, new IRenderFactory<EntityGideonBot>()
+		{
+			@Override
+			public Render<? super EntityGideonBot> createRenderFor(RenderManager manager)
+			{
+				return new RenderGideonBot(manager);
 			}
 			
 		});

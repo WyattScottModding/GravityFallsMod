@@ -7,6 +7,7 @@ import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
+import main.Reference;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.settings.KeyBinding;
@@ -37,12 +38,9 @@ public class CloakOfInvisibility extends ItemArmor implements IHasModel
 		super(materialIn, renderIndexIn, equipmentSlotIn);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsmagic);
+		this.setCreativeTab(GravityFalls.gravityfallsarmor);
 		
-
-
 		ItemInit.ITEMS.add(this);
-
 	}
 
 
@@ -72,19 +70,21 @@ public class CloakOfInvisibility extends ItemArmor implements IHasModel
 					else 
 						invisible = false;
 					counter = 100;
-
 				}
-
 			}
-
 		}
-
 
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}
 
-
-
+	@Override
+	public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) 
+	{		
+		if(invisible)
+			return Reference.MODID + ":textures/models/armor/cloak_layer_1.png";
+		else
+			return Reference.MODID + ":textures/models/armor/cloak_layer_1-2.png";
+	}
 
 	@Override
 	public void registerModels() 

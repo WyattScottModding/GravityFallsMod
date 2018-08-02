@@ -33,12 +33,6 @@ public class ModelGolfCart extends ModelBase
   ModelRenderer SupportBeam5;
   ModelRenderer SupportBeam6;
   ModelRenderer MainBody10;
-  ModelRenderer Flag1;
-  ModelRenderer Flag2;
-  ModelRenderer Flag3;
-  ModelRenderer Flag4;
-  ModelRenderer Flag5;
-  ModelRenderer Flag6;
   ModelRenderer MainBody11;
   ModelRenderer Questiony3;
   ModelRenderer MainBody12;
@@ -80,18 +74,6 @@ public class ModelGolfCart extends ModelBase
   ModelRenderer MainBody18;
   ModelRenderer StickShift1;
   ModelRenderer BlackCover6;
-  ModelRenderer Flag7;
-  ModelRenderer Flag8;
-  ModelRenderer Flag9;
-  ModelRenderer Flag10;
-  ModelRenderer Flag11;
-  ModelRenderer Flag12;
-  ModelRenderer Flag13;
-  ModelRenderer Flag14;
-  ModelRenderer Flag15;
-  ModelRenderer Flag16;
-  ModelRenderer Flag17;
-  ModelRenderer Flag18;
   ModelRenderer SupportBeam7;
   ModelRenderer BackBeam2;
   ModelRenderer BackBeam3;
@@ -303,49 +285,7 @@ public class ModelGolfCart extends ModelBase
     this.MainBody10.setTextureSize(256, 256);
     this.MainBody10.showModel = true;
     setRotation(this.MainBody10, 0.0F, 0.0F, 0.0F);
-    
-    this.Flag1 = new ModelRenderer(this, 86, 124);
-    this.Flag1.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag1.setRotationPoint(-1.0F, -25.0F, 39.0F);
-    this.Flag1.setTextureSize(256, 256);
-    this.Flag1.showModel = true;
-    setRotation(this.Flag1, 0.0F, 0.0F, 0.0F);
-    
-    this.Flag2 = new ModelRenderer(this, 69, 124);
-    this.Flag2.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag2.setRotationPoint(-10.0F, -25.0F, 39.0F);
-    this.Flag2.setTextureSize(256, 256);
-    this.Flag2.showModel = true;
-    setRotation(this.Flag2, 0.0F, 0.0F, 0.0F);
-    
-    this.Flag3 = new ModelRenderer(this, 86, 124);
-    this.Flag3.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag3.setRotationPoint(-21.0F, -25.0F, 39.0F);
-    this.Flag3.setTextureSize(256, 256);
-    this.Flag3.showModel = true;
-    setRotation(this.Flag3, 0.0F, 0.0F, 0.0F);
-    
-    this.Flag4 = new ModelRenderer(this, 69, 124);
-    this.Flag4.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag4.setRotationPoint(-30.0F, -25.0F, 39.0F);
-    this.Flag4.setTextureSize(256, 256);
-    this.Flag4.showModel = true;
-    setRotation(this.Flag4, 0.0F, 0.0F, 0.0F);
-    
-    this.Flag5 = new ModelRenderer(this, 86, 124);
-    this.Flag5.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag5.setRotationPoint(-21.0F, -25.0F, -17.0F);
-    this.Flag5.setTextureSize(256, 256);
-    this.Flag5.showModel = true;
-    setRotation(this.Flag5, -0.0872665F, 0.0F, 0.0F);
-    
-    this.Flag6 = new ModelRenderer(this, 69, 124);
-    this.Flag6.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag6.setRotationPoint(-30.0F, -25.0F, -17.0F);
-    this.Flag6.setTextureSize(256, 256);
-    this.Flag6.showModel = true;
-    setRotation(this.Flag6, -0.0872665F, 0.0F, 0.0F);
-    
+   
     this.MainBody11 = new ModelRenderer(this, 0, 102);
     this.MainBody11.addBox(0.0F, -0.5F, -0.9F, 38, 7, 6);
     this.MainBody11.setRotationPoint(-30.0F, 6.0F, -23.5F);
@@ -633,90 +573,6 @@ public class ModelGolfCart extends ModelBase
     this.BlackCover6.showModel = true;
     setRotation(this.BlackCover6, 0.0F, 0.0F, 0.0F);
     
-    this.Flag7 = new ModelRenderer(this, 86, 124);
-    this.Flag7.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag7.setRotationPoint(-1.0F, -25.0F, -17.0F);
-    this.Flag7.setTextureSize(256, 256);
-    this.Flag7.showModel = true;
-    setRotation(this.Flag7, -0.0872665F, 0.0F, 0.0F);
-    
-    this.Flag8 = new ModelRenderer(this, 69, 124);
-    this.Flag8.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag8.setRotationPoint(-10.0F, -25.0F, -17.0F);
-    this.Flag8.setTextureSize(256, 256);
-    this.Flag8.showModel = true;
-    setRotation(this.Flag8, -0.0872665F, 0.0F, 0.0F);
-    
-    this.Flag9 = new ModelRenderer(this, 69, 124);
-    this.Flag9.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag9.setRotationPoint(-30.0F, -25.0F, 33.0F);
-    this.Flag9.setTextureSize(256, 256);
-    this.Flag9.showModel = true;
-    setRotation(this.Flag9, 0.0F, 1.570796F, 0.0F);
-    
-    this.Flag10 = new ModelRenderer(this, 86, 124);
-    this.Flag10.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag10.setRotationPoint(-30.0F, -25.0F, 6.0F);
-    this.Flag10.setTextureSize(256, 256);
-    this.Flag10.showModel = true;
-    setRotation(this.Flag10, 0.0F, 1.570796F, 0.0F);
-    
-    this.Flag11 = new ModelRenderer(this, 69, 124);
-    this.Flag11.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag11.setRotationPoint(-30.0F, -25.0F, -3.0F);
-    this.Flag11.setTextureSize(256, 256);
-    this.Flag11.showModel = true;
-    setRotation(this.Flag11, 0.0F, 1.570796F, 0.0F);
-    
-    this.Flag12 = new ModelRenderer(this, 86, 124);
-    this.Flag12.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag12.setRotationPoint(-30.0F, -25.0F, 24.0F);
-    this.Flag12.setTextureSize(256, 256);
-    this.Flag12.showModel = true;
-    setRotation(this.Flag12, 0.0F, 1.570796F, 0.0F);
-    
-    this.Flag13 = new ModelRenderer(this, 69, 124);
-    this.Flag13.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag13.setRotationPoint(-30.0F, -25.0F, 15.0F);
-    this.Flag13.setTextureSize(256, 256);
-    this.Flag13.showModel = true;
-    setRotation(this.Flag13, 0.0F, 1.570796F, 0.0F);
-    
-    this.Flag14 = new ModelRenderer(this, 69, 124);
-    this.Flag14.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag14.setRotationPoint(8.0F, -25.0F, -3.0F);
-    this.Flag14.setTextureSize(256, 256);
-    this.Flag14.showModel = true;
-    setRotation(this.Flag14, 0.0F, 1.570796F, 0.0F);
-    
-    this.Flag15 = new ModelRenderer(this, 86, 124);
-    this.Flag15.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag15.setRotationPoint(8.0F, -25.0F, 6.0F);
-    this.Flag15.setTextureSize(256, 256);
-    this.Flag15.showModel = true;
-    setRotation(this.Flag15, 0.0F, 1.570796F, 0.0F);
-    
-    this.Flag16 = new ModelRenderer(this, 69, 124);
-    this.Flag16.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag16.setRotationPoint(8.0F, -25.0F, 15.0F);
-    this.Flag16.setTextureSize(256, 256);
-    this.Flag16.showModel = true;
-    setRotation(this.Flag16, 0.0F, 1.570796F, 0.0F);
-    
-    this.Flag17 = new ModelRenderer(this, 86, 124);
-    this.Flag17.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag17.setRotationPoint(8.0F, -25.0F, 24.0F);
-    this.Flag17.setTextureSize(256, 256);
-    this.Flag17.showModel = true;
-    setRotation(this.Flag17, 0.0F, 1.570796F, 0.0F);
-    
-    this.Flag18 = new ModelRenderer(this, 69, 124);
-    this.Flag18.addBox(0.0F, 0.0F, 0.0F, 8, 10, 0);
-    this.Flag18.setRotationPoint(8.0F, -25.0F, 33.0F);
-    this.Flag18.setTextureSize(256, 256);
-    this.Flag18.showModel = true;
-    setRotation(this.Flag18, 0.0F, 1.570796F, 0.0F);
-    
     this.SupportBeam7 = new ModelRenderer(this, 75, 53);
     this.SupportBeam7.addBox(0.0F, 0.0F, 0.0F, 1, 23, 1);
     this.SupportBeam7.setRotationPoint(6.5F, -25.0F, 37.5F);
@@ -868,12 +724,6 @@ public class ModelGolfCart extends ModelBase
     this.SupportBeam5.renderWithRotation(f5);
     this.SupportBeam6.renderWithRotation(f5);
     this.MainBody10.renderWithRotation(f5);
-    this.Flag1.renderWithRotation(f5);
-    this.Flag2.renderWithRotation(f5);
-    this.Flag3.renderWithRotation(f5);
-    this.Flag4.renderWithRotation(f5);
-    this.Flag5.renderWithRotation(f5);
-    this.Flag6.renderWithRotation(f5);
     this.MainBody11.renderWithRotation(f5);
     this.Questiony3.renderWithRotation(f5);
     this.MainBody12.renderWithRotation(f5);
@@ -915,18 +765,6 @@ public class ModelGolfCart extends ModelBase
     this.MainBody18.renderWithRotation(f5);
     this.StickShift1.renderWithRotation(f5);
     this.BlackCover6.renderWithRotation(f5);
-    this.Flag7.renderWithRotation(f5);
-    this.Flag8.renderWithRotation(f5);
-    this.Flag9.renderWithRotation(f5);
-    this.Flag10.renderWithRotation(f5);
-    this.Flag11.renderWithRotation(f5);
-    this.Flag12.renderWithRotation(f5);
-    this.Flag13.renderWithRotation(f5);
-    this.Flag14.renderWithRotation(f5);
-    this.Flag15.renderWithRotation(f5);
-    this.Flag16.renderWithRotation(f5);
-    this.Flag17.renderWithRotation(f5);
-    this.Flag18.renderWithRotation(f5);
     this.SupportBeam7.renderWithRotation(f5);
     this.BackBeam2.renderWithRotation(f5);
     this.BackBeam3.renderWithRotation(f5);

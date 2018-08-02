@@ -43,7 +43,8 @@ public class LightSource extends Block implements ITileEntityProvider, IHasModel
 	public static List<Item> lightSourceList = new ArrayList<Item>() 
 	{
 		{
-			add(ItemInit.FLASHLIGHT);			
+			add(ItemInit.FLASHLIGHT);		
+			add(ItemInit.MAGICFLASHLIGHT);
 		}
 	};
 

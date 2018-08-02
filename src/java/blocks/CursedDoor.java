@@ -34,8 +34,6 @@ public class CursedDoor extends BlockDoor implements IHasModel
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setSoundType(SoundType.STONE);
-		this.setCreativeTab(GravityFalls.gravityfallsblocks);
-
 
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));

@@ -7,6 +7,7 @@ import java.util.Random;
 import javax.annotation.Nullable;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
@@ -24,6 +25,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.BlockStainedGlass;
 import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -34,6 +36,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.MoverType;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityZombieHorse;
@@ -173,6 +176,17 @@ public class MagnetGun extends ItemBow implements IHasModel
 				if(soundCounter == 4)
 					world.playSound(player, player.posX, player.posY, player.posZ, SoundsHandler.ITEM_MAGNETGUN, SoundCategory.PLAYERS, 1.0F, 1.0F);
 
+				//Animation
+				/*
+				GL11.glPushMatrix();
+				GL11.glDisable(GL11.GL_LIGHTING);
+				
+				
+				
+				
+				GL11.glEnable(GL11.GL_LIGHTING);
+				GL11.glPopMatrix();
+				*/
 
 				//The gun is only attracted to objects that contain iron
 				if(blockType == Blocks.IRON_BLOCK || blockType == Blocks.IRON_BARS || blockType == Blocks.IRON_ORE || blockType == Blocks.IRON_DOOR || blockType == Blocks.DETECTOR_RAIL || blockType == Blocks.RAIL || blockType == Blocks.ACTIVATOR_RAIL || blockType == Blocks.ANVIL || blockType == Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE || blockType == Blocks.PISTON || blockType == Blocks.STICKY_PISTON  || blockType == BlockInit.URANIUM_TANK || blockType == BlockInit.URANIUM_TANK_FILLED || blockType == BlockInit.URANIUM_TANK_HALFFILLED || blockType == Blocks.HOPPER || blockType == BlockInit.METAL_TREE)

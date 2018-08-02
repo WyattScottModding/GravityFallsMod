@@ -97,7 +97,7 @@ public class LeafBlower extends ItemSword implements IHasModel
 
 			if(clicked && (stack.getItemDamage() < 100 || flag))
 			{
-				if(worldIn.getWorldTime() % 10 == 0 && !flag)
+				if(worldIn.getWorldTime() % 60 == 0 && !flag)
 					stack.damageItem(1, player);
 
 				RayTraceResult blockPosition1 = player.rayTrace(7, 1.0F);

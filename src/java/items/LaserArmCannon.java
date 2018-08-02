@@ -68,7 +68,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
             public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
             {
             	if(cooldown >= 0 && cooldown < 5)
-            		return 0.6F;
+            		return 0.1F;
             	else if(cooldown >= 5 && cooldown < 10)
             		return 0.5F;
             	else if(cooldown >= 10 && cooldown < 15)
@@ -78,7 +78,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
             	else if(cooldown >= 20 && cooldown < 25)
             		return 0.2F;
             	else//if(cooldown >= 25 && cooldown <= 30)
-            		return 0.1F;
+            		return 0.6F;
             }
         });
 		
@@ -111,11 +111,11 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 
 		if(!worldIn.isRemote && entityIn instanceof EntityPlayer)
 		{
-
+		
 			EntityPlayer player = (EntityPlayer) entityIn;
 			boolean flag = player.capabilities.isCreativeMode;
 
-			if(!charging && (stack.getItemDamage() < 20 || flag))
+			if(!charging && (stack.getItemDamage() < 20 || flag) && player.getHeldItemMainhand().getItem() instanceof LaserArmCannon)
 			{
 				if(!flag)
 					stack.damageItem(1, player);
@@ -146,7 +146,6 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 
 	public void getMouseOver(EntityPlayer player, World world)
 	{
-
 		Vec3d lookVec = player.getLookVec();
 
 		BlockPos pos = player.getPosition();

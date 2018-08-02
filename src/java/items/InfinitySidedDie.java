@@ -1,5 +1,7 @@
 package items;
 
+import org.lwjgl.opengl.GL11;
+
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
@@ -30,7 +32,7 @@ public class InfinitySidedDie extends ItemBow implements IHasModel{
 	public int timeSkyLight = 0;
 	public boolean countSkyLight = false;
 	public World world = null;
-	public int cooldown = 50;
+	public int cooldown = 20;
 
 	public InfinitySidedDie(String name)
 	{
@@ -57,33 +59,15 @@ public class InfinitySidedDie extends ItemBow implements IHasModel{
 
 			this.world = worldIn;
 
-
 			ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, false);
 			if (ret != null) 
 				return ret;
 
 
-			/*
-				else if(diceRoll == 32)
-				{
-					if(playerIn instanceof EntityPlayerMP)
-					{
-						EntityPlayerMP player = (EntityPlayerMP) playerIn;
-						String ip = player.connection.netManager.getRemoteAddress().toString();
-						ITextComponent msg = new TextComponentString(ip);
-						playerIn.sendMessage(msg);
-					}
-				}
-			 */
-			
 			onPlayerStoppedUsing(itemstack, worldIn, playerIn, 10);
 			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(ItemInit.INFINITY_SIDED_DIE));
 
 		}		
-
-
-
-		//     worldIn.playSound((EntityPlayer)null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
 
 		return new ActionResult<ItemStack>(EnumActionResult.FAIL, new ItemStack(ItemInit.INFINITY_SIDED_DIE));
 
@@ -102,11 +86,12 @@ public class InfinitySidedDie extends ItemBow implements IHasModel{
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft)
 	{
+		world = worldIn;
 		if(entityLiving instanceof EntityPlayer && cooldown == 0)
 		{
 			EntityPlayer playerIn = (EntityPlayer) entityLiving;
 
-			int diceRoll = (int) (Math.random() * 39) + 1;
+			int diceRoll = (int) (Math.random() * 45) + 1;
 
 			if(diceRoll == 1)
 			{
@@ -206,7 +191,7 @@ public class InfinitySidedDie extends ItemBow implements IHasModel{
 			}
 			else if(diceRoll == 23)
 			{
-				ITextComponent msg = new TextComponentString("You rolled an 8");
+				ITextComponent msg = new TextComponentString("You rolled an 8!");
 				playerIn.sendMessage(msg);
 			}
 			else if(diceRoll == 24)
@@ -245,7 +230,6 @@ public class InfinitySidedDie extends ItemBow implements IHasModel{
 			{
 				BlockPos posFeet = playerIn.getPosition();
 				playerIn.world.setBlockState(posFeet, Blocks.LAVA.getDefaultState());
-
 			}
 			else if(diceRoll == 32)
 			{
@@ -333,10 +317,33 @@ public class InfinitySidedDie extends ItemBow implements IHasModel{
 				worldIn.spawnEntity(witch);
 				worldIn.spawnEntity(witch);
 			}
+			else if(diceRoll == 40)
+			{
+				GL11.glScalef(10, 10, 10);
+			}
+			else if(diceRoll == 41)
+			{
+				GL11.glScalef(0.1F, 0.1F, 0.1F);
+			}
+			else if(diceRoll == 42)
+			{
+				world.setSkylightSubtracted(5);
+			}
+			else if(diceRoll == 43)
+			{
+				playerIn.addExperienceLevel(100);
+			}
+			else if(diceRoll == 44)
+			{
+				GL11.glViewport(5, 5, 10, 10);
+			}
+			else if(diceRoll == 45)
+			{
+				int y = (int)(Math.random() * 200);
+				playerIn.setPosition(playerIn.posX, y, playerIn.posZ);
+			}
 
-
-			cooldown = 50;
-
+			cooldown = 20;
 
 		}
 	}
@@ -351,8 +358,4 @@ public class InfinitySidedDie extends ItemBow implements IHasModel{
 	{
 		return EnumAction.BOW;
 	}
-
-
-
-
 }

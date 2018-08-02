@@ -41,6 +41,7 @@ public class FlashLight extends ItemSword implements IHasModel
 	public boolean clicked = false;
 	public int counter = 0;
 	public static World world = null;
+	public ItemStack stack = null;
 
 	public FlashLight(String name)
 	{
@@ -61,7 +62,6 @@ public class FlashLight extends ItemSword implements IHasModel
             }
         });
 		
-
 		ItemInit.ITEMS.add(this);
 	}
 
@@ -82,7 +82,7 @@ public class FlashLight extends ItemSword implements IHasModel
 				clicked = false;
 				counter = 4;
 			}
-			else if(!clicked && counter == 0)
+			else if(!clicked && counter == 0 && stack != null && stack.getItemDamage() <= 99)
 			{
 				clicked = true;
 				counter = 4;
@@ -96,6 +96,7 @@ public class FlashLight extends ItemSword implements IHasModel
 	{	
 		if(counter > 0)
 			counter--;
+		this.stack = stack;
 		
 		if(entity instanceof EntityPlayer)
 		{
@@ -116,7 +117,7 @@ public class FlashLight extends ItemSword implements IHasModel
 			{
 				ItemStack itemstack = findAmmo(player);
 
-				if(itemstack.getItem() instanceof Battery && player.getHeldItemMainhand().getItem() instanceof MemoryGun)
+				if(itemstack.getItem() instanceof Battery && player.getHeldItemMainhand().getItem() instanceof FlashLight)
 				{
 					stack.setItemDamage(stack.getItemDamage() - 50);
 					itemstack.shrink(1);

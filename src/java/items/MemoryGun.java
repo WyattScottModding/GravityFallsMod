@@ -65,7 +65,7 @@ public class MemoryGun extends ItemBow implements IHasModel
             @SideOnly(Side.CLIENT)
             public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
             {
-                return cooldown == 0 ? 0.0F : 1.0F;
+                return cooldown != 0 ? 0.0F : 1.0F;
             }
         });
 

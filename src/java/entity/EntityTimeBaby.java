@@ -77,7 +77,7 @@ import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
-public class EntityBill extends EntityPigZombie
+public class EntityTimeBaby extends EntityPigZombie
 {
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
 	private static final UUID ATTACK_SPEED_BOOST_MODIFIER_UUID = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
@@ -86,22 +86,22 @@ public class EntityBill extends EntityPigZombie
     private UUID angerTargetUUID;
 	int level = 1;
 
-	public EntityBill(World par1World)
+	public EntityTimeBaby(World par1World)
 	{
 		super(par1World);
-		this.setSize(2.0F, 2.0F);
+		this.setSize(10.0F, 12.0F);
 		this.isImmuneToFire = true;
-		this.experienceValue = 100;
-		this.stepHeight = 6;
+		this.experienceValue = 60;
+		this.stepHeight = 4;
 	}
 	
-	public EntityBill(World par1World, double x, double y, double z)
+	public EntityTimeBaby(World par1World, double x, double y, double z)
 	{
 		super(par1World);
-		this.setSize(2.0F, 2.0F);
+		this.setSize(10.0F, 12.0F);
 		this.isImmuneToFire = true;
-		this.experienceValue = 100;
-		this.stepHeight = 6;
+		this.experienceValue = 60;
+		this.stepHeight = 4;
 		this.setPosition(x, y, z);
 	}
 	
@@ -142,13 +142,13 @@ public class EntityBill extends EntityPigZombie
 	{
 		super.applyEntityAttributes();
 
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(1000.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(700.0D);
 
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.6D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.7D);
 
-		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(10.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(5.0D);
 		
-		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(300.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(100.0D);
 		
 	}
 	
@@ -215,7 +215,7 @@ public class EntityBill extends EntityPigZombie
 	@Override
 	protected SoundEvent getDeathSound() 
 	{
-		return SoundsHandler.ENTITY_BILL_DEATH;
+		return null;
 	}
 
 	@Override
@@ -234,7 +234,7 @@ public class EntityBill extends EntityPigZombie
 	@Override
 	protected ResourceLocation getLootTable()
 	{
-		return LootTableHandler.BILL;
+		return LootTableHandler.BABY;
 
 	}
 
@@ -246,52 +246,8 @@ public class EntityBill extends EntityPigZombie
 	@Override
 	public void onUpdate() 
 	{
-		unicornDefence();
 		
 		super.onUpdate();
 	}
 	
-	public void unicornDefence()
-	{
-		Block blockNorth = world.getBlockState(this.getPosition().north()).getBlock();
-		Block blockSouth = world.getBlockState(this.getPosition().south()).getBlock();
-		Block blockEast = world.getBlockState(this.getPosition().east()).getBlock();
-		Block blockWest = world.getBlockState(this.getPosition().west()).getBlock();
-
-		Block hair = BlockInit.UNICORNHAIR;
-
-
-		if(blockNorth == hair && blockSouth == hair && blockEast == hair && blockWest == hair)
-		{
-			this.motionX = 0.0;
-			this.motionY = 0.0;
-			this.motionZ = 0.0;
-		}
-		
-		for(int i = 3; i >= -10; i--)
-		{	
-			Block blockNorth2 = world.getBlockState(this.getPosition().north().add(0, i, 0)).getBlock();
-			Block blockSouth2 = world.getBlockState(this.getPosition().south().add(0, i, 0)).getBlock();
-			Block blockEast2 = world.getBlockState(this.getPosition().east().add(0, i, 0)).getBlock();
-			Block blockWest2 = world.getBlockState(this.getPosition().west().add(0, i, 0)).getBlock();
-			
-			if(blockNorth2 == hair)
-			{
-				this.motionZ = 3.0;
-			}
-			if(blockSouth2 == hair)
-			{
-				this.motionZ = -3.0;
-			}
-			if(blockWest2 == hair)
-			{
-				this.motionX = 3.0;
-			}
-			if(blockEast2 == hair)
-			{
-				this.motionX = -3.0;
-			}
-		}
-	}
-
 }

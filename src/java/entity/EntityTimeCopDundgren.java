@@ -79,6 +79,7 @@ public class EntityTimeCopDundgren extends EntityEnderman
 		super(par1World);
 		this.setSize(1.0F, 3.0F);
 		this.setPathPriority(PathNodeType.OPEN, -1.0F);
+		this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ItemInit.LASER_ARM_CANNON));
 	}
 
 	@Override

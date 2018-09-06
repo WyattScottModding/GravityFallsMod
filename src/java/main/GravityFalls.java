@@ -39,7 +39,6 @@ public class GravityFalls {
     public static final String NETWORK_CHANNEL_NAME = "GravityFalls";
 
 
-
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event)
 	{
@@ -68,8 +67,6 @@ public class GravityFalls {
 	{
 		RegistryHandler.serverRegistries(event);
 	}
-
-
 
 
 }

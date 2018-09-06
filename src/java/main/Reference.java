@@ -5,7 +5,7 @@ import net.minecraft.world.DimensionType;
 public class Reference {
 
 	public static final String NAME = "Gravity Falls";
-	public static final String VERSION = "0.82";
+	public static final String VERSION = "1.0";
 	public static final String MODID = "gravityfalls";
 	public static final String ACCEPTED_VERSIONS = "1.12.2";
 	
@@ -25,8 +25,9 @@ public class Reference {
 	public static final int ENTITY_EIGHTBALL = 310;
 	public static final int ENTITY_EYEBATHUGE = 311;
 	public static final int ENTITY_KEYHOLE = 312;
-
-
+	public static final int ENTITY_UNICORN = 313;
+	public static final int ENTITY_GIDEONBOT = 314;
+	public static final int ENTITY_TIMEBABY = 315;
 
 
 	
@@ -66,7 +67,5 @@ public class Reference {
 		{
 			return registryName;
 		}
-		
-		
 	}
 }

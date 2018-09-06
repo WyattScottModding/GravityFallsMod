@@ -67,12 +67,11 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import potions.CustomPotions;
 
 public class EntityForget extends EntityFireball
 {
 
-	private EntityLivingBase owner;
+	private EntityPlayer shooter;
 	public Entity entity;
 	int ticksAlive;
 	private int ticksInAir;
@@ -87,6 +86,19 @@ public class EntityForget extends EntityFireball
 		super(worldIn);
 		this.setSize(40.0F, 20.0F);
 		this.world = worldIn;
+	}
+
+	public EntityForget(World worldIn, double x, double y, double z, EntityPlayer player)
+	{
+		super(worldIn);
+		this.setSize(40.0F, 20.0F);
+		this.setLocationAndAngles(x, y, z, this.rotationYaw, this.rotationPitch);
+		this.setPosition(x, y, z);
+		this.accelerationX = 1.0D;
+		this.accelerationY = 1.0D;
+		this.accelerationZ = 1.0D;
+		this.world = worldIn;
+		this.shooter = player;
 	}
 
 	public EntityForget(World worldIn, double x, double y, double z)
@@ -123,18 +135,20 @@ public class EntityForget extends EntityFireball
 
 			entityLiving.setNoAI(true);
 			entityLiving.setSilent(true);
-			
+
 			if(entity instanceof EntityPlayer)
 			{
 				EntityPlayer player = (EntityPlayer) entity;
-				
-				for(int i = 0; i < player.inventory.getSizeInventory(); i++)
+
+				if(shooter != null && player != shooter)
 				{
-					if(player.inventory.getStackInSlot(i).isEmpty())
-						player.inventory.removeStackFromSlot(i);
+					int j = (int)(Math.random() * player.inventory.getSizeInventory());
+
+					if(!player.inventory.getStackInSlot(j).isEmpty())
+						player.inventory.removeStackFromSlot(j);
 				}
 			}
-			
+
 			if(world.isRemote)
 			{
 				for(int i = 0; i < world.playerEntities.size(); i++)

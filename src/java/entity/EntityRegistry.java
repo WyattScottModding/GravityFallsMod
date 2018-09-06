@@ -21,6 +21,9 @@ public class EntityRegistry
 		registerEntity("eyebathuge", EntityEyeBatHuge.class, Reference.ENTITY_EYEBATHUGE, 40, 00000000, 10944522);
 		registerEntity("keyhole", EntityKeyhole.class, Reference.ENTITY_KEYHOLE, 40, 7403753, 14898591);
 		registerEntity("unicorn", EntityUnicorn.class, Reference.ENTITY_UNICORN, 60, 9669872, 16747519);
+		registerEntity("gideonbot", EntityGideonBot.class, Reference.ENTITY_GIDEONBOT, 60, 10735355, 15518927);
+		registerEntity("timebaby", EntityTimeBaby.class, Reference.ENTITY_TIMEBABY, 100, 15460340, 1703889);
+
 	}
 
 	public static void registerEntity(String name, Class<? extends Entity> entity, int id, int range, int color1, int color2)

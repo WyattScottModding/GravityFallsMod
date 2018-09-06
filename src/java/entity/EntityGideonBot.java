@@ -39,26 +39,22 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
-public class EntityGolfCart extends EntityMob
+public class EntityGideonBot extends EntityMob
 {
 	public EntityPlayer player;
-	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityGolfCart.class, DataSerializers.FLOAT);
+	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityGideonBot.class, DataSerializers.FLOAT);
 
-	public double acceleration = 1.0;
 	World world = null;
-	public boolean passenger = false;
-	public EntityPlayer driver = null;
-	public EntityPlayer rider = null;
 
-	public EntityGolfCart(World worldIn)
+	public EntityGideonBot(World worldIn)
 	{
 		super(worldIn);
-		this.setSize(1.8F, 2.8F);
-		this.stepHeight = 1;
+		this.setSize(10.0F, 30.0F);
+		this.stepHeight = 5;
 		this.world = worldIn;
 	}
 
-	public EntityGolfCart(World worldIn, double x, double y, double z)
+	public EntityGideonBot(World worldIn, double x, double y, double z)
 	{
 		super(worldIn);
 		this.setPosition(x, y, z);
@@ -68,8 +64,8 @@ public class EntityGolfCart extends EntityMob
 		this.prevPosX = x;
 		this.prevPosY = y;
 		this.prevPosZ = z;
-		this.setSize(1.8F, 2.8F);
-		this.stepHeight = 1;
+		this.setSize(10.0F, 30.0F);
+		this.stepHeight = 5;
 		this.world = worldIn;
 	}
 
@@ -82,7 +78,7 @@ public class EntityGolfCart extends EntityMob
 	protected void applyEntityAttributes()
 	{
 		super.applyEntityAttributes();
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.7D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.8D);
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(500.0D);
 	}
 
@@ -106,8 +102,8 @@ public class EntityGolfCart extends EntityMob
 
 		this.player = player;
 
-		this.height = 0.7F;
-		this.width = 2.5F;
+		this.height = 10F;
+		this.width = 10F;
 
 
 		if(stack != null && stack.getItem() == Items.SPAWN_EGG)
@@ -125,16 +121,9 @@ public class EntityGolfCart extends EntityMob
 				else
 				{
 					this.mountToCart(player);
-					driver = player;
+					//	Minecraft.getMinecraft().gameSettings.thirdPersonView = 1;
 					return true;
 				}
-			}
-			else if(!passenger)
-			{
-				this.mountToCart(player);
-				passenger = true;
-				rider = player;
-				return true;
 			}
 			else
 			{
@@ -164,19 +153,8 @@ public class EntityGolfCart extends EntityMob
 	{
 		if(this.isBeingRidden() && this.canBeSteered())
 		{
-			forward *= acceleration;
 			EntityLivingBase entitylivingbase = (EntityLivingBase)this.getControllingPassenger();
 
-			if(Keyboard.isKeyDown(Keyboard.KEY_A))
-			{
-				this.rotationYaw -= 5;
-				player.rotationYaw -=5;
-			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_D))
-			{
-				this.rotationYaw += 5;
-				player.rotationYaw +=5;
-			}
 			this.prevRotationYaw = this.rotationYaw;
 			this.rotationPitch = entitylivingbase.rotationPitch;
 			this.prevRotationPitch = this.rotationPitch * 0.5f;
@@ -191,7 +169,7 @@ public class EntityGolfCart extends EntityMob
 				forward *= 0.25f;
 			}
 
-			this.jumpMovementFactor = this.getAIMoveSpeed() * 0.1f;
+			this.jumpMovementFactor = 2.0F;
 
 			if(this.canPassengerSteer())
 			{
@@ -247,7 +225,7 @@ public class EntityGolfCart extends EntityMob
 	@Override
 	public boolean shouldRiderSit() 
 	{
-		return true;
+		return false;
 	}
 
 	@Override
@@ -281,31 +259,40 @@ public class EntityGolfCart extends EntityMob
 	}
 
 
-
 	@Override
 	public void onUpdate() 
 	{
-		if(Keyboard.isKeyDown(Keyboard.KEY_W) && acceleration < 10 && player != null)
-			acceleration += 0.1;
-		else
-			acceleration = 1.0;
-
+		//When the player dismounts
 		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && player != null)
 		{
 			dismountEntity(player);
 			player.dismountRidingEntity();
 			player.attemptTeleport(player.posX - 1, player.posY, player.posZ - 1);
 			this.attemptTeleport(this.posX, this.posY - 1, this.posZ);
+			player.eyeHeight = 1.8F;
+			this.setInvisible(false);
 			player = null;
 		}
+		//While the player is riding
+		if(player != null)
+		{
+			player.setHealth(this.getHealth());
+			player.fallDistance = 0.0F;
+			player.eyeHeight = 10;
+			this.setInvisible(true);
+			this.rotationYaw = player.rotationYaw;
+			this.rotationPitch = player.rotationPitch;
+
+		}
+		this.fallDistance = 0.0F;
 
 		if(getAttackingEntity() instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) getAttackingEntity();
 
 			if(!player.isCreative())
-				this.dropItem(ItemInit.GOLF_CART, 1);
-			
+				this.dropItem(ItemInit.GIDEONBOT, 1);
+
 			this.setDead();
 		}
 

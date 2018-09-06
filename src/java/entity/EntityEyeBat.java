@@ -79,14 +79,19 @@ public class EntityEyeBat extends EntityBat
 	{
 		super(par1World);
 		this.setSize(2.0F, 0.5F);
-
+	}
+	
+	public EntityEyeBat(World par1World, double x, double y, double z)
+	{
+		super(par1World);
+		this.setSize(2.0F, 0.5F);
+		this.setPosition(x, y, z);
 	}
 
 
 	@Override
 	protected void applyEntityAttributes() 
 	{
-
 		super.applyEntityAttributes();
 
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(10.0D);

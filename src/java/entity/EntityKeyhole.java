@@ -6,6 +6,8 @@ import init.BlockInit;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
+import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
@@ -20,7 +22,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
 import net.minecraft.world.World;
 
-public class EntityKeyhole extends EntitySpider
+public class EntityKeyhole extends EntityPigZombie
 {
 
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
@@ -31,12 +33,19 @@ public class EntityKeyhole extends EntitySpider
 		super(par1World);
 		this.setSize(0.5F, 0.5F);
 	}
+	
+	@Override
+	protected void applyEntityAI() 
+	{
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+
+        super.applyEntityAI();
+	}
 
 
 	@Override
 	protected void applyEntityAttributes() 
 	{
-
 		super.applyEntityAttributes();
 
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(300.0D);

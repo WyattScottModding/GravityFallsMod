@@ -9,9 +9,12 @@ import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.World;
 
 public class CommandDimensionTeleport extends CommandBase
 {
@@ -64,8 +67,15 @@ public class CommandDimensionTeleport extends CommandBase
 		{
 			if(dimensionID == 0)
 			{
-				((EntityPlayer) sender).preparePlayerToSpawn();
-				((EntityPlayer) sender).respawnPlayer();
+				if(((EntityPlayer) sender).getBedLocation() != null)
+				{
+					BlockPos pos = new BlockPos(((EntityPlayer) sender).getBedLocation());
+
+					Teleport.teleportToDimension((EntityPlayer)sender, dimensionID, pos.getX(), pos.getY(), pos.getZ());
+				}
+				else
+					Teleport.teleportToDimension((EntityPlayer)sender, dimensionID, 0, 70, 0);
+
 			}
 			else if(dimensionID == 1)
 			{
@@ -73,12 +83,39 @@ public class CommandDimensionTeleport extends CommandBase
 			}
 			else if(dimensionID == 2)
 			{
-				Teleport.teleportToDimension((EntityPlayer)sender, dimensionID, 0, 65, 0);
+				Teleport.teleportToDimension((EntityPlayer)sender, dimensionID, -18.5, 62, -18.5);
 			}
-			else
+			else if(dimensionID == -1 || dimensionID == 3)
 			{
-				Teleport.teleportToDimension((EntityPlayer)sender, dimensionID, sender.getPosition().getX(), sender.getPosition().getY(), sender.getPosition().getZ());
+				if(sender instanceof EntityPlayer)
+					attemptTeleport((EntityPlayer)sender, server.getEntityWorld(), dimensionID);
 			}	
+			else
+				Teleport.teleportToDimension((EntityPlayer)sender, dimensionID, ((EntityPlayer) sender).posX, ((EntityPlayer) sender).posY, ((EntityPlayer) sender).posZ);
 		}
+	}
+	
+	public void attemptTeleport(EntityPlayer player, World world, int dimension)
+	{
+		int x = 0;
+		int y = 70;
+		int z = 0;
+		BlockPos pos = new BlockPos(x, y, z);
+		int counter = 0;
+
+		while(world.getBlockState(pos).getBlock() != Blocks.AIR && world.getBlockState(pos.down()).getBlock() == Blocks.AIR)
+		{
+			x = (int) (Math.random() * 400) - 200;
+			z = (int) (Math.random() * 400) - 200;
+
+			pos = new BlockPos(x, y, z);
+
+			if(counter > 150000)
+			{
+				counter = 0;
+				y = (int) (Math.random() * 20) - 10;
+			}
+		}
+		Teleport.teleportToDimension(player, dimension, x, y, z);
 	}
 }

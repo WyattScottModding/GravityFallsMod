@@ -26,6 +26,7 @@ import net.minecraft.entity.ai.EntityAIHurtByTarget;
 import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
 import net.minecraft.entity.ai.EntityAIMate;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
 import net.minecraft.entity.ai.EntityAIOwnerHurtTarget;
 import net.minecraft.entity.ai.EntityAISit;
@@ -69,12 +70,13 @@ import net.minecraft.world.World;
 
 public class EntitySecurityDroid extends EntityPigZombie
 {
-    public static final net.minecraft.entity.ai.attributes.IAttribute REACH_DISTANCE = new net.minecraft.entity.ai.attributes.RangedAttribute(null, "generic.reachDistance", 20.0D, 0.0D, 1024.0D).setShouldWatch(true);
+	public static final net.minecraft.entity.ai.attributes.IAttribute REACH_DISTANCE = new net.minecraft.entity.ai.attributes.RangedAttribute(null, "generic.reachDistance", 20.0D, 0.0D, 1024.0D).setShouldWatch(true);
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
 	private static final UUID ATTACK_SPEED_BOOST_MODIFIER_UUID = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
 	private static final AttributeModifier ATTACK_SPEED_BOOST_MODIFIER = (new AttributeModifier(ATTACK_SPEED_BOOST_MODIFIER_UUID, "Attacking speed boost", 0.05D, 0)).setSaved(false);
 	private int angerLevel;
-    private UUID angerTargetUUID;
+	private UUID angerTargetUUID;
+	private boolean pullEntity = false;
 
 	public EntitySecurityDroid(World par1World)
 	{
@@ -82,12 +84,19 @@ public class EntitySecurityDroid extends EntityPigZombie
 		this.setSize(3.0F, 6.0F);
 		this.stepHeight = 10;
 	}
+	
+	@Override
+	protected void applyEntityAI() 
+	{
+        this.targetTasks.addTask(2, new EntityAINearestAttackableTarget(this, EntityPlayer.class, true));
+
+        super.applyEntityAI();
+	}
 
 
 	@Override
 	protected void applyEntityAttributes() 
 	{
-
 		super.applyEntityAttributes();
 
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(150.0D);
@@ -97,15 +106,15 @@ public class EntitySecurityDroid extends EntityPigZombie
 		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(6.0D);;
 
 		this.getEntityAttribute(SPAWN_REINFORCEMENTS_CHANCE).setBaseValue(0.0D);
-		
-        this.getAttributeMap().registerAttribute(REACH_DISTANCE);
 
+		this.getAttributeMap().registerAttribute(REACH_DISTANCE);
 	}
-	
+
 	@Override
 	protected void updateAITasks()
 	{
 		IAttributeInstance iattributeinstance = this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED);
+
 
 		if (this.isAngry())
 		{
@@ -154,7 +163,7 @@ public class EntitySecurityDroid extends EntityPigZombie
 	@Override
 	protected void playStepSound(BlockPos pos, Block blockIn)
 	{
-		
+
 	}
 
 	@Override
@@ -179,16 +188,55 @@ public class EntitySecurityDroid extends EntityPigZombie
 
 	@Override
 	public void onUpdate()
-	{
-		
-		
-		
+	{	
+		if(this.attackingPlayer != null)
+		{
+			EntityPlayer player = this.attackingPlayer;
+
+			if(world.getWorldTime() % 100 == 0)
+			{
+				if(pullEntity)
+					pullEntity = false;
+				else
+					pullEntity = true;
+			}
+
+//			if(pullEntity)
+	//			pullEntity(player);
+		}
 		super.onUpdate();
 	}
-	
-	public void pullPlayer(EntityPlayer player)
+
+	public void pullEntity(EntityPlayer player)
 	{
-		
+		double droidX = this.posX;
+		double droidY = this.posY;
+		double droidZ = this.posZ;
+
+		double playerX = player.posX;
+		double playerY = player.posY;
+		double playerZ = player.posZ;
+
+		if(droidX < playerX)
+			player.motionX = -1.0F;
+		else if(droidX > playerX)
+			player.motionX = 1.0F;
+		else
+			player.motionX = 0.0F;
+
+		if(droidY < playerY)
+			player.motionY = -1.0F;
+		else if(droidY > playerY)
+			player.motionY = 1.0F;
+		else
+			player.motionY = 0.0F;
+
+		if(droidZ < playerZ)
+			player.motionZ = -1.0F;
+		else if(droidZ > playerZ)
+			player.motionZ = 1.0F;
+		else
+			player.motionZ = 0.0F;
 	}
 
 }

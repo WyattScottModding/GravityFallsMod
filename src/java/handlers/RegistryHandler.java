@@ -1,6 +1,7 @@
 package handlers;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,25 +15,34 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import com.google.common.collect.Multimap;
 
+import animations.RenderLaser;
 import armor.FireHelmet;
 import armor.RegenerationLegs;
 import armor.SpeedBoots;
 import armor.StrengthChestplate;
 import blocks.LightSource;
 import commands.CommandDimensionTeleport;
+import commands.CommandLocate2;
+import commands.Teleport;
+import entity.EntityBill;
 import entity.EntityRegistry;
+import entity.EntityTimeBaby;
 import init.BiomeInit;
 import init.BlockInit;
 import init.DimensionInit;
 import init.ItemInit;
 import init.PotionInit;
 import items.FlashLight;
+import items.ReturnDevice;
+import items.TimeTape;
 import main.GravityFalls;
 import main.IHasModel;
 import main.Reference;
 import models.ModelSize;
 import net.minecraft.advancements.PlayerAdvancements;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockColored;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.model.ModelBase;
@@ -52,12 +62,15 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.ai.attributes.RangedAttribute;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.item.EntityItemFrame;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
+import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemCompass;
 import net.minecraft.item.ItemStack;
@@ -65,7 +78,9 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -73,6 +88,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.GameType;
 import net.minecraft.world.World;
@@ -86,6 +102,7 @@ import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
@@ -97,6 +114,7 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import tileEntities.TileEntityLaser;
 import worldgen.WorldGenCustomStructures;
 import worldgen.WorldGenOres;
 
@@ -111,7 +129,8 @@ public class RegistryHandler
 	public static World world = null;
 
 	public static boolean portalActive = false;
-	public static int countdown = 18000;
+	public static boolean checkActive = false;
+	public static int countdown = -1;
 
 	public static boolean clicked = false;
 	public static boolean magicClicked = false;
@@ -128,6 +147,18 @@ public class RegistryHandler
 	public static boolean messageSent = false;
 	public static List<ItemStack> inventoryStacks = null;
 	public static boolean inGlobnar = false;
+	public static boolean recievedTimeWish = false;
+	public static boolean timebabySpawned = false;
+
+	public static boolean returnDevice = false;
+
+	public static PortalBlocks portalBlocks = null;
+	public static boolean portalControl = false;
+
+	private static boolean setBlocks = false;
+
+	public static boolean raiseDead = false;
+	public static boolean zombieMessage = false;
 
 
 	@SubscribeEvent
@@ -141,6 +172,7 @@ public class RegistryHandler
 	{
 		event.getRegistry().registerAll(BlockInit.BLOCKS.toArray(new Block[0]));
 		TileEntityHandler.registerTileEntites();
+		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLaser.class, new RenderLaser());
 	}
 
 	@SubscribeEvent
@@ -199,15 +231,16 @@ public class RegistryHandler
 	public static void serverRegistries(FMLServerStartingEvent event)
 	{
 		event.registerServerCommand(new CommandDimensionTeleport());
-		event.registerServerCommand(new CommandEffect());
-
+		event.registerServerCommand(new CommandLocate2());
 	}
 
 
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingUpdateEvent event)
 	{		
-		if (event.getEntity() instanceof EntityPlayer)
+		levitationRender(event.getEntityLiving());
+
+		if (event.getEntityLiving() instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			RegistryHandler.world = player.world;
@@ -217,16 +250,15 @@ public class RegistryHandler
 			flashlightRender(player);
 			heightRender(player);
 			globnarRender(player);
+			//nightmareRender(player);
+			
+			if(portalControl)
+				portalRender(player);
+			raiseDead(player);
+
 
 			if(scale > 1 && Mouse.isButtonDown(0))
 				extendedReach(player, player.world, (int) (scale * 4));
-
-			//Portal
-			if(portalActive)
-			{
-				System.out.println("Portal Active");
-			}
-
 
 		}
 
@@ -451,13 +483,13 @@ public class RegistryHandler
 		{
 			player.addPotionEffect(new PotionEffect(Potion.getPotionById(10), 10, 1));
 		}
-		
+
 		float height = 1.8F;
-		
+
 		if(nbt.hasKey("height"))
 		{
 			height = nbt.getFloat("height");
-		
+
 			player.stepHeight = height / 2;
 			player.height = height;
 			player.width = height / 3;
@@ -642,9 +674,11 @@ public class RegistryHandler
 	}
 
 	public static void globnarRender(EntityPlayer player)
-	{
+	{	
 		if(player.dimension == 2)
 		{
+			//	EntityTimeBaby timebaby = new EntityTimeBaby(world);
+			EntityBill timebaby = null;
 			inGlobnar = true;
 			if(!messageSent)
 			{
@@ -652,21 +686,47 @@ public class RegistryHandler
 				player.sendMessage(msg);
 				msg = new TextComponentString("You must defeat Time Baby to win the Time Wish!");
 				player.sendMessage(msg);
+				msg = new TextComponentString("All Time Tapes will now be confiscated.");
+				player.sendMessage(msg);
 				messageSent = true;
 
-				/*
-				for(int i = 0; i < 27; i++)
+
+				//Confiscate all Time Tapes
+				for(int i = 0; i < player.inventory.getSizeInventory(); i++)
 				{
-					if(player.inventory.getStackInSlot(i) != null)
+					if(player.inventory.getStackInSlot(i).getItem() instanceof TimeTape)
 					{
-						inventoryStacks.add(player.inventory.getStackInSlot(i));
 						player.inventory.removeStackFromSlot(i);
 					}
 				}
-				int j  = player.inventory.getSlotFor(new ItemStack(ItemInit.TIME_TAPE));
-				if(j != -1)
-					player.inventory.removeStackFromSlot(j);
-				 */
+				recievedTimeWish = false;
+			}
+			//Spawn Time Baby
+			if(!player.world.isRemote && !timebabySpawned)
+			{
+				timebaby = new EntityBill(player.world, -62.5, 74, -18.5);
+				player.world.spawnEntity(timebaby);
+				timebaby.changeDimension(2);
+				timebabySpawned = true;
+			}
+
+			//Give the player a Time Wish and a Time Tape
+			if(timebaby != null && timebaby.isDead && !recievedTimeWish && timebabySpawned && !player.world.isRemote)
+			{
+				EntityItem entityTape = new EntityItem(player.world);
+				entityTape.setItem(new ItemStack(ItemInit.TIME_TAPE));
+				entityTape.setPosition(-18.5, 61, -18.5);
+				player.world.spawnEntity(entityTape);
+
+				EntityItem entityWish = new EntityItem(player.world);
+				entityWish.setItem(new ItemStack(ItemInit.TIME_WISH));
+				entityWish.setPosition(-18.5, 61, -18.5);
+				player.world.spawnEntity(entityWish);
+
+				recievedTimeWish = true;
+				timebabySpawned = false;
+				ITextComponent msg = new TextComponentString("Time Baby has been defeated!");
+				player.sendMessage(msg);
 			}
 		}
 		else
@@ -674,7 +734,7 @@ public class RegistryHandler
 			inGlobnar = false;
 			messageSent = false;
 		}
-
+		/*
 		if(!inGlobnar && inventoryStacks != null)
 		{
 			for(int i = 0; i < 27; i++)
@@ -683,7 +743,292 @@ public class RegistryHandler
 			}
 			inventoryStacks = null;
 		}
+		 */
+	}
+
+	public static void nightmareRender(EntityPlayer player)
+	{	
+		if(player.dimension == 3)
+		{
+			if(!returnDevice)
+			{
+				boolean hasDevice = false;
+
+				for(int i = 0; i < player.inventory.getSizeInventory(); i++)
+				{
+					if(player.inventory.getStackInSlot(i).getItem() instanceof ReturnDevice)
+					{
+						hasDevice = true;
+					}
+				}
+
+				if(!hasDevice && !player.world.isRemote)
+				{
+					EntityItem entityReturn = new EntityItem(player.world);
+					entityReturn.setItem(new ItemStack(ItemInit.RETURN_DEVICE));
+					entityReturn.setPosition(player.posX, player.posY, player.posZ);
+					player.world.spawnEntity(entityReturn);
+					returnDevice = true;
+				}
+			}
+		}
+		else
+			returnDevice = false;
+	}
+
+	public static void portalRender(EntityPlayer player)
+	{
+		Date date = new Date();		
+
+		if(!checkActive && nbt.hasKey("portalActive"))
+		{
+			portalActive = nbt.getBoolean("portalActive");
+			checkActive = true;
+		}
+		else
+		{
+			nbt.setBoolean("portalActive", portalActive);
+		}
+
+		if(countdown == -1 && portalActive && !nbt.hasKey("countdown"))
+		{
+			nbt.setLong("countdown", date.getTime());
+		}
+
+		if(nbt.hasKey("countdown"))
+			countdown = 36000 - (int)(date.getTime() - nbt.getLong("countdown"));
+
+
+
+		if(portalActive)
+		{
+			if(countdown == 36000)
+				setPortal();
+			if(countdown > 0)
+				countdown--;
+			else if(countdown == 0)
+				portalOn();
+
+			//760
+			if(countdown == 760)
+				world.playSound(player, player.getPosition(), SoundsHandler.PORTAL_WORKING, SoundCategory.BLOCKS, 1.0F, 1.0F);
+			else if(countdown == 0)
+				world.playSound(player, player.getPosition(), SoundsHandler.PORTAL_FINISHED, SoundCategory.BLOCKS, 1.0F, 1.0F);
+
+
+			/*
+			if(portalBlocks != null)
+			{
+				Block block = world.getBlockState(portalBlocks.getLeverPos()).getBlock();
+
+				if(block != BlockInit.PORTAL_LEVER)
+					removePortal();
+			}
+			 */
+
+		}
+		else
+		{
+			nbt.removeTag("countdown");
+			removePortal();
+		}
+	}	
+
+	public static void levitationRender(EntityLivingBase entity)
+	{
+		if(portalActive)
+		{
+			if(countdown < 35500 && countdown > 35460)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+			else if(countdown < 27000 && countdown > 26880)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+			else if(countdown < 20000 && countdown > 19820)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+			else if(countdown < 14000 && countdown > 13760)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+			else if(countdown < 8000 && countdown > 7700)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+			else if(countdown < 6000 && countdown > 5680)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+			else if(countdown < 4000 && countdown > 3660)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+			else if(countdown < 3000 && countdown > 2640)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+			else if(countdown < 2000 && countdown > 1620)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+			else if(countdown < 1500 && countdown > 1100)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+			else if(countdown < 1000 && countdown > 550)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+			else if(countdown < 500 && countdown > 0)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+		}
+	}
+
+	public static void portalOn()
+	{
+		if(portalBlocks != null)
+		{
+			IBlockState state =  BlockInit.BLOCKTELEPORTER.getDefaultState();
+
+			for(BlockPos element : portalBlocks.getPortal())
+			{
+				world.setBlockState(element, state);
+			}
+		}
+	}
+
+	public static void setPortal()
+	{
+		if(portalBlocks != null && !setBlocks)
+		{
+			IBlockState state =  BlockInit.LIGHT_WHITE.getDefaultState();
+
+			for(BlockPos element : portalBlocks.getTriangle())
+			{
+				world.setBlockState(element, state);
+			}
+
+			state =  BlockInit.LIGHT_BLACK.getDefaultState();
+
+			for(BlockPos element : portalBlocks.getRing())
+			{
+				world.setBlockState(element, state);
+			}
+
+			state =  BlockInit.LIGHT_CYAN.getDefaultState();
+
+			for(BlockPos element : portalBlocks.getCircle())
+			{
+				world.setBlockState(element, state);
+			}
+
+			setBlocks = true;
+		}
+	}
+
+	public static void removePortal()
+	{
+		if(portalBlocks != null && setBlocks)
+		{
+			IBlockState state = Blocks.CONCRETE.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.WHITE);
+
+			for(BlockPos element : portalBlocks.getTriangle())
+			{
+				world.setBlockState(element, state);
+			}
+
+			state = Blocks.CONCRETE.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.BLACK);
+
+			for(BlockPos element : portalBlocks.getRing())
+			{
+				world.setBlockState(element, state);
+			}
+
+			state = Blocks.CONCRETE.getDefaultState().withProperty(BlockColored.COLOR, EnumDyeColor.CYAN);
+
+			for(BlockPos element : portalBlocks.getCircle())
+			{
+				world.setBlockState(element, state);
+			}
+
+			state =  Blocks.AIR.getDefaultState();
+
+			for(BlockPos element : portalBlocks.getPortal())
+			{
+				world.setBlockState(element, state);
+			}
+			setBlocks = false;
+		}
 	}
 
 
+	public static void raiseDead(EntityPlayer player)
+	{
+		if(nbt.hasKey("raiseDead"))
+		{
+			if(nbt.getBoolean("raiseDead"))
+			{
+				raiseDead = true;
+			}
+		}
+		else
+			nbt.setBoolean("raiseDead", raiseDead);
+		
+		if(player.world.isDaytime())
+		{
+			raiseDead = false;
+			zombieMessage = false;
+		}
+		
+		//Timer based on Difficulty
+		boolean zombieSpawn = false;
+		
+		if(player.world.getDifficulty().equals(EnumDifficulty.PEACEFUL))
+			zombieSpawn = false;
+		else if(player.world.getDifficulty().equals(EnumDifficulty.EASY))
+		{
+			if(player.world.getWorldTime() % 30 == 0)
+				zombieSpawn = true;
+		}
+		else if(player.world.getDifficulty().equals(EnumDifficulty.NORMAL))
+		{
+			if(player.world.getWorldTime() % 20 == 0)
+				zombieSpawn = true;
+		}
+		else if(player.world.getDifficulty().equals(EnumDifficulty.HARD))
+		{
+			if(player.world.getWorldTime() % 10 == 0)
+				zombieSpawn = true;
+		}
+			
+		
+
+		if(raiseDead && !player.world.isRemote && zombieSpawn)
+		{
+			if(!zombieMessage)
+			{
+				ITextComponent msg = new TextComponentString("You feel a sharp chill go down your spine.");
+				player.sendMessage(msg);
+				zombieMessage = true;
+			}
+
+			int x = (int) ((Math.random() * 80) - 40 + player.posX);
+			int z = (int) ((Math.random() * 80) - 40 + player.posZ);
+			int y = findGround(player.world, x, (int) player.posY, z);
+			BlockPos pos1 = new BlockPos(x, y + 1, z);
+			BlockPos pos2 = new BlockPos(x, y + 2, z);
+
+
+			if(y != -1 && player.world.getBlockState(pos1).getBlock() == Blocks.AIR && player.world.getBlockState(pos2).getBlock() == Blocks.AIR)
+			{
+				EntityZombie zombie = new EntityZombie(player.world);
+				zombie.setPosition(x, y + 1, z);
+
+				player.world.spawnEntity(zombie);			
+			}
+		}
+		nbt.setBoolean("raiseDead", raiseDead);
+		zombieSpawn = false;
+	}
+
+	private static int findGround(World world, int x, int playerY, int z)
+	{
+		int y = playerY + 15;
+		boolean foundGround = false;
+
+		while(!foundGround && y-- >= 0)
+		{
+			if(y < (playerY - 15))
+				return -1;
+
+			Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
+			foundGround = block.getDefaultState().isSideSolid(world, new BlockPos(x, y, z), EnumFacing.UP);
+		}
+
+		if(foundGround)
+			return y;
+
+		return -1;
+	}
 }

@@ -63,37 +63,34 @@ public class BiomeGravityFalls extends Biome
 		
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityGnome.class, 20, 10, 20));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityGolem.class, 1, 0, 1));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityPigZombie.class, 2, 0, 5));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityPigZombie.class, 2, 0, 4));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityParrot.class, 5, 1, 3));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityBat.class, 15, 2, 6));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityRabbit.class, 5, 0, 4));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityLlama.class, 3, 0, 5));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityShulker.class, 100, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityShulker.class, 4, 2, 2));
 		this.spawnableCreatureList.add(new SpawnListEntry(EntityWolf.class, 6, 0, 8));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityZombieHorse.class, 1, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntitySkeletonHorse.class, 1, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityWitherSkeleton.class, 1, 0, 1));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityTimeCopDundgren.class, 10, 0, 1));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityTimeCopLolph.class, 10, 0, 1));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityUnicorn.class, 1, 1, 5));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityTimeCopDundgren.class, 4, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityTimeCopLolph.class, 4, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityUnicorn.class, 2, 1, 5));
 		
-		this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntitySheep.class, 12, 4, 4));
+		this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntitySheep.class, 15, 4, 4));
         this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityPig.class, 10, 4, 4));
         this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityChicken.class, 10, 4, 4));
-        this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityCow.class, 8, 4, 4));
-        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntitySpider.class, 100, 4, 4));
-        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityZombie.class, 95, 4, 4));
+        this.spawnableCreatureList.add(new Biome.SpawnListEntry(EntityCow.class, 15, 4, 4));
+        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntitySpider.class, 50, 4, 4));
+        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityZombie.class, 70, 4, 4));
         this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityZombieVillager.class, 5, 1, 1));
-        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntitySkeleton.class, 100, 4, 4));
-        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntitySlime.class, 100, 4, 4));
+        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntitySkeleton.class, 50, 4, 4));
+        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntitySlime.class, 10, 4, 4));
         this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityEnderman.class, 10, 1, 4));
-        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityWitch.class, 5, 1, 1));
-        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityEyeBat.class, 2, 5, 10));
+        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityWitch.class, 8, 1, 1));
+        this.spawnableMonsterList.add(new Biome.SpawnListEntry(EntityEyeBat.class, 16, 5, 10));
 
         this.addDefaultFlowers();
-
-
-
 	}
 	
 	@Override

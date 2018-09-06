@@ -41,13 +41,13 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 	public double prevZ2 = -5;
 	public double prevZ3 = -5;
 	public double prevZ4 = -5;
-	
+
 	public boolean onWall = false;
 	public int deBug = 0;
-	
+
 	public double motionX;
 	public double motionZ;
-	
+
 	private int counter = 0;
 
 	public SpeedBoots(String name, ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
@@ -68,7 +68,7 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 			counter++;
 		else if(counter == 10)
 			counter = 0;
-		
+
 		if(entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
@@ -95,11 +95,11 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 
 				this.motionX = player.motionX;
 				this.motionZ = player.motionZ;
-				
+
 				player.stepHeight = (int) (speed / 10) + 1;
 
 				player.fallDistance = 0;
-				
+
 				//Running up Walls
 				BlockPos pos1 = new BlockPos(player.posX, player.posY, player.posZ + 1);
 				BlockPos pos2 = new BlockPos(player.posX, player.posY, player.posZ - 1);
@@ -111,19 +111,19 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 				boolean xMovementWaterFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_WATER || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_WATER;		
 				boolean xMovementLava = world.getBlockState(pos3).getBlock() != Blocks.LAVA || world.getBlockState(pos4).getBlock() != Blocks.LAVA;		
 				boolean xMovementLavaFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_LAVA || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_LAVA;		
-				
+
 				if(speed > 15 && Keyboard.isKeyDown(Keyboard.KEY_W) && xMovementWaterFlowing && xMovementLava && xMovementLavaFlowing && xMovementAir && xMovementWater && player.posX == this.prevX1 && player.posX == this.prevX2 && player.posX == this.prevX3 && player.posX == this.prevX4)
 				{
 					player.motionY = (double) speed / 15;
 					onWall = true;
-					
-					
+
+
 				}
 				else if(onWall)
 				{
 					player.motionY = -(double) speed / 15;
 					deBug++;
-					
+
 					if(deBug == 8)
 					{
 						onWall = false;
@@ -141,14 +141,14 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 				boolean zMovementWaterFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_WATER || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_WATER;		
 				boolean zMovementLava = world.getBlockState(pos3).getBlock() != Blocks.LAVA || world.getBlockState(pos4).getBlock() != Blocks.LAVA;		
 				boolean zMovementLavaFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_LAVA || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_LAVA;
-				
+
 				if(speed > 15 && Keyboard.isKeyDown(Keyboard.KEY_W) && zMovementWaterFlowing && zMovementLava && zMovementLavaFlowing && zMovementAir && zMovementWater && player.posZ == this.prevZ1 && player.posZ == this.prevZ2 && player.posZ == this.prevZ3 && player.posZ == this.prevZ4)
 				{
 					if(speed < 45)
 						player.motionY = (double) speed / 15;
 					else
 						player.motionY = 3;
-					
+
 					onWall = true;
 				}
 				else if(onWall)
@@ -158,7 +158,7 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 					else
 						player.motionY = -3;
 					deBug++;
-					
+
 					if(deBug == 8)
 					{
 						onWall = false;
@@ -171,22 +171,23 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 				this.prevZ1 = player.posZ;
 
 				//Running on Water
-				if(player.isOverWater() && speed > 15 && Keyboard.isKeyDown(Keyboard.KEY_W) && world.getBlockState(player.getPosition().down()).getBlock() != Blocks.AIR)
+				if(player.isOverWater() && speed > 15 && world.getBlockState(player.getPosition().down()).getBlock() != Blocks.AIR)
 				{
-					if(world.getBlockState(player.getPosition()).getBlock() == Blocks.WATER)
-						player.motionY = 1.0F;
-					else
-						player.motionY = 0.0F;
+					if(Keyboard.isKeyDown(Keyboard.KEY_W))
+					{
+						if(world.getBlockState(player.getPosition()).getBlock() == Blocks.WATER)
+							player.motionY = 1.0F;
+						else
+							player.motionY = 0.0F;
 
-					float f = speed / 30;
-					float yaw2 = player.rotationYaw;
-					float pitch2 = player.rotationPitch;
+						float f = speed / 20;
+						float yaw2 = player.rotationYaw;
 
-					player.motionX = (double)(-MathHelper.sin(yaw2 / 180.0F * (float)Math.PI) * MathHelper.cos(pitch2 / 180.0F * (float)Math.PI) * f);
-					player.motionZ = (double)(MathHelper.cos(yaw2 / 180.0F * (float)Math.PI) * MathHelper.cos(pitch2 / 180.0F * (float)Math.PI) * f);
-				}
-
-			}	
+						player.motionX = (double)(-MathHelper.sin(yaw2 / 180.0F * (float)Math.PI));
+						player.motionZ = (double)(MathHelper.cos(yaw2 / 180.0F * (float)Math.PI));
+					}
+				}	
+			}
 		}
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}
@@ -205,7 +206,7 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 		else //if(counter == 8 || counter == 9)
 			return Reference.MODID + ":textures/models/armor/magic_layer_1-5.png";
 	}
-	
+
 	@Override
 	public void registerModels() 
 	{

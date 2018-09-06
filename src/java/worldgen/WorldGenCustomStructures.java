@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import handlers.RegistryHandler;
 import init.BiomeInit;
 import init.BlockInit;
 import net.minecraft.block.Block;
+import net.minecraft.command.CommandLocate;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
@@ -41,8 +43,6 @@ public class WorldGenCustomStructures implements IWorldGenerator
 	private boolean generated15 = false;
 	private boolean generated16 = false;
 
-	
-
 
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator,
@@ -69,7 +69,6 @@ public class WorldGenCustomStructures implements IWorldGenerator
 			this.generateStructureCrystal(new WorldGenStructure("crystal"), world, random, chunkX, chunkZ, 200, Blocks.GRASS, BiomeGravityFalls.class);
 			this.generateStructureTrees(new WorldGenStructure("redwoodtrees"), world, random, chunkX, chunkZ, Blocks.GRASS, BiomeGravityFalls.class);
 			this.generateStructureUranium(new WorldGenStructure("uranium"), world, random, chunkX, chunkZ);
-			this.generateStructureNowYouSeeIt(new WorldGenStructure("nowyouseeitnowyoudontium"), world, random, chunkX, chunkZ, BiomeGravityFalls.class);
 			this.generateStructureCopper(new WorldGenStructure("copper"), world, random, chunkX, chunkZ);
 
 
@@ -177,6 +176,8 @@ public class WorldGenCustomStructures implements IWorldGenerator
 			
 			break;
 		case 3:
+			this.generateStructureCrystal(new WorldGenStructure("chest"), world, random, chunkX, chunkZ, 100, BlockInit.ASTEROID, BiomeNightmareRealm.class);
+		
 			break;
 
 
@@ -236,6 +237,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 				{
 					generator.generate(world, random, pos);
 					next = 3;
+					addStructureToLocate(pos, "Journal3");
 				}
 			}
 		}
@@ -250,10 +252,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 		int z = (chunkZ * 16) + random.nextInt(15) + 8;
 		int y = calculateGenerationHeight(world, x, z, topBlock) - 15;
 
-
 		BlockPos pos = new BlockPos(x, y, z);
-
-
 
 		Class<?> biome = world.provider.getBiomeForCoords(pos).getClass();
 
@@ -265,6 +264,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 				{
 					generator.generate(world, random, pos);
 					next = 2;
+					addStructureToLocate(pos, "Bunker");
 				}
 			}
 		}
@@ -296,10 +296,10 @@ public class WorldGenCustomStructures implements IWorldGenerator
 				{
 					generator.generate(world, random, pos);
 					next = 4;
+					addStructureToLocate(pos, "MysteryShack");
 				}
 			}
 		}
-		//	}
 	}
 
 	private void generateStructureCrystal(WorldGenerator generator, World world, Random random, int chunkX, int chunkZ, int chance, Block topBlock, Class<?>...classes)
@@ -309,18 +309,18 @@ public class WorldGenCustomStructures implements IWorldGenerator
 		int x = (chunkX * 16) + random.nextInt(15) + 8;
 		int z = (chunkZ * 16) + random.nextInt(15) + 8;
 		int y = calculateGenerationHeight(world, x, z, topBlock) + 1;
-
-
+		
+		
 		BlockPos pos = new BlockPos(x, y, z);
 
 		Class<?> biome = world.provider.getBiomeForCoords(pos).getClass();
 
-		if(world.getWorldType() != WorldType.FLAT)
+		if(world.getWorldType() != WorldType.FLAT  && world.getBlockState(pos).getBlock() == Blocks.AIR)
 		{
 			if(classesList.contains(biome))
 			{
 				if(random.nextInt(chance) == 0)
-				{
+				{ 
 					generator.generate(world, random, pos);
 				}
 			}
@@ -350,6 +350,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 				{
 					generator.generate(world, random, pos);
 					next = 1;
+					addStructureToLocate(pos, "UFO");
 				}
 			}
 		}
@@ -464,8 +465,11 @@ public class WorldGenCustomStructures implements IWorldGenerator
 			foundGround = block == topBlock;
 		}
 
-
 		return y;
 	}
 
+	protected void addStructureToLocate(BlockPos pos, String name)
+    {
+        RegistryHandler.nbt.setString(name,"Structure Located At: " + pos.getX() + " " +pos.getY() + " " + pos.getZ());
+    }
 }

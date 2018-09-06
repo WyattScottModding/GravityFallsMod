@@ -16,11 +16,11 @@ import blocks.CopperBlock;
 import blocks.CryogenicTubeOff;
 import blocks.CryogenicTubeOn;
 import blocks.Crystal;
+import blocks.CursedDoor;
 import blocks.HiddenElement;
 import blocks.HyperDrive;
 import blocks.LightSource;
 import blocks.MetalTree;
-import blocks.OutHouse;
 import blocks.PowerCord;
 import blocks.RedWoodLeaves;
 import blocks.RedWoodLogs;
@@ -32,14 +32,8 @@ import blocks.UraniumFurnace;
 import blocks.UraniumTank;
 import blocks.UraniumTankFilled;
 import blocks.UraniumTankHalfFilled;
-import blocks.portalcontrol.PortalControl;
-import blocks.portalcontrol.PortalControlAllBooks;
-import blocks.portalcontrol.PortalControlBook1;
-import blocks.portalcontrol.PortalControlBook1Book2;
-import blocks.portalcontrol.PortalControlBook1Book3;
-import blocks.portalcontrol.PortalControlBook2;
-import blocks.portalcontrol.PortalControlBook2Book3;
-import blocks.portalcontrol.PortalControlBook3;
+import blocks.PortalControl;
+import blocks.PortalLever;
 import blocks.slabs.RedWoodDoubleSlab;
 import blocks.slabs.RedWoodHalfSlab;
 import blocks.UnicornHair;
@@ -71,6 +65,8 @@ public class BlockInit
 
 	public static final Block POWER_CORD = new PowerCord("powercord");
 
+	public static final Block POWER_CORD_ON = new PowerCord("powercord_on");
+
 	public static final Block URANIUM_FURNACE = new UraniumFurnace("uranium_furnace");
 
 	public static final Block HYPER_DRIVE = new HyperDrive("hyperdrive", Material.IRON);
@@ -93,7 +89,7 @@ public class BlockInit
 
 	public static final Block BLOCKTELEPORTER = new BlockTeleporter("block_teleporter");
 	
-	public static final Block OUTHOUSE = new OutHouse("out_house", Material.WOOD);
+	public static final Block CURSED_DOOR = new CursedDoor("cursed_door", Material.WOOD);
 	
 	public static final Block Book1 = new Book_1("book_1", Material.CLOTH);
 	
@@ -104,17 +100,10 @@ public class BlockInit
 	public static final Block COPPER_BLOCK = new CopperBlock("copper_block");
 	
 	public static final Block UNICORNHAIR = new UnicornHair("unicornhair");
-	
-
-	//PortalControls
+		
 	public static final Block PORTAL_CONTROL = new PortalControl("portalcontrol", Material.ANVIL);
-	public static final Block PORTAL_CONTROLBOOK1 = new PortalControlBook1("portalcontrolbook1", Material.ANVIL);
-	public static final Block PORTAL_CONTROLBOOK2 = new PortalControlBook2("portalcontrolbook2", Material.ANVIL);
-	public static final Block PORTAL_CONTROLBOOK3 = new PortalControlBook3("portalcontrolbook3", Material.ANVIL);
-	public static final Block PORTAL_CONTROLBOOK1BOOK2 = new PortalControlBook1Book2("portalcontrolbook1book2", Material.ANVIL);
-	public static final Block PORTAL_CONTROLBOOK2BOOK3 = new PortalControlBook2Book3("portalcontrolbook2book3", Material.ANVIL);
-	public static final Block PORTAL_CONTROLBOOK1BOOK3 = new PortalControlBook1Book3("portalcontrolbook1book3", Material.ANVIL);
-	public static final Block PORTAL_CONTROLALLBOOKS = new PortalControlAllBooks("portalcontrolallbooks", Material.ANVIL);
+	
+	public static final Block PORTAL_LEVER = new PortalLever("portallever", Material.IRON);
 
 	
 	//Lights

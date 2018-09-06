@@ -16,6 +16,8 @@ import armor.RubberHat;
 import armor.RubberLeggings;
 import armor.SpeedBoots;
 import armor.StrengthChestplate;
+import armor.TieOfPossession;
+import armor.TieOfPossession2;
 import food.InfinityPizza;
 import food.SmileDip;
 import handlers.SoundsHandler;
@@ -27,10 +29,14 @@ import items.Book3;
 import items.CopperIngot;
 import items.CrystalShard;
 import items.CustomRecords;
+import items.EyeBat;
 import items.FlashLight;
+import items.GideonBot;
+import items.GideonBotPart;
 import items.GolfCart;
 import items.GrapplingHook;
 import items.InfinitySidedDie;
+import items.IterdimensionalRift;
 import items.LaserArmCannon;
 import items.Latex;
 import items.LeafBlower;
@@ -38,8 +44,10 @@ import items.LightBulb;
 import items.MagicFlashLight;
 import items.MagnetGun;
 import items.MemoryGun;
+import items.Net;
 import items.PresidentKey;
 import items.QuantumDestabilizer;
+import items.ReturnDevice;
 import items.Rift;
 import items.Rubber;
 import items.TimeTape;
@@ -56,6 +64,7 @@ import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.common.util.EnumHelper;
+import potions.PotionFreeze;
 
 public class ItemInit {
 
@@ -67,10 +76,11 @@ public class ItemInit {
 	public static final ArmorMaterial DIPPER = EnumHelper.addArmorMaterial("dipper", Reference.MODID + ":dipper", 20, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
 	public static final ArmorMaterial MABEL = EnumHelper.addArmorMaterial("mabel", Reference.MODID + ":mabel", 20, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
 	public static final ArmorMaterial RUBBER = EnumHelper.addArmorMaterial("rubber", Reference.MODID + ":rubber", 10, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
-	public static final ArmorMaterial MAGIC = EnumHelper.addArmorMaterial("magic", Reference.MODID + ":magic", 40, new int[]{7, 8, 9, 6}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
-	public static final ArmorMaterial CLOAK = EnumHelper.addArmorMaterial("cloak", Reference.MODID + ":cloak", 99, new int[]{6, 7, 8, 5}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
+	public static final ArmorMaterial MAGIC = EnumHelper.addArmorMaterial("magic", Reference.MODID + ":magic", 50, new int[]{7, 8, 9, 6}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
+	public static final ArmorMaterial CLOAK = EnumHelper.addArmorMaterial("cloak", Reference.MODID + ":cloak", 40, new int[]{2, 2, 2, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
 	public static final ArmorMaterial KNUCKLES = EnumHelper.addArmorMaterial("knuckles", Reference.MODID + ":knuckles", 30, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
 	public static final ArmorMaterial AMULET = EnumHelper.addArmorMaterial("amulet", Reference.MODID + ":amulet", 30, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, 0.0F);
+	public static final ArmorMaterial TIE = EnumHelper.addArmorMaterial("tie", Reference.MODID + ":tie", 40, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
 
 	//Armor
 	public static final Item PINE_HAT = new Dipper("pinehat", DIPPER, 1, EntityEquipmentSlot.HEAD);
@@ -94,11 +104,12 @@ public class ItemInit {
 	public static final Item SPEED_BOOTS = new SpeedBoots("speedboots", MAGIC, 1, EntityEquipmentSlot.FEET);
 
 	public static final Item CLOAK_OF_INVISIBILITY = new CloakOfInvisibility("cloak", CLOAK, 1, EntityEquipmentSlot.CHEST);
-
 	public static final Item GOLD_KNUCKLES = new GoldKnuckles("goldknuckles", KNUCKLES, 1, EntityEquipmentSlot.CHEST);
-
 	public static final Item MYSTIC_AMULET = new MysticAmulet("mysticamulet", AMULET, 1, EntityEquipmentSlot.CHEST);
+	public static final Item TIE_OF_POSSESSION = new TieOfPossession("tie", TIE, 1, EntityEquipmentSlot.CHEST);
+	public static final Item TIE_OF_POSSESSION2 = new TieOfPossession2("tie2", TIE, 1, EntityEquipmentSlot.CHEST);
 
+	
 	
 	//Items
 	public static final Item CRYSTALSHARD = new CrystalShard("crystalshard");
@@ -155,7 +166,19 @@ public class ItemInit {
 	
 	public static final Item PRESIDENT_KEY	= new PresidentKey("presidentkey", ToolMaterial.IRON);
 	
-	//public static final Item FORDS_RAZOR = new FordsRazor("fordsrazor", ToolMaterial.IRON);
+	public static final Item GIDEONBOT	= new GideonBot("gideonbot");
+	public static final Item GIDEONBOT_HEAD	= new GideonBotPart("gideonbot_head");
+	public static final Item GIDEONBOT_BODY	= new GideonBotPart("gideonbot_body");
+	public static final Item GIDEONBOT_LEG	= new GideonBotPart("gideonbot_leg");
+	public static final Item GIDEONBOT_ARM	= new GideonBotPart("gideonbot_arm");
+	
+	public static final Item INTERDIMENSIONAL_RIFT = new IterdimensionalRift("interdimensional_rift");
+	
+	public static final Item RETURN_DEVICE = new ReturnDevice("returndevice");
+	
+	public static final Item EYEBAT = new EyeBat("eyebat");
+
+	public static final Item NET = new Net("net", ToolMaterial.STONE);
 
 
 	//Discs
@@ -165,4 +188,5 @@ public class ItemInit {
 	public static final Item DISC_STRAIGHTBLANCHIN = new CustomRecords("straightblanchin", SoundsHandler.RECORD_STRAIGHTBLANCHIN);
 	public static final Item DISC_DISCOGIRL = new CustomRecords("discogirl", SoundsHandler.RECORD_DISCOGIRL);
 
+	
 }

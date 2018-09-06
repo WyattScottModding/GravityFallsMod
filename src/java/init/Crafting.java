@@ -45,6 +45,11 @@ public class Crafting {
 
 		GameRegistry.addShapedRecipe(new ResourceLocation("blacklight1"), new ResourceLocation("item"), new ItemStack(ItemInit.BLACK_LIGHT, 1), new Object[]{"OOO", "LLL", "   ", 'L', BlockInit.LIGHT_PURPLE, 'O', Blocks.OBSIDIAN});
 		GameRegistry.addShapedRecipe(new ResourceLocation("blacklight2"), new ResourceLocation("item"), new ItemStack(ItemInit.BLACK_LIGHT, 1), new Object[]{"   ", "OOO", "LLL", 'L', BlockInit.LIGHT_PURPLE, 'O', Blocks.OBSIDIAN});
+		GameRegistry.addShapedRecipe(new ResourceLocation("gideonbot1"), new ResourceLocation("item"), new ItemStack(ItemInit.GIDEONBOT, 1), new Object[]{" H ", "ABA", "L L", 'A', ItemInit.GIDEONBOT_ARM, 'B', ItemInit.GIDEONBOT_BODY, 'H', ItemInit.GIDEONBOT_HEAD, 'L', ItemInit.GIDEONBOT_LEG});
+		GameRegistry.addShapedRecipe(new ResourceLocation("gideonbot2"), new ResourceLocation("item"), new ItemStack(ItemInit.GIDEONBOT, 1), new Object[]{" H ", "ABA", "LL ", 'A', ItemInit.GIDEONBOT_ARM, 'B', ItemInit.GIDEONBOT_BODY, 'H', ItemInit.GIDEONBOT_HEAD, 'L', ItemInit.GIDEONBOT_LEG});
+
+		GameRegistry.addShapedRecipe(new ResourceLocation("gideonbot3"), new ResourceLocation("item"), new ItemStack(ItemInit.GIDEONBOT, 1), new Object[]{" H ", "ABA", " LL", 'A', ItemInit.GIDEONBOT_ARM, 'B', ItemInit.GIDEONBOT_BODY, 'H', ItemInit.GIDEONBOT_HEAD, 'L', ItemInit.GIDEONBOT_LEG});
+		GameRegistry.addShapedRecipe(new ResourceLocation("net"), new ResourceLocation("item"), new ItemStack(ItemInit.NET, 1), new Object[]{"WSS", "WSS", "W  ", 'S', Items.STRING, 'W', Items.STICK,});
 
 		
 		//Time Wishes

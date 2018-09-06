@@ -1,5 +1,6 @@
 package armor;
 
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -19,7 +20,10 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityAreaEffectCloud;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.passive.EntityZombieHorse;
@@ -31,9 +35,11 @@ import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
+import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
@@ -151,13 +157,42 @@ public class TieOfPossession extends ItemArmor implements IHasModel
 					possessedEntity.rotationYaw -= 6;
 				else if(Keyboard.isKeyDown(Keyboard.KEY_K))
 					possessedEntity.rotationYaw += 6;
+				
+				possessedEntity.setPositionAndUpdate(possessedEntity.posX, possessedEntity.posY, possessedEntity.posZ);
 
+				//Attack
+				if(Keyboard.isKeyDown(Keyboard.KEY_H))
+				{
+					EntityLivingBase entityLiving = getMouseOver(possessedEntity, world);
+					
+					if(entityLiving != null)
+					{
+						//entityLiving.attackEntityFrom(DamageSource.GENERIC, 3.0F);
+						possessedEntity.attackEntityAsMob(entityLiving);
+					}
+				}
+			}
+			
+			//Explode if Creeper
+			if(possessedEntity instanceof EntityCreeper)
+			{
+				EntityCreeper creeper = (EntityCreeper) possessedEntity;
+				
+				 if (!world.isRemote && Keyboard.isKeyDown(Keyboard.KEY_M))
+			        {
+			            boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(world, creeper);
+			            float f = creeper.getPowered() ? 2.0F : 1.0F;
+			            creeper.world.createExplosion(creeper, creeper.posX, creeper.posY, creeper.posZ, (float)1.5 * f, flag);
+			            creeper.setDead();
+			            world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, creeper.posX,creeper.posY, creeper.posZ, 1, 1, 1, 0);
+			        }
 			}
 
 		}
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}
-
+	
+	
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
@@ -179,7 +214,7 @@ public class TieOfPossession extends ItemArmor implements IHasModel
 		return super.onItemRightClick(world, player, hand);
 	}
 
-	public EntityLivingBase getMouseOver(EntityPlayer player, World world)
+	public EntityLivingBase getMouseOver(EntityLivingBase player, World world)
 	{
 		Vec3d lookVec = player.getLookVec();
 
@@ -188,7 +223,7 @@ public class TieOfPossession extends ItemArmor implements IHasModel
 		float yaw = player.rotationYaw;
 		float pitch = player.rotationPitch;
 
-		for(int f = 1; f <= 4; f++)
+		for(int f = 1; f <= 5; f++)
 		{
 			double x = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 			double y = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);

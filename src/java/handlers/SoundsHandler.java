@@ -30,6 +30,9 @@ public class SoundsHandler
 	
 	public static SoundEvent BLOCK_PASSWORD;
 	
+	public static SoundEvent PORTAL_WORKING;
+	public static SoundEvent PORTAL_FINISHED;
+	
 	public static SoundEvent ITEM_MAGNETGUN;
 
 
@@ -58,6 +61,9 @@ public class SoundsHandler
 		ENTITY_UNICORN_AMBIENT = registerSound("entity.unicorn.ambient");
 		
 		BLOCK_PASSWORD = registerSound("block.password");
+		
+		PORTAL_WORKING = registerSound("portal.working");
+		PORTAL_FINISHED = registerSound("portal.finished");
 		
 		ITEM_MAGNETGUN = registerSound("item.magnetgun");
 	}

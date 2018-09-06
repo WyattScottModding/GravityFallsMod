@@ -84,7 +84,7 @@ public class Book3 extends ItemWrittenBook implements IHasModel{
 		{
 			if(player.isCreative())
 			{
-				if(block1.getBlock() != Blocks.AIR && block2.getBlock() == Blocks.AIR && block1.getBlock() != BlockInit.PORTAL_CONTROL && block1.getBlock() != BlockInit.PORTAL_CONTROLALLBOOKS && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1BOOK2 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1BOOK3 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK2 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK2BOOK3 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK3)
+				if(block1.getBlock() != Blocks.AIR && block2.getBlock() == Blocks.AIR && block1.getBlock() != BlockInit.PORTAL_CONTROL)
 				{
 					if(block1.isFullBlock())
 					{
@@ -94,7 +94,7 @@ public class Book3 extends ItemWrittenBook implements IHasModel{
 			}
 			else
 			{
-				if(block1.getBlock() != Blocks.AIR && block2.getBlock() == Blocks.AIR && block1.getBlock() != BlockInit.PORTAL_CONTROL && block1.getBlock() != BlockInit.PORTAL_CONTROLALLBOOKS && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1BOOK2 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK1BOOK3 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK2 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK2BOOK3 && block1.getBlock() != BlockInit.PORTAL_CONTROLBOOK3)
+				if(block1.getBlock() != Blocks.AIR && block2.getBlock() == Blocks.AIR && block1.getBlock() != BlockInit.PORTAL_CONTROL)
 				{
 					if(block1.isFullBlock())
 					{

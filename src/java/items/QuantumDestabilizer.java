@@ -61,7 +61,6 @@ import net.minecraft.init.Items;
 
 public class QuantumDestabilizer extends ItemBow implements IHasModel
 {
-
 	public int counter = 0;
 	public boolean aiming = false;
 
@@ -92,7 +91,6 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 
 			if (hasItemStack || flag)
 			{
-	
 				ItemStack itemstack = findAmmo(player);
 
 				float f = getArrowVelocity(i);
@@ -119,12 +117,6 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 
 				//	itemstack.shrink(1);
 				}
-
-
-
-
-
-
 			}		
 			player.closeScreen();
 			aiming = false;
@@ -138,7 +130,6 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 
 	public void getMouseOver(EntityPlayer player, World world)
 	{
-
 		Vec3d lookVec = player.getLookVec();
 
 		BlockPos pos = player.getPosition();
@@ -169,7 +160,6 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 				entity.onKillCommand();
 			}
 		}
-
 	}
 
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
@@ -203,16 +193,6 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 
 	}
 
-
-
-
-	@Override
-	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft)
-	{
-
-
-	}
-
 	public static float getArrowVelocity(int charge)
 	{
 		float f = (float)charge / 20.0F;
@@ -228,11 +208,11 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 	
 	private ItemStack findAmmo(EntityPlayer player)
 	{
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(Items.DIAMOND)))
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(BlockInit.HIDDEN_ELEMENT)))
 		{
 			return player.getHeldItem(EnumHand.OFF_HAND);
 		}
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(Items.DIAMOND)))
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(BlockInit.HIDDEN_ELEMENT)))
 		{
 			return player.getHeldItem(EnumHand.MAIN_HAND);
 		}
@@ -242,7 +222,7 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 			{
 				ItemStack itemstack = player.inventory.getStackInSlot(i);
 
-				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(Items.DIAMOND)))
+				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(BlockInit.HIDDEN_ELEMENT)))
 
 				{
 					return itemstack;

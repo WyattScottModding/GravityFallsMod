@@ -65,6 +65,7 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 		this.setSoundType(SoundType.STONE);
 		this.setBlockUnbreakable();
 		this.setDefaultState(this.blockState.getBaseState().withProperty(AXIS, EnumFacing.Axis.X));
+		this.setLightLevel(0.5F);
 
 
 		BlockInit.BLOCKS.add(this);
@@ -128,10 +129,13 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 	@Override
 	public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) 
 	{				
-		if(entity != null && entity instanceof EntityPlayer)
+		if(entity != null && entity instanceof EntityPlayerMP)
 		{
-			EntityPlayer player = (EntityPlayer) entity;
-			attemptTeleport(player, world);
+			EntityPlayerMP player = (EntityPlayerMP) entity;
+		//	Teleport.teleportToDimension(player, 3, player.posX, player.posY, player.posZ);
+			
+			//attemptTeleport(player, world);
+			entity.setPortal(pos);
 		}
 
 	}
@@ -169,7 +173,7 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 				y = (int) (Math.random() * 20) - 10;
 			}
 		}
-
+		
 		try
 		{
 			WorldServer worldServer = world.getMinecraftServer().getWorld(3);
@@ -182,6 +186,7 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 		{
 			return;
 		}
+		
 		//	Teleport.teleportToDimension(player, 3, x, y, z);
 
 	}

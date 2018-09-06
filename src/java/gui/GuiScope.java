@@ -43,7 +43,7 @@ public class GuiScope extends GuiContainer
 		this.mc.getTextureManager().bindTexture(TEXTURES);
 		int i = (this.width - this.xSize) / 2;
 		int j = (this.height - this.ySize) / 2;
-        this.drawModalRectWithCustomSizedTexture((width / 2) - (xSize / 2), (height / 2) - (ySize / 2), 0, 0, xSize, ySize, 175, 165);
+        this.drawModalRectWithCustomSizedTexture((width / 2) - (xSize / 2), (height / 2) - (ySize / 2), 0, 0, 175, 165, 175, 165);
 
 	
 	}

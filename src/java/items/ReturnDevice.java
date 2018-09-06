@@ -1,7 +1,6 @@
 package items;
 
-import entity.EntityGideonBot;
-import entity.EntityGolfCart;
+import commands.Teleport;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
@@ -12,40 +11,43 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 
-public class GideonBot extends Item implements IHasModel
+public class ReturnDevice extends Item implements IHasModel
 {
 
-	public GideonBot(String name)
+	public ReturnDevice(String name)
 	{
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		//this.setCreativeTab(GravityFalls.gravityfallsitems);
-		
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
+
 		ItemInit.ITEMS.add(this);
 	}
-	
-	public void registerModels()
-	{
-		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
-	}	
-	
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
-		ItemStack itemstack = player.getHeldItem(EnumHand.MAIN_HAND);
-
-		if(!world.isRemote)
+		if(player.dimension == 3 && !world.isRemote)
 		{
-			EntityGideonBot gideonBot = new EntityGideonBot(world, player.posX, player.posY, player.posZ);
-			world.spawnEntity(gideonBot);
-
-			if(!player.isCreative())
-				itemstack.shrink(1);
+			if(player.bedLocation != null)
+			{
+				BlockPos bedPos = player.bedLocation;
+				Teleport.teleportToDimension(player, 0, bedPos.getX(), bedPos.getY(), bedPos.getZ());
+			}
+			else
+			{
+				Teleport.teleportToDimension(player, 0, 0, 67, 0);
+			}
 		}
 
 		return super.onItemRightClick(world, player, hand);
 	}
+
+	public void registerModels()
+	{
+		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
+	}	
 }

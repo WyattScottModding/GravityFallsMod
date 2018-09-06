@@ -30,6 +30,7 @@ import net.minecraft.client.renderer.BufferBuilder;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderEntity;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.creativetab.CreativeTabs;
@@ -105,14 +106,17 @@ public class MagnetGun extends ItemBow implements IHasModel
 		ItemInit.ITEMS.add(this);
 
 		this.addPropertyOverride(new ResourceLocation("fired"), new IItemPropertyGetter()
-        {
-            @SideOnly(Side.CLIENT)
-            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
-            {
-                return !active ? 0.0F : 1.0F;
-            }
-        });
-		
+		{
+			@SideOnly(Side.CLIENT)
+			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+			{
+				if(entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack)
+					return !active ? 0.0F : 1.0F;
+				else
+					return 0.0F;
+			}
+		});
+
 		this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter()
 		{
 			@SideOnly(Side.CLIENT)
@@ -156,11 +160,11 @@ public class MagnetGun extends ItemBow implements IHasModel
 
 			if(Keyboard.isKeyDown(Keyboard.KEY_V))
 			{
-			//	if(attackCooldown == 100)
-			//	{
-					getMouseOver(player, world);
-					attackCooldown = 0;
-			//	}
+				//	if(attackCooldown == 100)
+				//	{
+				getMouseOver(player, world);
+				attackCooldown = 0;
+				//	}
 			}
 
 			RayTraceResult blockPosition = player.rayTrace(500, 1.0F);
@@ -176,17 +180,7 @@ public class MagnetGun extends ItemBow implements IHasModel
 				if(soundCounter == 4)
 					world.playSound(player, player.posX, player.posY, player.posZ, SoundsHandler.ITEM_MAGNETGUN, SoundCategory.PLAYERS, 1.0F, 1.0F);
 
-				//Animation
-				/*
-				GL11.glPushMatrix();
-				GL11.glDisable(GL11.GL_LIGHTING);
-				
-				
-				
-				
-				GL11.glEnable(GL11.GL_LIGHTING);
-				GL11.glPopMatrix();
-				*/
+
 
 				//The gun is only attracted to objects that contain iron
 				if(blockType == Blocks.IRON_BLOCK || blockType == Blocks.IRON_BARS || blockType == Blocks.IRON_ORE || blockType == Blocks.IRON_DOOR || blockType == Blocks.DETECTOR_RAIL || blockType == Blocks.RAIL || blockType == Blocks.ACTIVATOR_RAIL || blockType == Blocks.ANVIL || blockType == Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE || blockType == Blocks.PISTON || blockType == Blocks.STICKY_PISTON  || blockType == BlockInit.URANIUM_TANK || blockType == BlockInit.URANIUM_TANK_FILLED || blockType == BlockInit.URANIUM_TANK_HALFFILLED || blockType == Blocks.HOPPER || blockType == BlockInit.METAL_TREE)
@@ -265,13 +259,6 @@ public class MagnetGun extends ItemBow implements IHasModel
 					player.addItemStackToInventory(new ItemStack(Blocks.IRON_TRAPDOOR));
 				}
 
-				//Beam Animation
-				Vec3d vec3d = player.getLookVec();
-				Random rand = new Random();
-				float width = 0.6F;
-				float height = 1.8F;
-
-				//drawLine(player.posX, player.posY, player.posZ);
 			}
 		}
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
@@ -279,11 +266,11 @@ public class MagnetGun extends ItemBow implements IHasModel
 
 	private void drawLine(double xPos, double yPos, double zPos) 
 	{
-		GlStateManager.depthFunc(519);
-		GlStateManager.enableBlend();
-		GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-		GlStateManager.disableTexture2D();
-		GlStateManager.depthMask(false);
+	//	GlStateManager.depthFunc(519);
+	//	GlStateManager.enableBlend();
+	//	GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
+	//	GlStateManager.disableTexture2D();
+	//	GlStateManager.depthMask(false);
 		// some functions to set up the vertices
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder bufferbuilder = tessellator.getBuffer();
@@ -292,10 +279,10 @@ public class MagnetGun extends ItemBow implements IHasModel
 		bufferbuilder.pos(xPos + 2, yPos, zPos + 2).color(1, 1, 1, 0.0F).endVertex();
 		tessellator.draw();
 		// a long chain of vertices
-		GlStateManager.depthMask(true);
-		GlStateManager.enableTexture2D();
-		GlStateManager.disableBlend();
-		GlStateManager.depthFunc(515);
+	//	GlStateManager.depthMask(true);
+	//	GlStateManager.enableTexture2D();
+	//	GlStateManager.disableBlend();
+		//GlStateManager.depthFunc(515);
 	}
 
 	@Override
@@ -398,7 +385,5 @@ public class MagnetGun extends ItemBow implements IHasModel
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
-
-
 
 }

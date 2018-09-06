@@ -53,7 +53,7 @@ import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import scala.reflect.internal.Trees.This;
 
-public class PowerCord extends Block implements IHasModel
+public class PowerCordOn extends Block implements IHasModel
 {
 	public static final PropertyBool NORTH = PropertyBool.create("north");
 	public static final PropertyBool EAST = PropertyBool.create("east");
@@ -62,12 +62,11 @@ public class PowerCord extends Block implements IHasModel
 
 	public static AxisAlignedBB POWERCORD = new AxisAlignedBB(0.0D, 0D, 0.0D, 1.0D, 0.2D, 1.0D);
 
-	public PowerCord(String name)
+	public PowerCordOn(String name)
 	{
 		super(Material.CIRCUITS);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(NORTH, Boolean.valueOf(false)).withProperty(EAST, Boolean.valueOf(false)).withProperty(SOUTH, Boolean.valueOf(false)).withProperty(WEST, Boolean.valueOf(false)));
 		this.setTickRandomly(true);
 
@@ -93,6 +92,19 @@ public class PowerCord extends Block implements IHasModel
 	{
 		//return new ItemStack(BlockInit.POWER_CORD);
 		return null;
+	}
+	
+	@Override
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
+			EntityPlayer player) 
+	{
+		return new ItemStack(Item.getItemFromBlock(BlockInit.POWER_CORD), 1, getMetaFromState(world.getBlockState(pos)));
+	}
+	
+	@Override
+	public Item getItemDropped(IBlockState state, Random rand, int fortune) 
+	{
+		return Item.getItemFromBlock(BlockInit.POWER_CORD_ON);
 	}
 
 
@@ -128,8 +140,8 @@ public class PowerCord extends Block implements IHasModel
 	{
 		boolean power = checkPower(world, pos);
 		
-		if(power)
-			world.setBlockState(pos, BlockInit.POWER_CORD_ON.getDefaultState().withProperty(NORTH, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.NORTH))).withProperty(EAST, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.EAST))).withProperty(SOUTH, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.SOUTH))).withProperty(WEST, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.WEST))));
+		if(!power)
+			world.setBlockState(pos, BlockInit.POWER_CORD.getDefaultState().withProperty(NORTH, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.NORTH))).withProperty(EAST, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.EAST))).withProperty(SOUTH, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.SOUTH))).withProperty(WEST, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.WEST))));
 
 		super.neighborChanged(state, world, pos, blockIn, fromPos);
 	}
@@ -246,12 +258,6 @@ public class PowerCord extends Block implements IHasModel
 	}
 
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) 
-	{
-		return new ItemStack(Item.getItemFromBlock(this));
-	}
-
-	@Override
 	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) 
 	{
 		this.setDefaultState(this.getActualState(state, world, pos));
@@ -260,6 +266,12 @@ public class PowerCord extends Block implements IHasModel
 		if(world.getWorldTime() % 10 == 90)
 			this.setDefaultState(this.getDefaultState());
 	}
+
+	@Override
+	public boolean requiresUpdates()
+	{
+		return true;
+	}
 	
 	@Override
 	public int tickRate(World world) 
@@ -267,9 +279,5 @@ public class PowerCord extends Block implements IHasModel
 		return 1;
 	}
 
-	@Override
-	public boolean requiresUpdates()
-	{
-		return true;
-	}
+
 }

@@ -34,7 +34,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class GrapplingHook extends ItemBow implements IHasModel{
+public class GrapplingHook extends ItemBow implements IHasModel
+{
 
 	public boolean active = false;
 	public double prevY1 = -5;
@@ -74,33 +75,12 @@ public class GrapplingHook extends ItemBow implements IHasModel{
             @SideOnly(Side.CLIENT)
             public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
             {
-                return !active ? 0.0F : 1.0F;
+            	if(entityIn != null && entityIn.getActiveItemStack() == stack)
+            		return !active ? 0.0F : 1.0F;
+            	else
+            		return 0.0F;
             }
         });
-		
-		this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter()
-		{
-			@SideOnly(Side.CLIENT)
-			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
-			{
-				if (entityIn == null)
-				{
-					return 0.0F;
-				}
-				else
-				{
-					return entityIn.getActiveItemStack().getItem() != Items.BOW ? 0.0F : (float)(stack.getMaxItemUseDuration() - entityIn.getItemInUseCount()) / 20.0F;
-				}
-			}
-		});
-		this.addPropertyOverride(new ResourceLocation("pulling"), new IItemPropertyGetter()
-		{
-			@SideOnly(Side.CLIENT)
-			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
-			{
-				return entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F : 0.0F;
-			}
-		});
 	}
 
 
@@ -124,8 +104,6 @@ public class GrapplingHook extends ItemBow implements IHasModel{
 					player.motionZ = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 					time -= .05;
 				}
-
-
 
 			}
 			if(active)
@@ -179,9 +157,6 @@ public class GrapplingHook extends ItemBow implements IHasModel{
 				this.prevY1 = player.posY;
 			}
 
-
-
-
 		}
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}
@@ -234,7 +209,6 @@ public class GrapplingHook extends ItemBow implements IHasModel{
 	}
 
 
-
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft)
 	{
@@ -250,7 +224,6 @@ public class GrapplingHook extends ItemBow implements IHasModel{
 	{
 		return EnumAction.NONE;
 	}
-
 
 
 	@Override

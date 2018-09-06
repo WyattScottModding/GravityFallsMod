@@ -100,6 +100,23 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 				{
 					grow = false;
 				}
+				if(clicked && worldIn.isRemote)
+				{
+					if(grow)
+					{
+						if(height < 10)
+						{
+							//player.getCollisionBoundingBox().grow(1.1);
+						}
+					}
+					else
+					{
+						if(height > 0.1)
+						{
+							//player.getCollisionBoundingBox().shrink(1.1);
+						}
+					}
+				}
 
 
 				if(clicked && !worldIn.isRemote)
@@ -108,14 +125,14 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 
 					if(nbt == null)
 						nbt = new NBTTagCompound();
-					
+
 					stack.setTagCompound(nbt);
-					
+
 					if(nbt.hasKey("height"))
 						height = nbt.getFloat("height");
-					
+
 					System.out.println("Player height: " + height);
-					
+
 					float heightChange = 0.015F;
 
 					float scale = (float)(height / 1.8);
@@ -129,6 +146,8 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 						if(height < 10)
 						{
 							nbt.setFloat("height", height + heightChange);
+					//		if(player != null && player instanceof EntityPlayerMP)
+						//		player.getCollisionBoundingBox().grow(1.1);
 						}
 					}
 					else
@@ -136,6 +155,8 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 						if(height > 0.1)
 						{
 							nbt.setFloat("height", height - heightChange);
+				//			if(player != null && player instanceof EntityPlayerMP)
+					//			player.getCollisionBoundingBox().shrink(1.1);
 						}
 					}
 				}

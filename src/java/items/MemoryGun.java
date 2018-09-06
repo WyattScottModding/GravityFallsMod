@@ -59,15 +59,6 @@ public class MemoryGun extends ItemBow implements IHasModel
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
 		this.setMaxDamage(10);
-		
-		this.addPropertyOverride(new ResourceLocation("fired"), new IItemPropertyGetter()
-        {
-            @SideOnly(Side.CLIENT)
-            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
-            {
-                return cooldown != 0 ? 0.0F : 1.0F;
-            }
-        });
 
 		ItemInit.ITEMS.add(this);
 	}

@@ -1,6 +1,7 @@
 package items;
 
-import entity.EntityGideonBot;
+import entity.EntityEyeBat;
+import entity.EntityGnome;
 import entity.EntityGolfCart;
 import init.ItemInit;
 import main.GravityFalls;
@@ -14,24 +15,17 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
 
-public class GideonBot extends Item implements IHasModel
+public class EyeBat extends Item implements IHasModel
 {
-
-	public GideonBot(String name)
+	public EyeBat(String name)
 	{
-		this.setMaxStackSize(1);
+		this.setMaxStackSize(64);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		//this.setCreativeTab(GravityFalls.gravityfallsitems);
-		
+
 		ItemInit.ITEMS.add(this);
 	}
-	
-	public void registerModels()
-	{
-		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
-	}	
-	
+
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
@@ -39,13 +33,18 @@ public class GideonBot extends Item implements IHasModel
 
 		if(!world.isRemote)
 		{
-			EntityGideonBot gideonBot = new EntityGideonBot(world, player.posX, player.posY, player.posZ);
-			world.spawnEntity(gideonBot);
+			EntityEyeBat eyebat = new EntityEyeBat(world, player.posX, player.posY, player.posZ);
+			world.spawnEntity(eyebat);
 
 			if(!player.isCreative())
 				itemstack.shrink(1);
 		}
 
 		return super.onItemRightClick(world, player, hand);
+	}
+
+	public void registerModels()
+	{
+		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
 }

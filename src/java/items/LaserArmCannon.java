@@ -11,6 +11,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import akka.japi.pf.FI.Apply;
+import animations.RenderLaser;
 import entity.EntityGideonBot;
 import init.ItemInit;
 import main.GravityFalls;
@@ -18,6 +19,7 @@ import main.IHasModel;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.state.BlockStateContainer;
+import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItemFrame;
@@ -47,6 +49,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import tileEntities.TileEntityLaser;
 
 public class LaserArmCannon extends ItemSword implements IHasModel
 {
@@ -63,25 +66,32 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
 		this.setMaxDamage(20);
 		this.addPropertyOverride(new ResourceLocation("fired"), new IItemPropertyGetter()
-        {
-            @SideOnly(Side.CLIENT)
-            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
-            {
-            	if(cooldown >= 0 && cooldown < 5)
-            		return 0.1F;
-            	else if(cooldown >= 5 && cooldown < 10)
-            		return 0.5F;
-            	else if(cooldown >= 10 && cooldown < 15)
-            		return 0.4F;
-            	else if(cooldown >= 15 && cooldown < 20)
-            		return 0.3F;
-            	else if(cooldown >= 20 && cooldown < 25)
-            		return 0.2F;
-            	else//if(cooldown >= 25 && cooldown <= 30)
-            		return 0.6F;
-            }
-        });
-		
+		{
+			@SideOnly(Side.CLIENT)
+			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+			{				
+				if(entityIn != null && entityIn.getActiveItemStack() == stack)
+				{
+					if(charging)
+					{
+						if(cooldown >= 0 && cooldown < 5)
+							return 0.1F;
+						else if(cooldown >= 5 && cooldown < 10)
+							return 0.5F;
+						else if(cooldown >= 10 && cooldown < 15)
+							return 0.4F;
+						else if(cooldown >= 15 && cooldown < 20)
+							return 0.3F;
+						else if(cooldown >= 20 && cooldown < 25)
+							return 0.2F;
+					}
+
+					return 0.6F;
+				}
+				return 0.1F;
+			}
+		});
+
 		ItemInit.ITEMS.add(this);
 	}
 
@@ -107,11 +117,11 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 	{
 		if(cooldown > 0)
 			cooldown--;
-		
+
 
 		if(!worldIn.isRemote && entityIn instanceof EntityPlayer)
 		{
-		
+
 			EntityPlayer player = (EntityPlayer) entityIn;
 			boolean flag = player.capabilities.isCreativeMode;
 

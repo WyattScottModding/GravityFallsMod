@@ -1,5 +1,7 @@
 package blocks;
 
+import java.util.ArrayList;
+
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
@@ -10,6 +12,7 @@ import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
@@ -33,6 +36,7 @@ public class HyperDrive extends Block implements IHasModel{
 
 	public static final AxisAlignedBB HYPERDRIVE = new AxisAlignedBB(0.1875D, 0D, 0.1875D, .8125D, 1.0D, .8125D);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
+	public static final PropertyBool POWERED = PropertyBool.create("powered");
 
 	
 	public boolean power = false;
@@ -73,6 +77,12 @@ public class HyperDrive extends Block implements IHasModel{
 	{
 		return new ItemStack(Item.getItemFromBlock(this));
 	}
+	
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
+	{
+		return state.withProperty(POWERED, power).withProperty(FACING, state.getValue(FACING));
+	}
 
 
 	@Override
@@ -91,13 +101,43 @@ public class HyperDrive extends Block implements IHasModel{
 		Block uranium = BlockInit.URANIUM_TANK_FILLED;
 
 		if((block1 == uranium && block2 == uranium) || (block3 == uranium && block4 == uranium))	
+		{
 			power = true;
+			world.setBlockState(pos, state.withProperty(POWERED, true));
+		}
 		else
+		{
 			power = false;
+			world.setBlockState(pos, state.withProperty(POWERED, false));
+		}
+		
+		if(power)
+		{
+			ArrayList<BlockPos> list = new ArrayList<BlockPos>();
+			list.add(pos.up());
+			list.add(pos.down());
+			list.add(pos.north());
+			list.add(pos.south());
+			list.add(pos.west());
+			list.add(pos.east());
+
+
+			Block cord = BlockInit.POWER_CORD;
+
+			for(BlockPos element: list)
+			{
+				Block block = world.getBlockState(element).getBlock();
+				
+				if(block == cord)
+				{				
+					world.setBlockState(element, cord.getDefaultState().withProperty(POWERED, true));
+				}
+			}
+		}
 		
 		super.neighborChanged(state, world, pos, blockIn, fromPos);
 	}
-	
+
 	public boolean isOn()
 	{
 		return power;
@@ -166,7 +206,7 @@ public class HyperDrive extends Block implements IHasModel{
 	@Override
 	protected BlockStateContainer createBlockState() 
 	{
-		return new BlockStateContainer(this, new IProperty[] {FACING});
+		return new BlockStateContainer(this, new IProperty[] {FACING, POWERED});
 	}
 
 	@Override

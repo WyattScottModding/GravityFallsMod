@@ -36,26 +36,33 @@ public class TimeTape extends Item implements IHasModel
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
+	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
-		if(!worldIn.isRemote)
+		if(!world.isRemote)
 		{
-			if(playerIn.dimension == 0)
+			if(player.dimension == 0)
 			{
-				pos = playerIn.getPosition();
+				pos = player.getPosition();
 
-				Teleport.teleportToDimension(playerIn, 2, -18.5, 61, -18.5);
+				Teleport.teleportToDimension(player, 2, -18.5, 61, -18.5);
 			}
-			else if(playerIn.dimension == 2)
+			else if(player.dimension == 2)
 			{
 				if(pos != null)
-					Teleport.teleportToDimension(playerIn, 0, pos.getX(), pos.getY(), pos.getZ());
+					Teleport.teleportToDimension(player, 0, pos.getX(), pos.getY(), pos.getZ());
+				else if(player.bedLocation != null)
+				{
+					BlockPos bedPos = player.bedLocation;
+					Teleport.teleportToDimension(player, 0, bedPos.getX(), bedPos.getY(), bedPos.getZ());
+				}
 				else
-					Teleport.teleportToDimension(playerIn, 0, 0, 67, 0);
+				{
+					Teleport.teleportToDimension(player, 0, 0, 67, 0);
+				}
 			}
 		}
 
-		return super.onItemRightClick(worldIn, playerIn, handIn);
+		return super.onItemRightClick(world, player, hand);
 	}
 
 	@Override

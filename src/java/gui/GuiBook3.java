@@ -2,8 +2,11 @@ package gui;
 
 import java.io.IOException;
 
+import org.lwjgl.input.Keyboard;
+
 import containers.ContainerBook1;
 import containers.ContainerUraniumFurnace;
+import handlers.RegistryHandler;
 import init.ItemInit;
 import main.Reference;
 import net.minecraft.client.gui.GuiButton;
@@ -30,7 +33,10 @@ public class GuiBook3 extends GuiContainer
 	private static final ResourceLocation PAGE6 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page6.png");
 	private static final ResourceLocation PAGE7 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page7.png");
 
+	private static final ResourceLocation PAGE1_2 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page1-2.png");
+	private static final ResourceLocation PAGE2_2 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page2-2.png");
 	private static final ResourceLocation PAGE3_2 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page3-2.png");
+	private static final ResourceLocation PAGE5_2 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page5-2.png");
 
 	private final InventoryPlayer playerInv;
 	public TileEntityBook1 tileBook3;
@@ -88,9 +94,19 @@ public class GuiBook3 extends GuiContainer
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
 		if(currentPage == 1)
-			this.mc.getTextureManager().bindTexture(PAGE1);
-		else if(currentPage == 2)
-			this.mc.getTextureManager().bindTexture(PAGE2);
+		{
+			if(playerInv.hasItemStack(new ItemStack(ItemInit.BLACK_LIGHT)))
+				this.mc.getTextureManager().bindTexture(PAGE1_2);
+			else
+				this.mc.getTextureManager().bindTexture(PAGE1);
+		}
+		if(currentPage == 2)
+		{
+			if(playerInv.hasItemStack(new ItemStack(ItemInit.BLACK_LIGHT)))
+				this.mc.getTextureManager().bindTexture(PAGE2_2);
+			else
+				this.mc.getTextureManager().bindTexture(PAGE2);
+		}
 		else if(currentPage == 3)
 		{
 			if(playerInv.hasItemStack(new ItemStack(ItemInit.BLACK_LIGHT)))
@@ -101,7 +117,12 @@ public class GuiBook3 extends GuiContainer
 		else if(currentPage == 4)
 			this.mc.getTextureManager().bindTexture(PAGE4);
 		else if(currentPage == 5)
-			this.mc.getTextureManager().bindTexture(PAGE5);
+		{
+			if(playerInv.hasItemStack(new ItemStack(ItemInit.BLACK_LIGHT)))
+				this.mc.getTextureManager().bindTexture(PAGE5_2);
+			else
+				this.mc.getTextureManager().bindTexture(PAGE5);
+		}
 		else if(currentPage == 6)
 			this.mc.getTextureManager().bindTexture(PAGE6);
 		else if(currentPage == 7)
@@ -120,5 +141,18 @@ public class GuiBook3 extends GuiContainer
 			buttonList.get(1).enabled = false;
 		else
 			buttonList.get(1).enabled = true;
+		
+		
+		if(currentPage == 4)
+		{
+			if(Keyboard.isKeyDown(Keyboard.KEY_B) && !RegistryHandler.raiseDead)
+			{
+				RegistryHandler.raiseDead = true;
+				RegistryHandler.zombieMessage = false;
+			}
+		}
 	}
+	
+	
+	
 }

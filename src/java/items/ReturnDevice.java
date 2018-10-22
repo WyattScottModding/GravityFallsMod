@@ -1,6 +1,7 @@
 package items;
 
 import commands.Teleport;
+import handlers.RegistryHandler;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
@@ -30,9 +31,13 @@ public class ReturnDevice extends Item implements IHasModel
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
-		if(player.dimension == 3 && !world.isRemote)
+		if(player.dimension == 3 && !world.isRemote && RegistryHandler.portalActive)
 		{
-			if(player.bedLocation != null)
+			if(RegistryHandler.nbt != null && RegistryHandler.nbt.hasKey("PortalX"))
+			{
+				Teleport.teleportToDimension(player, 0, RegistryHandler.nbt.getInteger("PortalX"), RegistryHandler.nbt.getInteger("PortalY"), RegistryHandler.nbt.getInteger("PortalZ"));
+			}
+			else if(player.bedLocation != null)
 			{
 				BlockPos bedPos = player.bedLocation;
 				Teleport.teleportToDimension(player, 0, bedPos.getX(), bedPos.getY(), bedPos.getZ());

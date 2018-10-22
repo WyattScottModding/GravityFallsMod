@@ -70,6 +70,7 @@ public class GrapplingHook extends ItemBow implements IHasModel
 
 		ItemInit.ITEMS.add(this);
 
+		/*
 		this.addPropertyOverride(new ResourceLocation("fired"), new IItemPropertyGetter()
         {
             @SideOnly(Side.CLIENT)
@@ -78,6 +79,16 @@ public class GrapplingHook extends ItemBow implements IHasModel
             	if(entityIn != null && entityIn.getActiveItemStack() == stack)
             		return !active ? 0.0F : 1.0F;
             	else
+            		return 0.0F;
+            }
+        });
+        */
+		
+		this.addPropertyOverride(new ResourceLocation("fired"), new IItemPropertyGetter()
+        {
+            @SideOnly(Side.CLIENT)
+            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+            {
             		return 0.0F;
             }
         });

@@ -117,7 +117,7 @@ public class FlashLight extends ItemSword implements IHasModel
 			{
 				ItemStack itemstack = findAmmo(player);
 
-				if(itemstack.getItem() instanceof Battery && player.getHeldItemMainhand().getItem() instanceof FlashLight)
+				if(itemstack.getItem() instanceof Battery && (player.getHeldItemMainhand().getItem() instanceof FlashLight || player.getHeldItemOffhand().getItem() instanceof FlashLight))
 				{
 					stack.setItemDamage(stack.getItemDamage() - 50);
 					itemstack.shrink(1);

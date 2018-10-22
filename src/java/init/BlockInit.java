@@ -63,13 +63,15 @@ public class BlockInit
 
 	public static final Block URANIUM_TANK_FILLED = new UraniumTankFilled("uraniumtankfilled", Material.ROCK);
 
-	public static final Block POWER_CORD = new PowerCord("powercord");
+	public static final Block POWER_CORD = new PowerCord("powercord", false);
 
-	public static final Block POWER_CORD_ON = new PowerCord("powercord_on");
+	public static final Block POWER_CORD_ON = new PowerCord("powercord_on", true);
 
 	public static final Block URANIUM_FURNACE = new UraniumFurnace("uranium_furnace");
 
-	public static final Block HYPER_DRIVE = new HyperDrive("hyperdrive", Material.IRON);
+	public static final Block HYPER_DRIVE = new HyperDrive("hyperdrive", Material.IRON, false);
+	
+	public static final Block HYPER_DRIVE_ON = new HyperDrive("hyperdrive_on", Material.IRON, true);
 
 	public static final Block CRYOGENIC_TUBE_ON = new CryogenicTubeOn("cryogenictube_on", Material.IRON);
 

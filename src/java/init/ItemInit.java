@@ -174,7 +174,7 @@ public class ItemInit {
 	
 	public static final Item INTERDIMENSIONAL_RIFT = new IterdimensionalRift("interdimensional_rift");
 	
-	public static final Item RETURN_DEVICE = new ReturnDevice("returndevice");
+	public static final Item RETURN_DEVICE = new ReturnDevice("return_device");
 	
 	public static final Item EYEBAT = new EyeBat("eyebat");
 

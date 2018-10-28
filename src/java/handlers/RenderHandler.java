@@ -11,6 +11,7 @@ import entity.EntityHideBehind;
 import entity.EntityKeyhole;
 import entity.EntityGideonBot;
 import entity.EntitySecurityDroid;
+import entity.EntityTimeBaby;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
 import entity.EntityUnicorn;
@@ -29,6 +30,7 @@ import render.RenderHideBehind;
 import render.RenderKeyhole;
 import render.RenderGideonBot;
 import render.RenderSecurityDroid;
+import render.RenderTimeBaby;
 import render.RenderTimeCopDundgren;
 import render.RenderTimeCopLolph;
 import render.RenderUnicorn;
@@ -175,6 +177,16 @@ public class RenderHandler {
 			public Render<? super EntityGideonBot> createRenderFor(RenderManager manager)
 			{
 				return new RenderGideonBot(manager);
+			}
+			
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityTimeBaby.class, new IRenderFactory<EntityTimeBaby>()
+		{
+			@Override
+			public Render<? super EntityTimeBaby> createRenderFor(RenderManager manager)
+			{
+				return new RenderTimeBaby(manager);
 			}
 			
 		});

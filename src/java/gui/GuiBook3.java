@@ -5,22 +5,23 @@ import java.io.IOException;
 import org.lwjgl.input.Keyboard;
 
 import containers.ContainerBook1;
-import containers.ContainerUraniumFurnace;
 import handlers.RegistryHandler;
 import init.ItemInit;
 import main.Reference;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.ITextComponent;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import tileEntities.TileEntityBook1;
-import tileEntities.TileEntityUraniumFurnace;
 
 @SideOnly(Side.CLIENT)
 public class GuiBook3 extends GuiContainer
@@ -141,18 +142,27 @@ public class GuiBook3 extends GuiContainer
 			buttonList.get(1).enabled = false;
 		else
 			buttonList.get(1).enabled = true;
-		
-		
+
+
 		if(currentPage == 4)
 		{
-			if(Keyboard.isKeyDown(Keyboard.KEY_B) && !RegistryHandler.raiseDead)
+			if(Keyboard.isKeyDown(Keyboard.KEY_B) && !RegistryHandler.nbt.getBoolean("raiseDead"))
 			{
-				RegistryHandler.raiseDead = true;
-				RegistryHandler.zombieMessage = false;
+				EntityPlayer player = playerInv.player;
+
+				if(player.world.getDifficulty().equals(EnumDifficulty.PEACEFUL))
+				{
+					ITextComponent msg = new TextComponentString("You must not be in peaceful mode to raise the dead.");
+					player.sendMessage(msg);
+				}
+				else
+				{
+					RegistryHandler.nbt.setBoolean("raiseDead", true);
+				}
 			}
 		}
 	}
-	
-	
-	
+
+
+
 }

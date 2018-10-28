@@ -70,6 +70,7 @@ import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemCompass;
@@ -128,7 +129,6 @@ public class RegistryHandler
 
 	public static World world = null;
 
-	public static boolean portalActive = false;
 	public static boolean checkActive = false;
 	public static int countdown = -1;
 
@@ -144,21 +144,22 @@ public class RegistryHandler
 	public static float scale = 1.0F;
 	public static NBTTagCompound nbt = new NBTTagCompound();
 
-	public static boolean messageSent = false;
 	public static List<ItemStack> inventoryStacks = null;
-	public static boolean inGlobnar = false;
-	public static boolean recievedTimeWish = false;
-	public static boolean timebabySpawned = false;
 
 	public static boolean returnDevice = false;
 
 	public static PortalBlocks portalBlocks = null;
-	public static boolean portalControl = false;
 
 	private static boolean setBlocks = false;
 
-	public static boolean raiseDead = false;
 	public static boolean zombieMessage = false;
+
+	public static boolean messageSent = false;
+	public static boolean recievedTimeWish = false;
+
+	public static EntityTimeBaby timebaby = null;
+	
+	public static WorldGenCustomStructures structures = null;
 
 
 	@SubscribeEvent
@@ -172,7 +173,6 @@ public class RegistryHandler
 	{
 		event.getRegistry().registerAll(BlockInit.BLOCKS.toArray(new Block[0]));
 		TileEntityHandler.registerTileEntites();
-		ClientRegistry.bindTileEntitySpecialRenderer(TileEntityLaser.class, new RenderLaser());
 	}
 
 	@SubscribeEvent
@@ -225,7 +225,10 @@ public class RegistryHandler
 	public static void otherRegistries()
 	{
 		//GameRegistry.registerWorldGenerator(new WorldGenTrees(), 0);
-		GameRegistry.registerWorldGenerator(new WorldGenCustomStructures(), 0);
+		
+		structures = new WorldGenCustomStructures();
+		
+		GameRegistry.registerWorldGenerator(structures, 0);
 	}
 
 	public static void serverRegistries(FMLServerStartingEvent event)
@@ -245,21 +248,27 @@ public class RegistryHandler
 			EntityPlayer player = (EntityPlayer)event.getEntity();
 			RegistryHandler.world = player.world;
 
-			armorRender(player);
-			uraniumRender(player);
-			flashlightRender(player);
-			heightRender(player);
-			globnarRender(player);
-			//nightmareRender(player);
-			
-			if(portalControl)
+			if(!world.isRemote)
+			{
+				if(!nbt.hasKey("portalActive"))
+					nbt.setBoolean("portalActive", false);
+				
+				if(!nbt.hasKey("portalControl"))
+					nbt.setBoolean("portalControl", false);
+				
+				armorRender(player);
+				uraniumUpdate(player, world);
+				flashlightRender(player);
+				heightRender(player);
+				globnarRender(player, world);
 				portalRender(player);
-			raiseDead(player);
+				raiseDead(player);
 
 
-			if(scale > 1 && Mouse.isButtonDown(0))
-				extendedReach(player, player.world, (int) (scale * 4));
+				if(scale > 1 && Mouse.isButtonDown(0))
+					extendedReach(player, player.world, (int) (scale * 4));
 
+			}
 		}
 
 		if(event.getEntity() instanceof EntityLiving)
@@ -272,45 +281,81 @@ public class RegistryHandler
 	}
 
 
-	public static void uraniumRender(EntityPlayer player)
+	public static void uraniumUpdate(EntityPlayer player, World world)
 	{
-		boolean rubberArmor = false;
+		boolean hasArmor = false;
 
-		if(player.getArmorInventoryList().toString().length() > 91)
+		if(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemInit.RUBBER_HAT)
 		{
-			if(player.getArmorInventoryList().toString().substring(8, 19).equals("rubberboots"))
+			if(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == ItemInit.RUBBER_CHESTPLATE)
 			{
-				if(player.getArmorInventoryList().toString().substring(30, 44).equals("rubberleggings"))
+				if(player.getItemStackFromSlot(EntityEquipmentSlot.LEGS).getItem() == ItemInit.RUBBER_LEGGINGS)
 				{
-					if(player.getArmorInventoryList().toString().substring(55, 71).equals("rubberchestplate"))
+					if(player.getItemStackFromSlot(EntityEquipmentSlot.FEET).getItem() == ItemInit.RUBBER_BOOTS)
 					{
-						if(player.getArmorInventoryList().toString().substring(82, 91).equals("rubberhat"))
-						{
-							rubberArmor = true;
-
-						}
+						hasArmor = true;
 					}
 				}
 			}
 		}
-		if(!rubberArmor)
-		{
-			if (player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM_TANK_FILLED))) 
-			{
-				player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
-			}
-			if (player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM_TANK_HALFFILLED))) 
-			{
-				player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
-			}
-			if (player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM)))
-			{
-				player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
-			}
-			if (player.inventory.hasItemStack(new ItemStack(ItemInit.URANIUM_BUCKET)))
-			{
-				player.addPotionEffect(new PotionEffect(Potion.getPotionById(19), 10, 10));
 
+		if(!player.capabilities.isCreativeMode && !hasArmor)
+		{
+			Block block1 = world.getBlockState(player.getPosition()).getBlock();
+			Block block2 = world.getBlockState(player.getPosition().down()).getBlock();
+			Block block3 = world.getBlockState(player.getPosition().up()).getBlock();
+			Block block4 = world.getBlockState(player.getPosition().east()).getBlock();
+			Block block5 = world.getBlockState(player.getPosition().west()).getBlock();
+			Block block6 = world.getBlockState(player.getPosition().north()).getBlock();
+			Block block7 = world.getBlockState(player.getPosition().south()).getBlock();
+			Block block8 = world.getBlockState(player.getPosition().up().up()).getBlock();
+			Block block9 = world.getBlockState(player.getPosition().up().north()).getBlock();
+			Block block10 = world.getBlockState(player.getPosition().up().south()).getBlock();
+			Block block11 = world.getBlockState(player.getPosition().up().west()).getBlock();
+			Block block12 = world.getBlockState(player.getPosition().up().east()).getBlock();
+			Block block13 = world.getBlockState(player.getPosition().north().west()).getBlock();
+			Block block14 = world.getBlockState(player.getPosition().north().east()).getBlock();
+			Block block15 = world.getBlockState(player.getPosition().south().west()).getBlock();
+			Block block16 = world.getBlockState(player.getPosition().south().east()).getBlock();
+
+
+			List<Block> blocks = new ArrayList<Block>();
+			blocks.add(block1);
+			blocks.add(block2);
+			blocks.add(block3);
+			blocks.add(block4);
+			blocks.add(block5);
+			blocks.add(block6);
+			blocks.add(block7);
+			blocks.add(block8);
+			blocks.add(block9);
+			blocks.add(block10);
+			blocks.add(block11);
+			blocks.add(block12);
+			blocks.add(block13);
+			blocks.add(block14);
+			blocks.add(block15);
+			blocks.add(block16);
+
+
+
+			for(Block element : blocks)
+			{
+				if(element == BlockInit.URANIUM || element == BlockInit.URANIUM_TANK_FILLED || element == BlockInit.URANIUM_TANK_HALFFILLED)
+				{
+					player.addPotionEffect(new PotionEffect(MobEffects.POISON, 10, 10));
+				}
+			}
+
+
+			boolean uraniumOre = player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM));
+			boolean uraniumBucket = player.inventory.hasItemStack(new ItemStack(ItemInit.URANIUM_BUCKET));
+			boolean uraniumTankFilled = player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM_TANK_FILLED));
+			boolean uraniumTankHalfFilled = player.inventory.hasItemStack(new ItemStack(BlockInit.URANIUM_TANK_HALFFILLED));
+
+			if(uraniumOre || uraniumBucket || uraniumTankFilled || uraniumTankHalfFilled)
+			{
+				player.addPotionEffect(new PotionEffect(MobEffects.POISON, 10, 10));
 			}
 		}
 	}
@@ -408,28 +453,25 @@ public class RegistryHandler
 	{
 		if (!player.world.isRemote && clicked)
 		{
-			if (player.getHeldItemMainhand() != null)
+			if ((player.getHeldItemMainhand() != null && LightSource.isLightEmittingItem(player.getHeldItemMainhand().getItem())) || (player.getHeldItemOffhand() != null && LightSource.isLightEmittingItem(player.getHeldItemOffhand().getItem())))
 			{
-				if (LightSource.isLightEmittingItem(player.getHeldItemMainhand().getItem()))
+				int blockX = MathHelper.floor(player.posX);
+				int blockY = MathHelper.floor(player.posY-0.2D - player.getYOffset());
+				int blockZ = MathHelper.floor(player.posZ);
+				// place light at head level
+				BlockPos blockLocation = new BlockPos(blockX, blockY, blockZ).up();
+				if (player.world.getBlockState(blockLocation).getBlock() == Blocks.AIR)
 				{
-					int blockX = MathHelper.floor(player.posX);
-					int blockY = MathHelper.floor(player.posY-0.2D - player.getYOffset());
-					int blockZ = MathHelper.floor(player.posZ);
-					// place light at head level
-					BlockPos blockLocation = new BlockPos(blockX, blockY, blockZ).up();
-					if (player.world.getBlockState(blockLocation).getBlock() == Blocks.AIR)
-					{
-						player.world.setBlockState(blockLocation, BlockInit.LIGHT_SOURCE.getDefaultState());
+					player.world.setBlockState(blockLocation, BlockInit.LIGHT_SOURCE.getDefaultState());
 
-					}
-					else if (player.world.getBlockState(blockLocation.add(player.getLookVec().x, 
-							player.getLookVec().y, player.getLookVec().z)).getBlock() == Blocks.AIR)
-					{
+				}
+				else if (player.world.getBlockState(blockLocation.add(player.getLookVec().x, 
+						player.getLookVec().y, player.getLookVec().z)).getBlock() == Blocks.AIR)
+				{
 
-						player.world.setBlockState(blockLocation.add(player.getLookVec().x, player.getLookVec().y, 
-								player.getLookVec().z), BlockInit.LIGHT_SOURCE.getDefaultState());
+					player.world.setBlockState(blockLocation.add(player.getLookVec().x, player.getLookVec().y, 
+							player.getLookVec().z), BlockInit.LIGHT_SOURCE.getDefaultState());
 
-					}
 				}
 			}
 		}
@@ -611,15 +653,6 @@ public class RegistryHandler
 		return speed;
 	}
 
-	public static boolean getPortal()
-	{
-		return portalActive;
-	}
-
-	public static void setPortal(boolean portal)
-	{
-		portalActive = portal;
-	}
 
 	public static int getCountdown()
 	{
@@ -673,21 +706,17 @@ public class RegistryHandler
 		}
 	}
 
-	public static void globnarRender(EntityPlayer player)
-	{	
+	public static void globnarRender(EntityPlayer player, World world)
+	{
 		if(player.dimension == 2)
 		{
-			//	EntityTimeBaby timebaby = new EntityTimeBaby(world);
-			EntityBill timebaby = null;
-			inGlobnar = true;
-			if(!messageSent)
+			if(!messageSent && timebaby != null)
 			{
 				ITextComponent msg = new TextComponentString("Welcome to Globnar!");
 				player.sendMessage(msg);
 				msg = new TextComponentString("You must defeat Time Baby to win the Time Wish!");
 				player.sendMessage(msg);
-				msg = new TextComponentString("All Time Tapes will now be confiscated.");
-				player.sendMessage(msg);
+
 				messageSent = true;
 
 
@@ -699,111 +728,54 @@ public class RegistryHandler
 						player.inventory.removeStackFromSlot(i);
 					}
 				}
-				recievedTimeWish = false;
-			}
-			//Spawn Time Baby
-			if(!player.world.isRemote && !timebabySpawned)
-			{
-				timebaby = new EntityBill(player.world, -62.5, 74, -18.5);
-				player.world.spawnEntity(timebaby);
-				timebaby.changeDimension(2);
-				timebabySpawned = true;
-			}
 
-			//Give the player a Time Wish and a Time Tape
-			if(timebaby != null && timebaby.isDead && !recievedTimeWish && timebabySpawned && !player.world.isRemote)
-			{
-				EntityItem entityTape = new EntityItem(player.world);
-				entityTape.setItem(new ItemStack(ItemInit.TIME_TAPE));
-				entityTape.setPosition(-18.5, 61, -18.5);
-				player.world.spawnEntity(entityTape);
-
-				EntityItem entityWish = new EntityItem(player.world);
-				entityWish.setItem(new ItemStack(ItemInit.TIME_WISH));
-				entityWish.setPosition(-18.5, 61, -18.5);
-				player.world.spawnEntity(entityWish);
-
-				recievedTimeWish = true;
-				timebabySpawned = false;
-				ITextComponent msg = new TextComponentString("Time Baby has been defeated!");
+				msg = new TextComponentString("All Time Tapes have been confiscated.");
 				player.sendMessage(msg);
 			}
+			//Spawn Time Baby
+			if(timebaby != null)
+			{
+				world.spawnEntity(timebaby);
+				timebaby.setTarget(player);
+			}
+
+			if(timebaby != null && timebaby.posY <= 0)
+				timebaby.setPosition(-50, 61, -18.5);
+
+			//Give the player a Time Wish and a Time Tape
+			if(timebaby != null && timebaby.isDead && !recievedTimeWish)
+			{
+				EntityItem entityTape = new EntityItem(world);
+				entityTape.setItem(new ItemStack(ItemInit.TIME_TAPE));
+				entityTape.setPosition(-18.5, 61, -18.5);
+				world.spawnEntity(entityTape);
+
+				EntityItem entityWish = new EntityItem(world);
+				entityWish.setItem(new ItemStack(ItemInit.TIME_WISH));
+				entityWish.setPosition(-18.5, 61, -18.5);
+				world.spawnEntity(entityWish);
+				recievedTimeWish = true;
+
+				ITextComponent msg = new TextComponentString("Time Baby has been defeated!");
+				player.sendMessage(msg);
+
+				timebaby = null;
+			}
 		}
 		else
 		{
-			inGlobnar = false;
 			messageSent = false;
+			recievedTimeWish = false;
+
+			timebaby = new EntityTimeBaby(world, -50, 61, -18.5);
 		}
-		/*
-		if(!inGlobnar && inventoryStacks != null)
-		{
-			for(int i = 0; i < 27; i++)
-			{
-				player.inventory.add(i, inventoryStacks.get(i));
-			}
-			inventoryStacks = null;
-		}
-		 */
 	}
 
-	public static void nightmareRender(EntityPlayer player)
-	{	
-		if(player.dimension == 3)
-		{
-			if(!returnDevice)
-			{
-				boolean hasDevice = false;
-
-				for(int i = 0; i < player.inventory.getSizeInventory(); i++)
-				{
-					if(player.inventory.getStackInSlot(i).getItem() instanceof ReturnDevice)
-					{
-						hasDevice = true;
-					}
-				}
-
-				if(!hasDevice && !player.world.isRemote)
-				{
-					EntityItem entityReturn = new EntityItem(player.world);
-					entityReturn.setItem(new ItemStack(ItemInit.RETURN_DEVICE));
-					entityReturn.setPosition(player.posX, player.posY, player.posZ);
-					player.world.spawnEntity(entityReturn);
-					returnDevice = true;
-				}
-			}
-		}
-		else
-			returnDevice = false;
-	}
 
 	public static void portalRender(EntityPlayer player)
 	{
-		Date date = new Date();		
-
-		if(!checkActive && nbt.hasKey("portalActive"))
+		if(nbt.getBoolean("portalActive"))
 		{
-			portalActive = nbt.getBoolean("portalActive");
-			checkActive = true;
-		}
-		else
-		{
-			nbt.setBoolean("portalActive", portalActive);
-		}
-
-		if(countdown == -1 && portalActive && !nbt.hasKey("countdown"))
-		{
-			nbt.setLong("countdown", date.getTime());
-		}
-
-		if(nbt.hasKey("countdown"))
-			countdown = 36000 - (int)(date.getTime() - nbt.getLong("countdown"));
-
-
-
-		if(portalActive)
-		{
-			if(countdown == 36000)
-				setPortal();
 			if(countdown > 0)
 				countdown--;
 			else if(countdown == 0)
@@ -816,7 +788,7 @@ public class RegistryHandler
 				world.playSound(player, player.getPosition(), SoundsHandler.PORTAL_FINISHED, SoundCategory.BLOCKS, 1.0F, 1.0F);
 
 
-			/*
+
 			if(portalBlocks != null)
 			{
 				Block block = world.getBlockState(portalBlocks.getLeverPos()).getBlock();
@@ -824,19 +796,16 @@ public class RegistryHandler
 				if(block != BlockInit.PORTAL_LEVER)
 					removePortal();
 			}
-			 */
-
 		}
 		else
 		{
-			nbt.removeTag("countdown");
 			removePortal();
 		}
 	}	
 
 	public static void levitationRender(EntityLivingBase entity)
 	{
-		if(portalActive)
+		if(nbt.getBoolean("portalActive"))
 		{
 			if(countdown < 35500 && countdown > 35460)
 				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
@@ -858,17 +827,20 @@ public class RegistryHandler
 				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
 			else if(countdown < 1500 && countdown > 1100)
 				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
-			else if(countdown < 1000 && countdown > 550)
+			else if(countdown < 1000 && countdown > 0)
 				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
-			else if(countdown < 500 && countdown > 0)
-				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 5, 0));
+
 		}
 	}
 
 	public static void portalOn()
 	{
 		if(portalBlocks != null)
-		{
+		{			
+			nbt.setInteger("PortalX", portalBlocks.getPortal().get(0).getX() + 5);
+			nbt.setInteger("PortalY", portalBlocks.getPortal().get(0).getY() - 4);
+			nbt.setInteger("PortalZ", portalBlocks.getPortal().get(0).getZ());
+
 			IBlockState state =  BlockInit.BLOCKTELEPORTER.getDefaultState();
 
 			for(BlockPos element : portalBlocks.getPortal())
@@ -945,25 +917,21 @@ public class RegistryHandler
 
 	public static void raiseDead(EntityPlayer player)
 	{
-		if(nbt.hasKey("raiseDead"))
-		{
-			if(nbt.getBoolean("raiseDead"))
-			{
-				raiseDead = true;
-			}
-		}
-		else
-			nbt.setBoolean("raiseDead", raiseDead);
-		
 		if(player.world.isDaytime())
 		{
-			raiseDead = false;
-			zombieMessage = false;
+			nbt.setBoolean("raiseDead", false);
+			zombieMessage = false;			
 		}
-		
+
 		//Timer based on Difficulty
 		boolean zombieSpawn = false;
-		
+
+		if(player.world.getDifficulty().equals(EnumDifficulty.PEACEFUL))
+			zombieSpawn = false;
+		else
+			zombieSpawn = true;
+
+		/*
 		if(player.world.getDifficulty().equals(EnumDifficulty.PEACEFUL))
 			zombieSpawn = false;
 		else if(player.world.getDifficulty().equals(EnumDifficulty.EASY))
@@ -981,10 +949,10 @@ public class RegistryHandler
 			if(player.world.getWorldTime() % 10 == 0)
 				zombieSpawn = true;
 		}
-			
-		
+		 */
 
-		if(raiseDead && !player.world.isRemote && zombieSpawn)
+
+		if(nbt.getBoolean("raiseDead") && !player.world.isRemote && zombieSpawn)
 		{
 			if(!zombieMessage)
 			{
@@ -993,22 +961,20 @@ public class RegistryHandler
 				zombieMessage = true;
 			}
 
-			int x = (int) ((Math.random() * 80) - 40 + player.posX);
-			int z = (int) ((Math.random() * 80) - 40 + player.posZ);
+			int x = (int) ((Math.random() * 60) - 30 + player.posX);
+			int z = (int) ((Math.random() * 60) - 30 + player.posZ);
 			int y = findGround(player.world, x, (int) player.posY, z);
 			BlockPos pos1 = new BlockPos(x, y + 1, z);
 			BlockPos pos2 = new BlockPos(x, y + 2, z);
 
+			System.out.println("Zombie Spawned at: " + pos1.toString());
 
-			if(y != -1 && player.world.getBlockState(pos1).getBlock() == Blocks.AIR && player.world.getBlockState(pos2).getBlock() == Blocks.AIR)
-			{
-				EntityZombie zombie = new EntityZombie(player.world);
-				zombie.setPosition(x, y + 1, z);
+			EntityZombie zombie = new EntityZombie(player.world);
+			zombie.setPosition(x, y + 1, z);
 
-				player.world.spawnEntity(zombie);			
-			}
+			player.world.spawnEntity(zombie);			
+
 		}
-		nbt.setBoolean("raiseDead", raiseDead);
 		zombieSpawn = false;
 	}
 

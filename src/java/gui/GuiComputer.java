@@ -157,7 +157,12 @@ public class GuiComputer extends GuiContainer
 	{
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-		if(computerOn && RegistryHandler.portalActive && RegistryHandler.countdown != -1)
+		boolean active = false;
+		
+		if(RegistryHandler.nbt.hasKey("portalActive"))
+			active = RegistryHandler.nbt.getBoolean("portalActive");
+			
+		if(computerOn && active && RegistryHandler.countdown != -1)
 		{
 			int height2 = (height / 2) + 14;
 			double percent = 0.0;
@@ -165,8 +170,6 @@ public class GuiComputer extends GuiContainer
 				percent = (double)(36000.0 - (double)countdown) / 36000.0;
 			
 			int barWidth = (int) (193 * percent);
-			
-			System.out.println("Percent: " + percent + " Bar Width: " + barWidth);
 			
 			this.mc.getTextureManager().bindTexture(COUNTDOWN);
 

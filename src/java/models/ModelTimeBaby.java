@@ -1,8 +1,243 @@
 package models;
 
 import net.minecraft.client.model.ModelBase;
+import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.entity.Entity;
 
 public class ModelTimeBaby extends ModelBase
 {
+    ModelRenderer Base1;
+    ModelRenderer Base2;
+    ModelRenderer Base3;
+    ModelRenderer Body;
+    ModelRenderer RightArm;
+    ModelRenderer LeftArm;
+    ModelRenderer Head1;
+    ModelRenderer Head2;
+    ModelRenderer RightEye;
+    ModelRenderer LeftEye;
+    ModelRenderer RightEar;
+    ModelRenderer LeftEar;
+    ModelRenderer RightHand;
+    ModelRenderer LeftHand;
+    ModelRenderer RightPinky;
+    ModelRenderer RightRing;
+    ModelRenderer RightMiddle;
+    ModelRenderer RightIndex;
+    ModelRenderer RightThumb1;
+    ModelRenderer RightThumb2;
+    ModelRenderer LeftPinky;
+    ModelRenderer LeftRing;
+    ModelRenderer LeftMiddle;
+    ModelRenderer LeftIndex;
+    ModelRenderer LeftThumb1;
+    ModelRenderer LeftThumb2;
+  
+  public ModelTimeBaby()
+  {
+    textureWidth = 256;
+    textureHeight = 256;
+    
+      Base1 = new ModelRenderer(this, 0, 108);
+      Base1.addBox(0F, 0F, 0F, 32, 8, 32);
+      Base1.setRotationPoint(-16F, 8F, -16F);
+      Base1.setTextureSize(256, 256);
+      Base1.mirror = true;
+      setRotation(Base1, 0F, 0F, 0F);
+      Base2 = new ModelRenderer(this, 0, 164);
+      Base2.addBox(0F, 0F, 0F, 40, 8, 40);
+      Base2.setRotationPoint(-20F, 0F, -20F);
+      Base2.setTextureSize(256, 256);
+      Base2.mirror = true;
+      setRotation(Base2, 0F, 0F, 0F);
+      Base3 = new ModelRenderer(this, 0, 108);
+      Base3.addBox(0F, 0F, 0F, 44, 12, 44);
+      Base3.setRotationPoint(-22F, -12F, -22F);
+      Base3.setTextureSize(256, 256);
+      Base3.mirror = true;
+      setRotation(Base3, 0F, 0F, 0F);
+      Body = new ModelRenderer(this, 0, 0);
+      Body.addBox(0F, 0F, 0F, 40, 28, 16);
+      Body.setRotationPoint(-20F, -40F, -8F);
+      Body.setTextureSize(256, 256);
+      Body.mirror = true;
+      setRotation(Body, 0F, 0F, 0F);
+      RightArm = new ModelRenderer(this, 0, 0);
+      RightArm.addBox(0F, 0F, 0F, 4, 16, 4);
+      RightArm.setRotationPoint(-24F, -36F, -2F);
+      RightArm.setTextureSize(256, 256);
+      RightArm.mirror = true;
+      setRotation(RightArm, 0F, 0F, 0F);
+      LeftArm = new ModelRenderer(this, 0, 0);
+      LeftArm.addBox(0F, 0F, 0F, 4, 16, 4);
+      LeftArm.setRotationPoint(20F, -36F, -2F);
+      LeftArm.setTextureSize(256, 256);
+      LeftArm.mirror = true;
+      setRotation(LeftArm, 0F, 0F, 0F);
+      Head1 = new ModelRenderer(this, 0, 0);
+      Head1.addBox(0F, 0F, 0F, 48, 60, 48);
+      Head1.setRotationPoint(-24F, -100F, -24F);
+      Head1.setTextureSize(256, 256);
+      Head1.mirror = true;
+      setRotation(Head1, 0F, 0F, 0F);
+      Head2 = new ModelRenderer(this, 0, 0);
+      Head2.addBox(0F, 0F, 0F, 36, 6, 36);
+      Head2.setRotationPoint(-18F, -106F, -18F);
+      Head2.setTextureSize(256, 256);
+      Head2.mirror = true;
+      setRotation(Head2, 0F, 0F, 0F);
+      RightEye = new ModelRenderer(this, 28, 213);
+      RightEye.addBox(0F, 0F, 0F, 8, 8, 6);
+      RightEye.setRotationPoint(-9F, -70F, -30F);
+      RightEye.setTextureSize(256, 256);
+      RightEye.mirror = true;
+      setRotation(RightEye, 0F, 0F, 0F);
+      LeftEye = new ModelRenderer(this, 28, 213);
+      LeftEye.addBox(0F, 0F, 0F, 8, 8, 6);
+      LeftEye.setRotationPoint(0.9555556F, -70F, -30F);
+      LeftEye.setTextureSize(256, 256);
+      LeftEye.mirror = true;
+      setRotation(LeftEye, 0F, 0F, 0F);
+      RightEar = new ModelRenderer(this, 192, 0);
+      RightEar.addBox(0F, 0F, 0F, 6, 8, 4);
+      RightEar.setRotationPoint(-30F, -65F, -21F);
+      RightEar.setTextureSize(256, 256);
+      RightEar.mirror = true;
+      setRotation(RightEar, 0F, 0F, 0F);
+      LeftEar = new ModelRenderer(this, 192, 20);
+      LeftEar.addBox(0F, 0F, 0F, 6, 8, 4);
+      LeftEar.setRotationPoint(24F, -65F, -21F);
+      LeftEar.setTextureSize(256, 256);
+      LeftEar.mirror = true;
+      setRotation(LeftEar, 0F, 0F, 0F);
+      RightHand = new ModelRenderer(this, 0, 0);
+      RightHand.addBox(0F, 0F, 0F, 6, 4, 5);
+      RightHand.setRotationPoint(-25F, -20F, -2.5F);
+      RightHand.setTextureSize(256, 256);
+      RightHand.mirror = true;
+      setRotation(RightHand, 0F, 0F, 0F);
+      LeftHand = new ModelRenderer(this, 0, 0);
+      LeftHand.addBox(0F, 0F, 0F, 6, 4, 5);
+      LeftHand.setRotationPoint(19F, -20F, -2.5F);
+      LeftHand.setTextureSize(256, 256);
+      LeftHand.mirror = true;
+      setRotation(LeftHand, 0F, 0F, 0F);
+      RightPinky = new ModelRenderer(this, 0, 0);
+      RightPinky.addBox(0F, 0F, 0F, 1, 2, 1);
+      RightPinky.setRotationPoint(-24F, -16F, 1F);
+      RightPinky.setTextureSize(256, 256);
+      RightPinky.mirror = true;
+      setRotation(RightPinky, 0F, 0F, 0F);
+      RightRing = new ModelRenderer(this, 0, 0);
+      RightRing.addBox(0F, 0F, 0F, 1, 3, 1);
+      RightRing.setRotationPoint(-24F, -16F, 0F);
+      RightRing.setTextureSize(256, 256);
+      RightRing.mirror = true;
+      setRotation(RightRing, 0F, 0F, 0F);
+      RightMiddle = new ModelRenderer(this, 0, 0);
+      RightMiddle.addBox(0F, 0F, 0F, 1, 4, 1);
+      RightMiddle.setRotationPoint(-24F, -16F, -1F);
+      RightMiddle.setTextureSize(256, 256);
+      RightMiddle.mirror = true;
+      setRotation(RightMiddle, 0F, 0F, 0F);
+      RightIndex = new ModelRenderer(this, 0, 0);
+      RightIndex.addBox(0F, 0F, 0F, 1, 3, 1);
+      RightIndex.setRotationPoint(-24F, -16F, -2F);
+      RightIndex.setTextureSize(256, 256);
+      RightIndex.mirror = true;
+      setRotation(RightIndex, 0F, 0F, 0F);
+      RightThumb1 = new ModelRenderer(this, 0, 0);
+      RightThumb1.addBox(0F, 0F, 0F, 1, 1, 1);
+      RightThumb1.setRotationPoint(-24F, -18F, -3F);
+      RightThumb1.setTextureSize(256, 256);
+      RightThumb1.mirror = true;
+      setRotation(RightThumb1, 0F, 0F, 0F);
+      RightThumb2 = new ModelRenderer(this, 0, 0);
+      RightThumb2.addBox(0F, 0F, 0F, 1, 2, 1);
+      RightThumb2.setRotationPoint(-24F, -18F, -4F);
+      RightThumb2.setTextureSize(256, 256);
+      RightThumb2.mirror = true;
+      setRotation(RightThumb2, 0F, 0F, 0F);
+      LeftPinky = new ModelRenderer(this, 0, 0);
+      LeftPinky.addBox(0F, 0F, 0F, 1, 2, 1);
+      LeftPinky.setRotationPoint(23F, -16F, 1F);
+      LeftPinky.setTextureSize(256, 256);
+      LeftPinky.mirror = true;
+      setRotation(LeftPinky, 0F, 0F, 0F);
+      LeftRing = new ModelRenderer(this, 0, 0);
+      LeftRing.addBox(0F, 0F, 0F, 1, 3, 1);
+      LeftRing.setRotationPoint(23F, -16F, 0F);
+      LeftRing.setTextureSize(256, 256);
+      LeftRing.mirror = true;
+      setRotation(LeftRing, 0F, 0F, 0F);
+      LeftMiddle = new ModelRenderer(this, 0, 0);
+      LeftMiddle.addBox(0F, 0F, 0F, 1, 4, 1);
+      LeftMiddle.setRotationPoint(23F, -16F, -1F);
+      LeftMiddle.setTextureSize(256, 256);
+      LeftMiddle.mirror = true;
+      setRotation(LeftMiddle, 0F, 0F, 0F);
+      LeftIndex = new ModelRenderer(this, 0, 0);
+      LeftIndex.addBox(0F, 0F, 0F, 1, 3, 1);
+      LeftIndex.setRotationPoint(23F, -16F, -2F);
+      LeftIndex.setTextureSize(256, 256);
+      LeftIndex.mirror = true;
+      setRotation(LeftIndex, 0F, 0F, 0F);
+      LeftThumb1 = new ModelRenderer(this, 0, 0);
+      LeftThumb1.addBox(0F, 0F, 0F, 1, 1, 1);
+      LeftThumb1.setRotationPoint(23F, -18F, -3F);
+      LeftThumb1.setTextureSize(256, 256);
+      LeftThumb1.mirror = true;
+      setRotation(LeftThumb1, 0F, 0F, 0F);
+      LeftThumb2 = new ModelRenderer(this, 0, 0);
+      LeftThumb2.addBox(0F, 0F, 0F, 1, 2, 1);
+      LeftThumb2.setRotationPoint(23F, -18F, -4F);
+      LeftThumb2.setTextureSize(256, 256);
+      LeftThumb2.mirror = true;
+      setRotation(LeftThumb2, 0F, 0F, 0F);
+  }
+  
+  public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5)
+  {
+    super.render(entity, f, f1, f2, f3, f4, f5);
+    setRotationAngles(f, f1, f2, f3, f4, f5, entity);
+    Base1.render(f5);
+    Base2.render(f5);
+    Base3.render(f5);
+    Body.render(f5);
+    RightArm.render(f5);
+    LeftArm.render(f5);
+    Head1.render(f5);
+    Head2.render(f5);
+    RightEye.render(f5);
+    LeftEye.render(f5);
+    RightEar.render(f5);
+    LeftEar.render(f5);
+    RightHand.render(f5);
+    LeftHand.render(f5);
+    RightPinky.render(f5);
+    RightRing.render(f5);
+    RightMiddle.render(f5);
+    RightIndex.render(f5);
+    RightThumb1.render(f5);
+    RightThumb2.render(f5);
+    LeftPinky.render(f5);
+    LeftRing.render(f5);
+    LeftMiddle.render(f5);
+    LeftIndex.render(f5);
+    LeftThumb1.render(f5);
+    LeftThumb2.render(f5);
+  }
+  
+  private void setRotation(ModelRenderer model, float x, float y, float z)
+  {
+    model.rotateAngleX = x;
+    model.rotateAngleY = y;
+    model.rotateAngleZ = z;
+  }
+  
+  public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity)
+  {
+    super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
+  }
 
 }

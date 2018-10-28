@@ -26,6 +26,16 @@ item.battery.name=Battery
 item.leafblower.name=Leaf Blower
 item.rift.name=Interdimensional Rift
 item.presidentkey.name=President's Key
+item.gideonbot.name=Gideon Bot
+item.gideonbot_head.name=Gideon Bot Head
+item.gideonbot_body.name=Gideon Bot Body
+item.gideonbot_leg.name=Gideon Bot Leg
+item.gideonbot_arm.name=Gideon Bot Arm
+item.interdimensional_rift.name=Interdimensional Rift
+item.returndevice.name=Return Device
+item.eyebat.name=EyeBat
+item.net.name=Net
+item.return_device.name=Return Device
 
 item.themesong.name=Music Disc
 item.themesong2.name=Music Disc
@@ -55,6 +65,8 @@ item.speedboots.name=Speed Boots
 item.cloak.name=Cloak of Occasional Invisibility
 item.goldknuckles.name=Gold Knuckles
 item.mysticamulet.name=Mystic Amulet
+item.tie.name=Tie of Possession
+item.tie2.name=Tie of Possession 2
 
 item.record.themesong.desc=Theme Song
 item.record.themesong2.desc=Theme Song 2
@@ -102,13 +114,6 @@ tile.lightwhite.name=White Light
 tile.lightyellow.name=Yellow Light
 
 tile.portalcontrol.name=Portal Control
-tile.portalcontrolallbooks.name=Portal Control
-tile.portalcontrolbook1.name=Portal Control
-tile.portalcontrolbook1book2.name=Portal Control
-tile.portalcontrolbook1book3.name=Portal Control
-tile.portalcontrolbook2.name=Portal Control
-tile.portalcontrolbook2book3.name=Portal Control
-tile.portalcontrolbook3.name=Portal Control
 tile.redwood_stairs.name=Redwood Stairs
 tile.redwood_slab_half.name=Redwood Half Slab
 tile.redwood_slab_double.name=Redwood Double Slab
@@ -120,6 +125,9 @@ tile.book_3.name=Journal 3
 tile.copper_block.name=Copper Block
 tile.lightsource.name=Light Source
 tile.unicornhair.name=Unicorn Hair
+tile.cursed_door.name=Cursed Door
+tile.portallever.name=Portal Lever
+tile.powercord_on.name=PowerCord
 
 itemGroup.tabGravityFallsBlocks=Gravity Falls Blocks
 itemGroup.tabGravityFallsArmor=Gravity Falls Armor
@@ -141,5 +149,9 @@ entity.eightball.name=8 Ball
 entity.eyebathuge.name=Huge Eye Bat
 entity.keyhole.name=Keyhole
 entity.unicorn.name=Unicorn
+entity.gideonbot.name=Gideon Bot
+entity.timebaby.name=Time Baby
 
 container.uranium_furnace=Uranium Furnace
+
+item.potionfreeze.name=Potion Freeze

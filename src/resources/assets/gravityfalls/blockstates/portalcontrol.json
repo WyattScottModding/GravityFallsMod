@@ -1,9 +1,86 @@
 {
     "variants":
     {
-        "facing=north": {"model": "gravityfalls:portalcontrol"},
-        "facing=east": {"model": "gravityfalls:portalcontrol", "y": 90},
-        "facing=south": {"model": "gravityfalls:portalcontrol", "y": 180},
-        "facing=west": {"model": "gravityfalls:portalcontrol", "y": 270}
+        "book1=false,book2=false,book3=false,facing=north,light=false": {"model": "gravityfalls:portalcontrol"},
+        "book1=false,book2=false,book3=false,facing=east,light=false": {"model": "gravityfalls:portalcontrol", "y": 90 },
+        "book1=false,book2=false,book3=false,facing=south,light=false": {"model": "gravityfalls:portalcontrol", "y": 180 },
+        "book1=false,book2=false,book3=false,facing=west,light=false": {"model": "gravityfalls:portalcontrol", "y": 270 },
+        
+        "book1=true,book2=false,book3=false,facing=north,light=false": {"model": "gravityfalls:portalcontrolbook1"},
+        "book1=true,book2=false,book3=false,facing=east,light=false": {"model": "gravityfalls:portalcontrolbook1", "y": 90 },
+        "book1=true,book2=false,book3=false,facing=south,light=false": {"model": "gravityfalls:portalcontrolbook1", "y": 180 },
+        "book1=true,book2=false,book3=false,facing=west,light=false": {"model": "gravityfalls:portalcontrolbook1", "y": 270 },
+        
+        "book1=false,book2=true,book3=false,facing=north,light=false": {"model": "gravityfalls:portalcontrolbook2"},
+        "book1=false,book2=true,book3=false,facing=east,light=false": {"model": "gravityfalls:portalcontrolbook2", "y": 90 },
+        "book1=false,book2=true,book3=false,facing=south,light=false": {"model": "gravityfalls:portalcontrolbook2", "y": 180 },
+        "book1=false,book2=true,book3=false,facing=west,light=false": {"model": "gravityfalls:portalcontrolbook2", "y": 270 },
+        
+        "book1=false,book2=false,book3=true,facing=north,light=false": {"model": "gravityfalls:portalcontrolbook3"},
+        "book1=false,book2=false,book3=true,facing=east,light=false": {"model": "gravityfalls:portalcontrolbook3", "y": 90 },
+        "book1=false,book2=false,book3=true,facing=south,light=false": {"model": "gravityfalls:portalcontrolbook3", "y": 180 },
+        "book1=false,book2=false,book3=true,facing=west,light=false": {"model": "gravityfalls:portalcontrolbook3", "y": 270 },
+        
+        "book1=true,book2=true,book3=false,facing=north,light=false": {"model": "gravityfalls:portalcontrolbook1book2"},
+        "book1=true,book2=true,book3=false,facing=east,light=false": {"model": "gravityfalls:portalcontrolbook1book2", "y": 90 },
+        "book1=true,book2=true,book3=false,facing=south,light=false": {"model": "gravityfalls:portalcontrolbook1book2", "y": 180 },
+        "book1=true,book2=true,book3=false,facing=west,light=false": {"model": "gravityfalls:portalcontrolbook1book2", "y": 270 },
+        
+        "book1=true,book2=false,book3=true,facing=north,light=false": {"model": "gravityfalls:portalcontrolbook1book3"},
+        "book1=true,book2=false,book3=true,facing=east,light=false": {"model": "gravityfalls:portalcontrolbook1book3", "y": 90 },
+        "book1=true,book2=false,book3=true,facing=south,light=false": {"model": "gravityfalls:portalcontrolbook1book3", "y": 180 },
+        "book1=true,book2=false,book3=true,facing=west,light=false": {"model": "gravityfalls:portalcontrolbook1book3", "y": 270 },
+        
+        "book1=false,book2=true,book3=true,facing=north,light=false": {"model": "gravityfalls:portalcontrolbook2book3"},
+        "book1=false,book2=true,book3=true,facing=east,light=false": {"model": "gravityfalls:portalcontrolbook2book3", "y": 90 },
+        "book1=false,book2=true,book3=true,facing=south,light=false": {"model": "gravityfalls:portalcontrolbook2book3", "y": 180 },
+        "book1=false,book2=true,book3=true,facing=west,light=false": {"model": "gravityfalls:portalcontrolbook2book3", "y": 270 },
+        
+        "book1=true,book2=true,book3=true,facing=north,light=false": {"model": "gravityfalls:portalcontrolallbooks"},
+        "book1=true,book2=true,book3=true,facing=east,light=false": {"model": "gravityfalls:portalcontrolallbooks", "y": 90 },
+        "book1=true,book2=true,book3=true,facing=south,light=false": {"model": "gravityfalls:portalcontrolallbooks", "y": 180 },
+        "book1=true,book2=true,book3=true,facing=west,light=false": {"model": "gravityfalls:portalcontrolallbooks", "y": 270 },
+        
+        
+        
+        "book1=false,book2=false,book3=false,facing=north,light=true": {"model": "gravityfalls:portalcontrol"},
+        "book1=false,book2=false,book3=false,facing=east,light=true": {"model": "gravityfalls:portalcontrol", "y": 90 },
+        "book1=false,book2=false,book3=false,facing=south,light=true": {"model": "gravityfalls:portalcontrol", "y": 180 },
+        "book1=false,book2=false,book3=false,facing=west,light=true": {"model": "gravityfalls:portalcontrol", "y": 270 },
+        
+        "book1=true,book2=false,book3=false,facing=north,light=true": {"model": "gravityfalls:portalcontrolbook1_light"},
+        "book1=true,book2=false,book3=false,facing=east,light=true": {"model": "gravityfalls:portalcontrolbook1_light", "y": 90 },
+        "book1=true,book2=false,book3=false,facing=south,light=true": {"model": "gravityfalls:portalcontrolbook1_light", "y": 180 },
+        "book1=true,book2=false,book3=false,facing=west,light=true": {"model": "gravityfalls:portalcontrolbook1_light", "y": 270 },
+        
+        "book1=false,book2=true,book3=false,facing=north,light=true": {"model": "gravityfalls:portalcontrolbook2_light"},
+        "book1=false,book2=true,book3=false,facing=east,light=true": {"model": "gravityfalls:portalcontrolbook2_light", "y": 90 },
+        "book1=false,book2=true,book3=false,facing=south,light=true": {"model": "gravityfalls:portalcontrolbook2_light", "y": 180 },
+        "book1=false,book2=true,book3=false,facing=west,light=true": {"model": "gravityfalls:portalcontrolbook2_light", "y": 270 },
+        
+        "book1=false,book2=false,book3=true,facing=north,light=true": {"model": "gravityfalls:portalcontrolbook3_light"},
+        "book1=false,book2=false,book3=true,facing=east,light=true": {"model": "gravityfalls:portalcontrolbook3_light", "y": 90 },
+        "book1=false,book2=false,book3=true,facing=south,light=true": {"model": "gravityfalls:portalcontrolbook3_light", "y": 180 },
+        "book1=false,book2=false,book3=true,facing=west,light=true": {"model": "gravityfalls:portalcontrolbook3_light", "y": 270 },
+        
+        "book1=true,book2=true,book3=false,facing=north,light=true": {"model": "gravityfalls:portalcontrolbook1book2_light"},
+        "book1=true,book2=true,book3=false,facing=east,light=true": {"model": "gravityfalls:portalcontrolbook1book2_light", "y": 90 },
+        "book1=true,book2=true,book3=false,facing=south,light=true": {"model": "gravityfalls:portalcontrolbook1book2_light", "y": 180 },
+        "book1=true,book2=true,book3=false,facing=west,light=true": {"model": "gravityfalls:portalcontrolbook1book2_light", "y": 270 },
+        
+        "book1=true,book2=false,book3=true,facing=north,light=true": {"model": "gravityfalls:portalcontrolbook1book3_light"},
+        "book1=true,book2=false,book3=true,facing=east,light=true": {"model": "gravityfalls:portalcontrolbook1book3_light", "y": 90 },
+        "book1=true,book2=false,book3=true,facing=south,light=true": {"model": "gravityfalls:portalcontrolbook1book3_light", "y": 180 },
+        "book1=true,book2=false,book3=true,facing=west,light=true": {"model": "gravityfalls:portalcontrolbook1book3_light", "y": 270 },
+        
+        "book1=false,book2=true,book3=true,facing=north,light=true": {"model": "gravityfalls:portalcontrolbook2book3_light"},
+        "book1=false,book2=true,book3=true,facing=east,light=true": {"model": "gravityfalls:portalcontrolbook2book3_light", "y": 90 },
+        "book1=false,book2=true,book3=true,facing=south,light=true": {"model": "gravityfalls:portalcontrolbook2book3_light", "y": 180 },
+        "book1=false,book2=true,book3=true,facing=west,light=true": {"model": "gravityfalls:portalcontrolbook2book3_light", "y": 270 },
+        
+        "book1=true,book2=true,book3=true,facing=north,light=true": {"model": "gravityfalls:portalcontrolallbooks_light"},
+        "book1=true,book2=true,book3=true,facing=east,light=true": {"model": "gravityfalls:portalcontrolallbooks_light", "y": 90 },
+        "book1=true,book2=true,book3=true,facing=south,light=true": {"model": "gravityfalls:portalcontrolallbooks_light", "y": 180 },
+        "book1=true,book2=true,book3=true,facing=west,light=true": {"model": "gravityfalls:portalcontrolallbooks_light", "y": 270 }
      }
 }

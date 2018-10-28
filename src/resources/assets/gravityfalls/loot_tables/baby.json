@@ -1,0 +1,23 @@
+{
+    "pools": [
+        {
+            "name": "TimeBabyMain",
+            "rolls": {
+                "min": 1,
+                "max": 1
+            },
+            "bonus_rolls": {
+                "min": 0,
+                "max": 1
+            },
+            "entries": [
+                {
+                    "type": "item",
+                    "weight": 1,
+                    "name": "gravityfalls:",
+                    "quality": 1
+                }
+            ]
+        }
+    ]
+}

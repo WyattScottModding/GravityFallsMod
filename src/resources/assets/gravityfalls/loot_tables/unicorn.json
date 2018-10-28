@@ -3,12 +3,12 @@
         {
             "name": "UnicornMain",
             "rolls": {
-                "min": 5,
-                "max": 10
+                "min": 8,
+                "max": 16
             },
             "bonus_rolls": {
-                "min": 0,
-                "max": 3
+                "min": 4,
+                "max": 8
             },
             "conditions": [
                 {

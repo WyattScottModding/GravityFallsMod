@@ -1,0 +1,9 @@
+{
+    "variants":
+    {
+        "facing=north": {"model": "gravityfalls:hyperdrive_on"},
+        "facing=east": {"model": "gravityfalls:hyperdrive_on", "y": 90},
+        "facing=south": {"model": "gravityfalls:hyperdrive_on", "y": 180},
+        "facing=west": {"model": "gravityfalls:hyperdrive_on", "y": 270}
+     }
+}

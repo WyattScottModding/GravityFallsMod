@@ -1,0 +1,9 @@
+{
+    "variants":
+    {
+        "facing=north": {"model": "gravityfalls:portallever"},
+        "facing=east": {"model": "gravityfalls:portallever", "y": 90},
+        "facing=south": {"model": "gravityfalls:portallever", "y": 180},
+        "facing=west": {"model": "gravityfalls:portallever", "y": 270}
+    }
+}

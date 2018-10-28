@@ -25,7 +25,8 @@
     },
     "rewards": {
         "recipes": [
-            "grapplinghook"
+            "grapplinghook",
+            "uraniumfurnace"
         ]
     }
 }

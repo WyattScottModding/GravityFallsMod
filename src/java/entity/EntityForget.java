@@ -2,6 +2,9 @@ package entity;
 
 import javax.annotation.Nullable;
 
+import org.omg.CORBA.IRObjectOperations;
+
+import armor.TieOfPossession;
 import handlers.RegistryHandler;
 import items.MemoryGun;
 import main.GravityFalls;
@@ -49,6 +52,10 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item.ToolMaterial;
+import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -127,54 +134,77 @@ public class EntityForget extends EntityFireball
 		{
 			entity = (EntityLivingBase)result.entityHit;
 
-			EntityLiving entityLiving = (EntityLiving) result.entityHit;
-			((EntityLivingBase)result.entityHit).addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 6000));
-			((EntityLivingBase)result.entityHit).addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 6000));
-			((EntityLivingBase)result.entityHit).addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 6000));
-			((EntityLivingBase)result.entityHit).addPotionEffect(new PotionEffect(MobEffects.GLOWING, 20));
+			EntityLiving entityLiving = (EntityLiving) entity;
 
-			entityLiving.setNoAI(true);
-			entityLiving.setSilent(true);
+			ItemStack stack = entityLiving.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
 
-			if(entity instanceof EntityPlayer)
+			ItemArmor armor = null;
+
+			if(stack.getItem() instanceof ItemArmor)
 			{
-				EntityPlayer player = (EntityPlayer) entity;
-
-				if(shooter != null && player != shooter)
-				{
-					int j = (int)(Math.random() * player.inventory.getSizeInventory());
-
-					if(!player.inventory.getStackInSlot(j).isEmpty())
-						player.inventory.removeStackFromSlot(j);
-				}
+				armor = (ItemArmor) stack.getItem();
 			}
 
-			if(world.isRemote)
+			ArmorMaterial material = ArmorMaterial.IRON;
+
+			if(armor == null || !(armor.getArmorMaterial() == material))
 			{
-				for(int i = 0; i < world.playerEntities.size(); i++)
+				entityLiving.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 6000));
+				entityLiving.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 6000));
+				entityLiving.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 6000));
+				entityLiving.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 20));
+
+				entityLiving.setNoAI(true);
+				entityLiving.setSilent(true);
+
+				if(entity instanceof EntityPlayer)
 				{
-					if(world.playerEntities.get(i) instanceof EntityPlayerMP)
+					EntityPlayer player = (EntityPlayer) entity;
+
+					if(shooter != null && player != shooter)
 					{
-
-						entityLiving.targetTasks.taskEntries.iterator().remove();
-						while(entityLiving.targetTasks.taskEntries.iterator().hasNext())
+						boolean searching = true;
+						for(int i = 0; searching; i++)
 						{
-							entityLiving.targetTasks.taskEntries.iterator().next();
-							entityLiving.targetTasks.taskEntries.iterator().remove();
+							int j = (int)(Math.random() * player.inventory.getSizeInventory());
 
-
+							if(!player.inventory.getStackInSlot(j).isEmpty())
+							{
+								player.inventory.removeStackFromSlot(j);
+								searching = false;
+							}
+							
+							if(i == player.inventory.getSizeInventory())
+								searching = false;
 						}
 					}
-					result.entityHit.removeTrackingPlayer((EntityPlayerMP)world.playerEntities.get(i));
+				}
+
+				if(world.isRemote)
+				{
+					for(int i = 0; i < world.playerEntities.size(); i++)
+					{
+						if(world.playerEntities.get(i) instanceof EntityPlayerMP)
+						{
+
+							entityLiving.targetTasks.taskEntries.iterator().remove();
+							while(entityLiving.targetTasks.taskEntries.iterator().hasNext())
+							{
+								entityLiving.targetTasks.taskEntries.iterator().next();
+								entityLiving.targetTasks.taskEntries.iterator().remove();
+
+
+							}
+						}
+						result.entityHit.removeTrackingPlayer((EntityPlayerMP)world.playerEntities.get(i));
 
 
 
-					//Use EntityLiving to erase the memory of all entites
-
+						//Use EntityLiving to erase the memory of all entites
+					}
 				}
 			}
 		}
-
 
 		this.setDead();
 

@@ -89,7 +89,7 @@ public class EntityTimeBaby extends EntityPigZombie
 	public EntityTimeBaby(World par1World)
 	{
 		super(par1World);
-		this.setSize(10.0F, 12.0F);
+		this.setSize(10.0F, 18.0F);
 		this.isImmuneToFire = true;
 		this.experienceValue = 60;
 		this.stepHeight = 4;
@@ -98,7 +98,7 @@ public class EntityTimeBaby extends EntityPigZombie
 	public EntityTimeBaby(World par1World, double x, double y, double z)
 	{
 		super(par1World);
-		this.setSize(10.0F, 12.0F);
+		this.setSize(10.0F, 18.0F);
 		this.isImmuneToFire = true;
 		this.experienceValue = 60;
 		this.stepHeight = 4;
@@ -142,11 +142,11 @@ public class EntityTimeBaby extends EntityPigZombie
 	{
 		super.applyEntityAttributes();
 
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(700.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(300.0D);
 
-		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.7D);
+		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
 
-		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(5.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(2.0D);
 		
 		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(100.0D);
 		
@@ -248,6 +248,13 @@ public class EntityTimeBaby extends EntityPigZombie
 	{
 		
 		super.onUpdate();
+	}
+	
+	
+	public void setTarget(EntityLivingBase entity)
+	{
+		this.setAttackTarget(entity);
+		this.setRevengeTarget(entity);
 	}
 	
 }

@@ -13,28 +13,27 @@ import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import tileEntities.TileEntityBook1;
+import tileEntities.TileEntityComputer;
 
-public class ContainerBook1 extends Container 
+public class ContainerComputer extends Container 
 {
-	private final TileEntityBook1 tileBook1;
-	
+	private final TileEntityComputer tileComputer;
 
-	public ContainerBook1(InventoryPlayer playerInventory, TileEntityBook1 bookInventory)
+	public ContainerComputer(InventoryPlayer playerInventory, TileEntityComputer computerInventory)
 	{
-		this.tileBook1 = bookInventory;
+		this.tileComputer = computerInventory;
 	}
 
 	@Override
 	public void addListener(IContainerListener listener) 
 	{
 		super.addListener(listener);
-		listener.sendAllWindowProperties(this, this.tileBook1);
+		listener.sendAllWindowProperties(this, this.tileComputer);
 	}
 
 	public boolean canInteractWith(EntityPlayer playerIn)
 	{
 		return true;
 	}
-
 
 }

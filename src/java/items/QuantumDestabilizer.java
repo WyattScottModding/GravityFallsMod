@@ -82,7 +82,7 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 			EntityPlayer player = (EntityPlayer) entityIn;
 
 			boolean flag = player.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
-			boolean hasItemStack = player.inventory.hasItemStack(new ItemStack(BlockInit.HIDDEN_ELEMENT));
+			boolean hasItemStack = player.inventory.hasItemStack(new ItemStack(Items.DIAMOND));
 			
 			int i = this.getMaxItemUseDuration(stack);
 			i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, player, i, hasItemStack || flag);
@@ -101,21 +101,10 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 
 					if (!worldIn.isRemote)
 					{
-						//EntityQuantum entityquantum = new EntityQuantum(worldIn, player.posX + Math.sin(-player.rotationYaw * Math.PI / 180) * 1.5, player.posY + .5 + Math.sin(-player.rotationPitch * Math.PI / 180) * 1.5, player.posZ + Math.cos(-player.rotationYaw * Math.PI / 180) * 1.5);
-
-
 						getMouseOver(player, worldIn);
-
-
-
+						itemstack.shrink(1);
 					}
-					//entityquantum.shoot(player, player.rotationPitch, player.rotationYaw, 3.0F, 0.0F);
-					//entityquantum.isInvisible();
-					//entityquantum.isInvisibleToPlayer(player);
-					//worldIn.spawnEntity(entityquantum);
-					//quantum = entityquantum;
-
-				//	itemstack.shrink(1);
+					
 				}
 			}		
 			player.closeScreen();
@@ -208,11 +197,11 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 	
 	private ItemStack findAmmo(EntityPlayer player)
 	{
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(BlockInit.HIDDEN_ELEMENT)))
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(Items.DIAMOND)))
 		{
 			return player.getHeldItem(EnumHand.OFF_HAND);
 		}
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(BlockInit.HIDDEN_ELEMENT)))
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(Items.DIAMOND)))
 		{
 			return player.getHeldItem(EnumHand.MAIN_HAND);
 		}
@@ -222,7 +211,7 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 			{
 				ItemStack itemstack = player.inventory.getStackInSlot(i);
 
-				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(BlockInit.HIDDEN_ELEMENT)))
+				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(Items.DIAMOND)))
 
 				{
 					return itemstack;

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import commands.CommandLocate2;
 import handlers.RegistryHandler;
 import init.BiomeInit;
 import init.BlockInit;
@@ -43,11 +44,15 @@ public class WorldGenCustomStructures implements IWorldGenerator
 	private boolean generated15 = false;
 	private boolean generated16 = false;
 
+	private IChunkGenerator chunkGenerator = null;
+
 
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkGenerator chunkGenerator,
 			IChunkProvider chunkProvider)
 	{
+		this.chunkGenerator = chunkGenerator;
+
 		switch(world.provider.getDimension())
 		{
 		case -1:
@@ -70,7 +75,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 			this.generateStructureTrees(new WorldGenStructure("redwoodtrees"), world, random, chunkX, chunkZ, Blocks.GRASS, BiomeGravityFalls.class);
 			this.generateStructureUranium(new WorldGenStructure("uranium"), world, random, chunkX, chunkZ);
 			this.generateStructureCopper(new WorldGenStructure("copper"), world, random, chunkX, chunkZ);
-
+			this.generateStructureNowYouSeeIt(new WorldGenStructure("nowyouseeitnowyoudontium"), world, random, chunkX, chunkZ);
 
 			break;
 		case 1:
@@ -173,15 +178,12 @@ public class WorldGenCustomStructures implements IWorldGenerator
 				this.generateStructureGlobnar(new WorldGenStructure("globnar16"), world, random, pos);
 				generated16 = true;
 			}
-			
+
 			break;
 		case 3:
 			this.generateStructureCrystal(new WorldGenStructure("chest"), world, random, chunkX, chunkZ, 100, BlockInit.ASTEROID, BiomeNightmareRealm.class);
-		
+
 			break;
-
-
-
 		}
 	}
 
@@ -237,7 +239,6 @@ public class WorldGenCustomStructures implements IWorldGenerator
 				{
 					generator.generate(world, random, pos);
 					next = 3;
-					addStructureToLocate(pos, "Journal3");
 				}
 			}
 		}
@@ -264,7 +265,6 @@ public class WorldGenCustomStructures implements IWorldGenerator
 				{
 					generator.generate(world, random, pos);
 					next = 2;
-					addStructureToLocate(pos, "Bunker");
 				}
 			}
 		}
@@ -296,7 +296,6 @@ public class WorldGenCustomStructures implements IWorldGenerator
 				{
 					generator.generate(world, random, pos);
 					next = 4;
-					addStructureToLocate(pos, "MysteryShack");
 				}
 			}
 		}
@@ -309,8 +308,8 @@ public class WorldGenCustomStructures implements IWorldGenerator
 		int x = (chunkX * 16) + random.nextInt(15) + 8;
 		int z = (chunkZ * 16) + random.nextInt(15) + 8;
 		int y = calculateGenerationHeight(world, x, z, topBlock) + 1;
-		
-		
+
+
 		BlockPos pos = new BlockPos(x, y, z);
 
 		Class<?> biome = world.provider.getBiomeForCoords(pos).getClass();
@@ -350,7 +349,6 @@ public class WorldGenCustomStructures implements IWorldGenerator
 				{
 					generator.generate(world, random, pos);
 					next = 1;
-					addStructureToLocate(pos, "UFO");
 				}
 			}
 		}
@@ -468,8 +466,16 @@ public class WorldGenCustomStructures implements IWorldGenerator
 		return y;
 	}
 
-	protected void addStructureToLocate(BlockPos pos, String name)
-    {
-        RegistryHandler.nbt.setString(name,"Structure Located At: " + pos.getX() + " " +pos.getY() + " " + pos.getZ());
-    }
+	public BlockPos locate(World world, String name, BlockPos pos)
+	{
+		if(chunkGenerator != null)
+		{
+			return chunkGenerator.getNearestStructurePos(world, name, pos, false);
+		}
+		
+		return new BlockPos(-1, -1, -1);
+	}
+
+
+
 }

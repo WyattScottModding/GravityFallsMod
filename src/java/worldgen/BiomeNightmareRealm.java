@@ -60,9 +60,9 @@ public class BiomeNightmareRealm extends Biome
 		this.spawnableWaterCreatureList.clear();
 		
 		
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityEightBall.class, 2, 1, 1));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityEyeBatHuge.class, 8, 3, 10));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityKeyhole.class, 2, 1, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityEightBall.class, 1, 1, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityEyeBatHuge.class, 15, 3, 10));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityKeyhole.class, 1, 1, 1));
 
 	}
 	

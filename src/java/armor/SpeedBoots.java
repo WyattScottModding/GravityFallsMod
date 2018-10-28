@@ -73,120 +73,123 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
 
-			RayTraceResult blockPosition = player.rayTrace(100, 1.0F);
-
-			IBlockState block = world.getBlockState(blockPosition.getBlockPos());
-
-			Block blockType = block.getBlock();
-
-			if(Keyboard.isKeyDown(Keyboard.KEY_N) && speed < 100)
-				speed += .4F;
-			else if(Keyboard.isKeyDown(Keyboard.KEY_B) && speed > 2)
-				speed -= .4F;
-
-			if(RegistryHandler.getSpeed())
+			if(player.getItemStackFromSlot(EntityEquipmentSlot.FEET).getItem() == ItemInit.SPEED_BOOTS)
 			{
-				float yaw = player.rotationYaw;
-				float pitch = player.rotationPitch;
+				RayTraceResult blockPosition = player.rayTrace(100, 1.0F);
 
+				IBlockState block = world.getBlockState(blockPosition.getBlockPos());
 
-				//Amount of movement
-				player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 5, (int)speed));
+				Block blockType = block.getBlock();
 
-				this.motionX = player.motionX;
-				this.motionZ = player.motionZ;
+				if(Keyboard.isKeyDown(Keyboard.KEY_N) && speed < 100)
+					speed += .4F;
+				else if(Keyboard.isKeyDown(Keyboard.KEY_B) && speed > 2)
+					speed -= .4F;
 
-				player.stepHeight = (int) (speed / 10) + 1;
-
-				player.fallDistance = 0;
-
-				//Running up Walls
-				BlockPos pos1 = new BlockPos(player.posX, player.posY, player.posZ + 1);
-				BlockPos pos2 = new BlockPos(player.posX, player.posY, player.posZ - 1);
-				BlockPos pos3 = new BlockPos(player.posX + 1, player.posY, player.posZ);
-				BlockPos pos4 = new BlockPos(player.posX - 1, player.posY, player.posZ);
-
-				boolean xMovementAir = world.getBlockState(pos3).getBlock() != Blocks.AIR || world.getBlockState(pos4).getBlock() != Blocks.AIR;		
-				boolean xMovementWater = world.getBlockState(pos3).getBlock() != Blocks.WATER || world.getBlockState(pos4).getBlock() != Blocks.WATER;		
-				boolean xMovementWaterFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_WATER || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_WATER;		
-				boolean xMovementLava = world.getBlockState(pos3).getBlock() != Blocks.LAVA || world.getBlockState(pos4).getBlock() != Blocks.LAVA;		
-				boolean xMovementLavaFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_LAVA || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_LAVA;		
-
-				if(speed > 15 && Keyboard.isKeyDown(Keyboard.KEY_W) && xMovementWaterFlowing && xMovementLava && xMovementLavaFlowing && xMovementAir && xMovementWater && player.posX == this.prevX1 && player.posX == this.prevX2 && player.posX == this.prevX3 && player.posX == this.prevX4)
+				if(RegistryHandler.getSpeed())
 				{
-					player.motionY = (double) speed / 15;
-					onWall = true;
+					float yaw = player.rotationYaw;
+					float pitch = player.rotationPitch;
 
 
-				}
-				else if(onWall)
-				{
-					player.motionY = -(double) speed / 15;
-					deBug++;
+					//Amount of movement
+					player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 5, (int)speed));
 
-					if(deBug == 8)
+					this.motionX = player.motionX;
+					this.motionZ = player.motionZ;
+
+					player.stepHeight = (int) (speed / 10) + 1;
+
+					player.fallDistance = 0;
+
+					//Running up Walls
+					BlockPos pos1 = new BlockPos(player.posX, player.posY, player.posZ + 1);
+					BlockPos pos2 = new BlockPos(player.posX, player.posY, player.posZ - 1);
+					BlockPos pos3 = new BlockPos(player.posX + 1, player.posY, player.posZ);
+					BlockPos pos4 = new BlockPos(player.posX - 1, player.posY, player.posZ);
+
+					boolean xMovementAir = world.getBlockState(pos3).getBlock() != Blocks.AIR || world.getBlockState(pos4).getBlock() != Blocks.AIR;		
+					boolean xMovementWater = world.getBlockState(pos3).getBlock() != Blocks.WATER || world.getBlockState(pos4).getBlock() != Blocks.WATER;		
+					boolean xMovementWaterFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_WATER || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_WATER;		
+					boolean xMovementLava = world.getBlockState(pos3).getBlock() != Blocks.LAVA || world.getBlockState(pos4).getBlock() != Blocks.LAVA;		
+					boolean xMovementLavaFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_LAVA || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_LAVA;		
+
+					if(speed > 15 && Keyboard.isKeyDown(Keyboard.KEY_W) && xMovementWaterFlowing && xMovementLava && xMovementLavaFlowing && xMovementAir && xMovementWater && player.posX == this.prevX1 && player.posX == this.prevX2 && player.posX == this.prevX3 && player.posX == this.prevX4)
 					{
-						onWall = false;
-						deBug = 0;
-					}
-				}
-
-				this.prevX4 = this.prevX3;
-				this.prevX3 = this.prevX2;
-				this.prevX2 = this.prevX1;
-				this.prevX1 = player.posX;
-
-				boolean zMovementAir = world.getBlockState(pos1).getBlock() != Blocks.AIR || world.getBlockState(pos2).getBlock() != Blocks.AIR;
-				boolean zMovementWater = world.getBlockState(pos3).getBlock() != Blocks.WATER || world.getBlockState(pos4).getBlock() != Blocks.WATER;		
-				boolean zMovementWaterFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_WATER || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_WATER;		
-				boolean zMovementLava = world.getBlockState(pos3).getBlock() != Blocks.LAVA || world.getBlockState(pos4).getBlock() != Blocks.LAVA;		
-				boolean zMovementLavaFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_LAVA || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_LAVA;
-
-				if(speed > 15 && Keyboard.isKeyDown(Keyboard.KEY_W) && zMovementWaterFlowing && zMovementLava && zMovementLavaFlowing && zMovementAir && zMovementWater && player.posZ == this.prevZ1 && player.posZ == this.prevZ2 && player.posZ == this.prevZ3 && player.posZ == this.prevZ4)
-				{
-					if(speed < 45)
 						player.motionY = (double) speed / 15;
-					else
-						player.motionY = 3;
+						onWall = true;
 
-					onWall = true;
-				}
-				else if(onWall)
-				{
-					if(speed < 45)
+
+					}
+					else if(onWall)
+					{
 						player.motionY = -(double) speed / 15;
-					else
-						player.motionY = -3;
-					deBug++;
+						deBug++;
 
-					if(deBug == 8)
-					{
-						onWall = false;
-						deBug = 0;
+						if(deBug == 8)
+						{
+							onWall = false;
+							deBug = 0;
+						}
 					}
-				}
-				this.prevZ4 = this.prevZ3;
-				this.prevZ3 = this.prevZ2;
-				this.prevZ2 = this.prevZ1;
-				this.prevZ1 = player.posZ;
 
-				//Running on Water
-				if(player.isOverWater() && speed > 15 && world.getBlockState(player.getPosition().down()).getBlock() != Blocks.AIR)
-				{
-					if(Keyboard.isKeyDown(Keyboard.KEY_W))
+					this.prevX4 = this.prevX3;
+					this.prevX3 = this.prevX2;
+					this.prevX2 = this.prevX1;
+					this.prevX1 = player.posX;
+
+					boolean zMovementAir = world.getBlockState(pos1).getBlock() != Blocks.AIR || world.getBlockState(pos2).getBlock() != Blocks.AIR;
+					boolean zMovementWater = world.getBlockState(pos3).getBlock() != Blocks.WATER || world.getBlockState(pos4).getBlock() != Blocks.WATER;		
+					boolean zMovementWaterFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_WATER || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_WATER;		
+					boolean zMovementLava = world.getBlockState(pos3).getBlock() != Blocks.LAVA || world.getBlockState(pos4).getBlock() != Blocks.LAVA;		
+					boolean zMovementLavaFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_LAVA || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_LAVA;
+
+					if(speed > 15 && Keyboard.isKeyDown(Keyboard.KEY_W) && zMovementWaterFlowing && zMovementLava && zMovementLavaFlowing && zMovementAir && zMovementWater && player.posZ == this.prevZ1 && player.posZ == this.prevZ2 && player.posZ == this.prevZ3 && player.posZ == this.prevZ4)
 					{
-						if(world.getBlockState(player.getPosition()).getBlock() == Blocks.WATER)
-							player.motionY = 1.0F;
+						if(speed < 45)
+							player.motionY = (double) speed / 15;
 						else
-							player.motionY = 0.0F;
+							player.motionY = 3;
 
-						float f = speed / 20;
-						float yaw2 = player.rotationYaw;
-
-						player.motionX = (double)(-MathHelper.sin(yaw2 / 180.0F * (float)Math.PI));
-						player.motionZ = (double)(MathHelper.cos(yaw2 / 180.0F * (float)Math.PI));
+						onWall = true;
 					}
-				}	
+					else if(onWall)
+					{
+						if(speed < 45)
+							player.motionY = -(double) speed / 15;
+						else
+							player.motionY = -3;
+						deBug++;
+
+						if(deBug == 8)
+						{
+							onWall = false;
+							deBug = 0;
+						}
+					}
+					this.prevZ4 = this.prevZ3;
+					this.prevZ3 = this.prevZ2;
+					this.prevZ2 = this.prevZ1;
+					this.prevZ1 = player.posZ;
+
+					//Running on Water
+					if(player.isOverWater() && speed > 15 && world.getBlockState(player.getPosition().down()).getBlock() != Blocks.AIR)
+					{
+						if(Keyboard.isKeyDown(Keyboard.KEY_W))
+						{
+							if(world.getBlockState(player.getPosition()).getBlock() == Blocks.WATER)
+								player.motionY = 1.0F;
+							else
+								player.motionY = 0.0F;
+
+							float f = speed / 20;
+							float yaw2 = player.rotationYaw;
+
+							player.motionX = (double)(-MathHelper.sin(yaw2 / 180.0F * (float)Math.PI));
+							player.motionZ = (double)(MathHelper.cos(yaw2 / 180.0F * (float)Math.PI));
+						}
+					}	
+				}
 			}
 		}
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);

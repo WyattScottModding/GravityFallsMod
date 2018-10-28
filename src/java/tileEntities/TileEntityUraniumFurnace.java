@@ -136,7 +136,7 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 		super.writeToNBT(compound);
 		compound.setInteger("BurnTime", (short)this.burnTime);
 		compound.setInteger("CookTime", (short)this.cookTime);
-		compound.setInteger("CookTimeTOtal", (short)this.totalCookTime);
+		compound.setInteger("CookTimeTotal", (short)this.totalCookTime);
 		ItemStackHelper.saveAllItems(compound, this.inventory);
 		
 		if(this.hasCustomName())

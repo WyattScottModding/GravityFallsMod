@@ -31,7 +31,12 @@ public class ReturnDevice extends Item implements IHasModel
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
-		if(player.dimension == 3 && !world.isRemote && RegistryHandler.portalActive)
+		boolean active = false;
+
+		if(RegistryHandler.nbt.hasKey("portalActive"))
+			active = RegistryHandler.nbt.getBoolean("portalActive");
+
+		if(player.dimension == 3 && !world.isRemote && active)
 		{
 			if(RegistryHandler.nbt != null && RegistryHandler.nbt.hasKey("PortalX"))
 			{

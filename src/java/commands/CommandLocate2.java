@@ -1,5 +1,6 @@
 package commands;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,8 +10,10 @@ import com.google.common.collect.Lists;
 
 import handlers.RegistryHandler;
 import main.Reference;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
+import net.minecraft.command.CommandLocate;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -19,13 +22,34 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.world.World;
+import worldgen.WorldGenCustomStructures;
 
 public class CommandLocate2 extends CommandBase
 {
+	private final List<String> aliases = Lists.newArrayList(Reference.MODID, "locateGravity", "locateGravityFalls");
+	private final List<String> STRUCTURES = new ArrayList();
+
 	@Override
 	public String getName()
 	{
-		return "locate";
+		STRUCTURES.add("mysteryshack");
+		STRUCTURES.add("ufo");
+		STRUCTURES.add("bunker");
+		STRUCTURES.add("journal3");
+
+		return "locateFalls";
+	}
+
+	@Override
+	public String getUsage(ICommandSender sender)
+	{
+		return "locateFalls <string>";	
+	}
+
+	@Override
+	public List<String> getAliases()
+	{
+		return aliases;
 	}
 
 	@Override
@@ -40,50 +64,39 @@ public class CommandLocate2 extends CommandBase
 		if(args.length < 1)
 			return;
 
+		System.out.println("Execute");
+		
 		String s = args[0];
 
-		if(s.equals("Bunker"))
+		BlockPos pos = null;
+
+		if(RegistryHandler.structures != null)
 		{
-			if(RegistryHandler.nbt.hasKey("Bunker"))
+			pos = RegistryHandler.structures.locate(sender.getEntityWorld(), s, sender.getPosition());
+			
+			if(pos.getX() == -1 && pos.getY() == -1 && pos.getZ() == -1)
 			{
-				String string = RegistryHandler.nbt.getString("Bunker");
-				sender.sendMessage(new TextComponentString(string));
+				sender.sendMessage(new TextComponentString(TextFormatting.RED + "Structure Not Found"));
+				return;
 			}
+			
+			sender.sendMessage(new TextComponentString("The structure " + s + " is located at: " + pos.toString()));
+			
+			System.out.println("Structure: " + pos.toString());
+			return;
 		}
-		else if(s.equals("MysteryShack"))
+		else
 		{
-			if(RegistryHandler.nbt.hasKey("MysteryShack"))
-			{
-				String string = RegistryHandler.nbt.getString("MysteryShack");
-				sender.sendMessage(new TextComponentString(string));
-			}
+			sender.sendMessage(new TextComponentString(TextFormatting.RED + "Not Able To Execute"));
+			return;
 		}
-		else if(s.equals("Journal3"))
-		{
-			if(RegistryHandler.nbt.hasKey("Journal3"))
-			{
-				String string = RegistryHandler.nbt.getString("Journal3");
-				sender.sendMessage(new TextComponentString(string));
-			}
-		}
-		else if(s.equals("UFO"))
-		{
-			if(RegistryHandler.nbt.hasKey("UFO"))
-			{
-				String string = RegistryHandler.nbt.getString("UFO");
-				sender.sendMessage(new TextComponentString(string));
-			}
-		}
+
 	}
 
 
-	public String getUsage(ICommandSender sender)
+	public List<String> getTabCompletionOptions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos pos)
 	{
-		return "commands.locate.usage";
+		return args.length == 1 ? getListOfStringsMatchingLastWord(args, STRUCTURES): Collections.<String>emptyList();
 	}
 
-	public List<String> getTabCompletions(MinecraftServer server, ICommandSender sender, String[] args, @Nullable BlockPos targetPos)
-	{
-		return args.length == 1 ? getListOfStringsMatchingLastWord(args, new String[] {"Bunker", "MysteryShack", "Journal3", "UFO"}) : Collections.emptyList();
-	}
 }

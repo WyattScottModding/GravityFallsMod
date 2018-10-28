@@ -72,6 +72,9 @@ public class TieOfPossession extends ItemArmor implements IHasModel
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entityIn, int itemSlot, boolean isSelected) 
 	{	
+		if(possessedEntity != null && possessedEntity.isDead)
+			possessedEntity = null;
+		
 		if(entityIn instanceof EntityPlayer && possessedEntity != null)
 		{
 			EntityPlayer player = (EntityPlayer) entityIn;
@@ -185,6 +188,8 @@ public class TieOfPossession extends ItemArmor implements IHasModel
 			            creeper.world.createExplosion(creeper, creeper.posX, creeper.posY, creeper.posZ, (float)1.5 * f, flag);
 			            creeper.setDead();
 			            world.spawnParticle(EnumParticleTypes.EXPLOSION_NORMAL, creeper.posX,creeper.posY, creeper.posZ, 1, 1, 1, 0);
+			            
+			            possessedEntity = null;
 			        }
 			}
 

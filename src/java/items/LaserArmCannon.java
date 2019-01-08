@@ -13,6 +13,9 @@ import com.google.common.base.Predicates;
 import akka.japi.pf.FI.Apply;
 import animations.RenderLaser;
 import entity.EntityGideonBot;
+import entity.EntityTimeCopDundgren;
+import entity.EntityTimeCopLolph;
+import handlers.KeyBindings;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
@@ -100,6 +103,16 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
 
+	public boolean fireGun(World world)
+	{
+		if (!world.isRemote)
+		{
+			charging = false;
+			return true;
+		}
+		
+		return false;
+	}
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
@@ -121,7 +134,6 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 
 		if(!worldIn.isRemote && entityIn instanceof EntityPlayer)
 		{
-
 			EntityPlayer player = (EntityPlayer) entityIn;
 			boolean flag = player.capabilities.isCreativeMode;
 
@@ -135,7 +147,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 				cooldown = 30;
 			}
 
-			if(stack.getItemDamage() >= 10 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
+			if(stack.getItemDamage() >= 10 &&  KeyBindings.BATTERY.isDown())
 			{
 				if(player.getHeldItemMainhand().getItem() instanceof LaserArmCannon)
 				{
@@ -150,11 +162,22 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 				}
 			}
 		}
+		else if(!worldIn.isRemote && (entityIn instanceof EntityTimeCopDundgren || entityIn instanceof EntityTimeCopLolph))
+		{
+			EntityLivingBase entityLiving = (EntityPlayer) entityIn;
+
+			if(!charging)
+			{
+				getMouseOver(entityLiving, worldIn);
+				charging = true;
+				cooldown = 30;
+			}
+		}
 
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
-	public void getMouseOver(EntityPlayer player, World world)
+	public void getMouseOver(EntityLivingBase player, World world)
 	{
 		Vec3d lookVec = player.getLookVec();
 
@@ -188,13 +211,12 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 					EntityLivingBase mob = (EntityLivingBase) entity;
 
 					if(mob instanceof EntitySkeleton || mob instanceof EntityZombie || mob instanceof EntityZombieHorse)
-						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 2, 0));
+						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 4, 1));
 					else
-						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 2, 0));
+						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 4, 1));
 				}
 			}
 		}
-
 	}
 
 

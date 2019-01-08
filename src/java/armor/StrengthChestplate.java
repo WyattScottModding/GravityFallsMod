@@ -50,12 +50,18 @@ public class StrengthChestplate extends ItemArmor implements IHasModel
 		else if(counter == 18)
 			counter = 0;
 		
-		if(entityIn instanceof EntityPlayer && RegistryHandler.getStrength())
+		if(entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
 
-			player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 5, 5));
-			player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 5, 2));;
+			if(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == ItemInit.STRENGTH_CHESTPLATE)
+			{
+				player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 5, 2));
+				player.addPotionEffect(new PotionEffect(MobEffects.HASTE, 5, 2));
+				player.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 5, 2));
+
+				player.fallDistance = 0;	
+			}
 		}
 		
 

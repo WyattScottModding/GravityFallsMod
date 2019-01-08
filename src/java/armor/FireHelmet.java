@@ -31,7 +31,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 public class FireHelmet extends ItemArmor implements IHasModel
 {
 	private int counter = 0;
-	
+
 	public FireHelmet(String name, ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
 	{
 		super(materialIn, renderIndexIn, equipmentSlotIn);
@@ -41,7 +41,7 @@ public class FireHelmet extends ItemArmor implements IHasModel
 
 		ItemInit.ITEMS.add(this);
 	}
-	
+
 
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entityIn, int itemSlot, boolean isSelected) 
@@ -50,15 +50,18 @@ public class FireHelmet extends ItemArmor implements IHasModel
 			counter++;
 		else if(counter == 36)
 			counter = 0;
-		
-		if(entityIn instanceof EntityPlayer && RegistryHandler.getFire())
+
+		if(entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
 
-			player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 5, 1));
-			player.addPotionEffect(new PotionEffect(MobEffects.WATER_BREATHING, 5, 1));
-			
-			player.fallDistance = 0;	
+			if(player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem() == ItemInit.FIRE_HELMET)
+			{
+				player.addPotionEffect(new PotionEffect(MobEffects.FIRE_RESISTANCE, 5, 1));
+				player.addPotionEffect(new PotionEffect(MobEffects.WATER_BREATHING, 5, 1));
+
+				player.fallDistance = 0;	
+			}
 		}
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}
@@ -91,7 +94,5 @@ public class FireHelmet extends ItemArmor implements IHasModel
 	public void registerModels() 
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
-
 	}
-
 }

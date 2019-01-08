@@ -2,6 +2,7 @@ package armor;
 
 import org.lwjgl.input.Keyboard;
 
+import handlers.KeyBindings;
 import handlers.RegistryHandler;
 import init.BlockInit;
 import init.ItemInit;
@@ -10,6 +11,7 @@ import main.IHasModel;
 import main.Reference;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -81,12 +83,12 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 
 				Block blockType = block.getBlock();
 
-				if(Keyboard.isKeyDown(Keyboard.KEY_N) && speed < 100)
+				if(KeyBindings.ARMOR1.isDown() && speed < 100)
 					speed += .4F;
-				else if(Keyboard.isKeyDown(Keyboard.KEY_B) && speed > 2)
+				else if(KeyBindings.ARMOR2.isDown() && speed > 2)
 					speed -= .4F;
 
-				if(RegistryHandler.getSpeed())
+				if(player.getItemStackFromSlot(EntityEquipmentSlot.FEET).getItem() == ItemInit.SPEED_BOOTS)
 				{
 					float yaw = player.rotationYaw;
 					float pitch = player.rotationPitch;
@@ -114,7 +116,7 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 					boolean xMovementLava = world.getBlockState(pos3).getBlock() != Blocks.LAVA || world.getBlockState(pos4).getBlock() != Blocks.LAVA;		
 					boolean xMovementLavaFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_LAVA || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_LAVA;		
 
-					if(speed > 15 && Keyboard.isKeyDown(Keyboard.KEY_W) && xMovementWaterFlowing && xMovementLava && xMovementLavaFlowing && xMovementAir && xMovementWater && player.posX == this.prevX1 && player.posX == this.prevX2 && player.posX == this.prevX3 && player.posX == this.prevX4)
+					if(speed > 15 && Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown() && xMovementWaterFlowing && xMovementLava && xMovementLavaFlowing && xMovementAir && xMovementWater && player.posX == this.prevX1 && player.posX == this.prevX2 && player.posX == this.prevX3 && player.posX == this.prevX4)
 					{
 						player.motionY = (double) speed / 15;
 						onWall = true;
@@ -144,7 +146,7 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 					boolean zMovementLava = world.getBlockState(pos3).getBlock() != Blocks.LAVA || world.getBlockState(pos4).getBlock() != Blocks.LAVA;		
 					boolean zMovementLavaFlowing = world.getBlockState(pos3).getBlock() != Blocks.FLOWING_LAVA || world.getBlockState(pos4).getBlock() != Blocks.FLOWING_LAVA;
 
-					if(speed > 15 && Keyboard.isKeyDown(Keyboard.KEY_W) && zMovementWaterFlowing && zMovementLava && zMovementLavaFlowing && zMovementAir && zMovementWater && player.posZ == this.prevZ1 && player.posZ == this.prevZ2 && player.posZ == this.prevZ3 && player.posZ == this.prevZ4)
+					if(speed > 15 && Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown() && zMovementWaterFlowing && zMovementLava && zMovementLavaFlowing && zMovementAir && zMovementWater && player.posZ == this.prevZ1 && player.posZ == this.prevZ2 && player.posZ == this.prevZ3 && player.posZ == this.prevZ4)
 					{
 						if(speed < 45)
 							player.motionY = (double) speed / 15;
@@ -182,11 +184,11 @@ public class SpeedBoots extends ItemArmor implements IHasModel
 							else
 								player.motionY = 0.0F;
 
-							float f = speed / 20;
+							float f = speed / 30;
 							float yaw2 = player.rotationYaw;
 
-							player.motionX = (double)(-MathHelper.sin(yaw2 / 180.0F * (float)Math.PI));
-							player.motionZ = (double)(MathHelper.cos(yaw2 / 180.0F * (float)Math.PI));
+							player.motionX = (double)(-MathHelper.sin(yaw2 / 180.0F * (float)Math.PI)) * f;
+							player.motionZ = (double)(MathHelper.cos(yaw2 / 180.0F * (float)Math.PI)) * f;
 						}
 					}	
 				}

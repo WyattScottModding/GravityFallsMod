@@ -31,6 +31,7 @@ import net.minecraftforge.fml.client.registry.ClientRegistry;
 public class CloakOfInvisibility extends ItemArmor implements IHasModel
 {
 	public boolean invisible = true;
+
 	public int counter = 100;
 
 	public CloakOfInvisibility(String name, ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
@@ -44,7 +45,6 @@ public class CloakOfInvisibility extends ItemArmor implements IHasModel
 	}
 
 
-
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
@@ -52,8 +52,7 @@ public class CloakOfInvisibility extends ItemArmor implements IHasModel
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
 
-
-			if(player.getArmorInventoryList().toString().contains("cloak"))
+			if(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == ItemInit.CLOAK_OF_INVISIBILITY)
 			{
 				if(invisible)
 					player.addPotionEffect(new PotionEffect(MobEffects.INVISIBILITY, 5, 5));
@@ -90,7 +89,5 @@ public class CloakOfInvisibility extends ItemArmor implements IHasModel
 	public void registerModels() 
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
-
 	}
-
 }

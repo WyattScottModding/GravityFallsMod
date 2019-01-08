@@ -10,6 +10,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import entity.EntityGnome;
+import handlers.KeyBindings;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
@@ -127,7 +128,7 @@ public class LeafBlower extends ItemSword implements IHasModel
 					entity = null;
 				}
 			}
-			if(stack.getItemDamage() >= 25 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
+			if(stack.getItemDamage() >= 25 &&  KeyBindings.BATTERY.isDown())
 			{
 				if(player.getHeldItemMainhand().getItem() instanceof LeafBlower)
 				{

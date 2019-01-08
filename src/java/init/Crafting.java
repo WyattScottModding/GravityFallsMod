@@ -26,7 +26,7 @@ public class Crafting {
 	    GameRegistry.addShapedRecipe(new ResourceLocation("powercord"), new ResourceLocation("powercord"), new ItemStack(BlockInit.POWER_CORD, 1), new Object[]{"III", "RRR", "III", 'R', Items.REDSTONE, 'I', ItemInit.RUBBER_ITEM});
 		GameRegistry.addShapelessRecipe(new ResourceLocation("redwoodplanks"), new ResourceLocation("redwoodplanks"), new ItemStack(BlockInit.REDWOODPLANKS, 4), new Ingredient[]{Ingredient.fromStacks(new ItemStack(BlockInit.REDWOODLOGS))});
 		GameRegistry.addShapedRecipe(new ResourceLocation("lightbulb"), new ResourceLocation("lightbulb"), new ItemStack(ItemInit.LIGHT_BULB, 1), new Object[]{"GGG", "GSG", "RIR", 'G', Blocks.GLASS_PANE, 'S', Blocks.GLOWSTONE, 'I', Items.IRON_INGOT, 'R', Items.REDSTONE});
-		GameRegistry.addShapedRecipe(new ResourceLocation("uraniumfurnace"), new ResourceLocation("uraniumfurnace"), new ItemStack(BlockInit.URANIUM_FURNACE, 1), new Object[]{"III", "RFR", "CCC", 'F', Blocks.FURNACE, 'C', Blocks.CONCRETE, 'I', Items.IRON_INGOT, 'R', Items.REDSTONE});
+		GameRegistry.addShapedRecipe(new ResourceLocation("uranium_furnace"), new ResourceLocation("uranium_furnace"), new ItemStack(BlockInit.URANIUM_FURNACE, 1), new Object[]{"III", "RFR", "CCC", 'F', Blocks.FURNACE, 'C', Blocks.CONCRETE, 'I', Items.IRON_INGOT, 'R', Items.REDSTONE});
 	
 		GameRegistry.addShapedRecipe(new ResourceLocation("quantumdestabilizer"), new ResourceLocation("quantumdestabilizer"), new ItemStack(ItemInit.QUANTTUM_DESTABILIZER, 1), new Object[]{" GO", "DEO", " OO", 'E', BlockInit.HIDDEN_ELEMENT, 'G', Blocks.GLASS, 'O', Blocks.OBSIDIAN, 'D', Items.DIAMOND});
 		GameRegistry.addShapedRecipe(new ResourceLocation("goldknuckles"), new ResourceLocation("goldknuckles"), new ItemStack(ItemInit.GOLD_KNUCKLES, 1), new Object[]{"B B", "III", "   ", 'I', Items.GOLD_INGOT, 'B', Blocks.GOLD_BLOCK});
@@ -44,12 +44,16 @@ public class Crafting {
 
 		GameRegistry.addShapedRecipe(new ResourceLocation("blacklight1"), new ResourceLocation("blacklight"), new ItemStack(ItemInit.BLACK_LIGHT, 1), new Object[]{"OOO", "LLL", "   ", 'L', BlockInit.LIGHT_PURPLE, 'O', Blocks.OBSIDIAN});
 		GameRegistry.addShapedRecipe(new ResourceLocation("blacklight2"), new ResourceLocation("blacklight"), new ItemStack(ItemInit.BLACK_LIGHT, 1), new Object[]{"   ", "OOO", "LLL", 'L', BlockInit.LIGHT_PURPLE, 'O', Blocks.OBSIDIAN});
-		GameRegistry.addShapedRecipe(new ResourceLocation("gideonbot1"), new ResourceLocation("blacklight"), new ItemStack(ItemInit.GIDEONBOT, 1), new Object[]{" H ", "ABA", "L L", 'A', ItemInit.GIDEONBOT_ARM, 'B', ItemInit.GIDEONBOT_BODY, 'H', ItemInit.GIDEONBOT_HEAD, 'L', ItemInit.GIDEONBOT_LEG});
-		GameRegistry.addShapedRecipe(new ResourceLocation("gideonbot2"), new ResourceLocation("blacklight"), new ItemStack(ItemInit.GIDEONBOT, 1), new Object[]{" H ", "ABA", "LL ", 'A', ItemInit.GIDEONBOT_ARM, 'B', ItemInit.GIDEONBOT_BODY, 'H', ItemInit.GIDEONBOT_HEAD, 'L', ItemInit.GIDEONBOT_LEG});
+//		GameRegistry.addShapedRecipe(new ResourceLocation("gideonbot1"), new ResourceLocation("blacklight"), new ItemStack(ItemInit.GIDEONBOT, 1), new Object[]{" H ", "ABA", "L L", 'A', ItemInit.GIDEONBOT_ARM, 'B', ItemInit.GIDEONBOT_BODY, 'H', ItemInit.GIDEONBOT_HEAD, 'L', ItemInit.GIDEONBOT_LEG});
+//		GameRegistry.addShapedRecipe(new ResourceLocation("gideonbot2"), new ResourceLocation("blacklight"), new ItemStack(ItemInit.GIDEONBOT, 1), new Object[]{" H ", "ABA", "LL ", 'A', ItemInit.GIDEONBOT_ARM, 'B', ItemInit.GIDEONBOT_BODY, 'H', ItemInit.GIDEONBOT_HEAD, 'L', ItemInit.GIDEONBOT_LEG});
 
-		GameRegistry.addShapedRecipe(new ResourceLocation("gideonbot3"), new ResourceLocation("gideonbot"), new ItemStack(ItemInit.GIDEONBOT, 1), new Object[]{" H ", "ABA", " LL", 'A', ItemInit.GIDEONBOT_ARM, 'B', ItemInit.GIDEONBOT_BODY, 'H', ItemInit.GIDEONBOT_HEAD, 'L', ItemInit.GIDEONBOT_LEG});
+//		GameRegistry.addShapedRecipe(new ResourceLocation("gideonbot3"), new ResourceLocation("gideonbot"), new ItemStack(ItemInit.GIDEONBOT, 1), new Object[]{" H ", "ABA", " LL", 'A', ItemInit.GIDEONBOT_ARM, 'B', ItemInit.GIDEONBOT_BODY, 'H', ItemInit.GIDEONBOT_HEAD, 'L', ItemInit.GIDEONBOT_LEG});
 		GameRegistry.addShapedRecipe(new ResourceLocation("net"), new ResourceLocation("net"), new ItemStack(ItemInit.NET, 1), new Object[]{"WSS", "WSS", "W  ", 'S', Items.STRING, 'W', Items.STICK,});
 		GameRegistry.addShapedRecipe(new ResourceLocation("return_device"), new ResourceLocation("return_device"), new ItemStack(ItemInit.RETURN_DEVICE, 1), new Object[]{"IGI", "IRI", "IOI", 'I', Items.IRON_INGOT, 'O', Items.GOLD_INGOT, 'G',Blocks.GLASS, 'R', Items.REDSTONE});
+		GameRegistry.addShapedRecipe(new ResourceLocation("portallever"), new ResourceLocation("portallever"), new ItemStack(BlockInit.PORTAL_LEVER, 1), new Object[]{" B ", " I ", "III", 'B', Blocks.STONE_BUTTON, 'I', Items.IRON_INGOT});
+
+		GameRegistry.addShapedRecipe(new ResourceLocation("portalcontrol1"), new ResourceLocation("portalcontrol"), new ItemStack(BlockInit.PORTAL_CONTROL, 1), new Object[]{"   ", "WWW", "OOO", 'O', Blocks.OBSIDIAN, 'W',  new ItemStack(Blocks.WOOL, 1, EnumDyeColor.BLACK.getDyeDamage())});
+		GameRegistry.addShapedRecipe(new ResourceLocation("portalcontrol2"), new ResourceLocation("portalcontrol"), new ItemStack(BlockInit.PORTAL_CONTROL, 1), new Object[]{"WWW", "OOO", "   ", 'O', Blocks.OBSIDIAN, 'W',  new ItemStack(Blocks.WOOL, 1, EnumDyeColor.BLACK.getDyeDamage())});
 
 		
 		//Time Wishes
@@ -76,8 +80,6 @@ public class Crafting {
 		GameRegistry.addShapedRecipe(new ResourceLocation("mabelshoes1"), new ResourceLocation("mabelshoes"), new ItemStack(ItemInit.MABEL_SHOES, 1), new Object[]{"   ", "W W", "B B", 'B', new ItemStack(Blocks.WOOL, 1, EnumDyeColor.BLACK.getDyeDamage()), 'W', new ItemStack(Blocks.WOOL, 0, EnumDyeColor.WHITE.getDyeDamage())});
 		GameRegistry.addShapedRecipe(new ResourceLocation("mabelshoes2"), new ResourceLocation("mabelshoes"), new ItemStack(ItemInit.MABEL_SHOES, 1), new Object[]{"W W", "B B", "   ", 'B', new ItemStack(Blocks.WOOL, 1, EnumDyeColor.BLACK.getDyeDamage()), 'W', new ItemStack(Blocks.WOOL, 0, EnumDyeColor.WHITE.getDyeDamage())});
 
-		
-		
 		GameRegistry.addShapedRecipe(new ResourceLocation("rubberhelmet1"), new ResourceLocation("rubberhelmet"), new ItemStack(ItemInit.RUBBER_HAT, 1), new Object[]{"RRR", "RGR", "   ", 'R', ItemInit.RUBBER_ITEM, 'G', Blocks.GLASS});
 		GameRegistry.addShapedRecipe(new ResourceLocation("rubberhelmet2"), new ResourceLocation("rubberhelmet"), new ItemStack(ItemInit.RUBBER_HAT, 1), new Object[]{"   ", "RRR", "RGR", 'R', ItemInit.RUBBER_ITEM, 'G', Blocks.GLASS});
 		GameRegistry.addShapedRecipe(new ResourceLocation("rubberchestplate"), new ResourceLocation("rubberchestplate"), new ItemStack(ItemInit.RUBBER_CHESTPLATE, 1), new Object[]{"R R", "RRR", "RRR", 'R', ItemInit.RUBBER_ITEM});
@@ -85,6 +87,9 @@ public class Crafting {
 		GameRegistry.addShapedRecipe(new ResourceLocation("rubberboots1"), new ResourceLocation("rubberboots"), new ItemStack(ItemInit.RUBBER_BOOTS, 1), new Object[]{"   ", "R R", "R R", 'R', ItemInit.RUBBER_ITEM});
 		GameRegistry.addShapedRecipe(new ResourceLocation("rubberboots2"), new ResourceLocation("rubberboots"), new ItemStack(ItemInit.RUBBER_BOOTS, 1), new Object[]{"R R", "R R", "   ", 'R', ItemInit.RUBBER_ITEM});
 	
+		GameRegistry.addShapedRecipe(new ResourceLocation("tie"), new ResourceLocation("tie"), new ItemStack(ItemInit.TIE_OF_POSSESSION, 1), new Object[]{"WWW", " I ", " R ", 'R', Items.REDSTONE, 'W', Blocks.WOOL, 'I', Items.IRON_INGOT});
+
+		
 		//RedWood Crafting
 		GameRegistry.addShapedRecipe(new ResourceLocation("redwoodpressureplate"), new ResourceLocation("pressureplate"), new ItemStack(Blocks.WOODEN_PRESSURE_PLATE, 1), new Object[]{"RR ", "   ", "   ", 'R', BlockInit.REDWOODPLANKS});
 		GameRegistry.addShapedRecipe(new ResourceLocation("redwoodcraftingtable"), new ResourceLocation("craftingtable"), new ItemStack(Blocks.CRAFTING_TABLE, 1), new Object[]{"RR ", "RR ", "   ", 'R', BlockInit.REDWOODPLANKS});

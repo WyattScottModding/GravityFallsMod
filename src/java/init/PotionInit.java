@@ -1,71 +1,38 @@
 package init;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import armor.CloakOfInvisibility;
-import armor.Dipper;
-import armor.FireHelmet;
-import armor.GoldKnuckles;
-import armor.Mabel;
-import armor.MysticAmulet;
-import armor.RegenerationLegs;
-import armor.RubberBoots;
-import armor.RubberChestplate;
-import armor.RubberHat;
-import armor.RubberLeggings;
-import armor.SpeedBoots;
-import armor.StrengthChestplate;
-import food.InfinityPizza;
-import food.SmileDip;
-import handlers.SoundsHandler;
-import items.Battery;
-import items.BlackLight;
-import items.Book1;
-import items.Book2;
-import items.Book3;
-import items.CopperIngot;
-import items.CrystalShard;
-import items.CustomRecords;
-import items.FlashLight;
-import items.GideonBot;
-import items.GideonBotPart;
-import items.GolfCart;
-import items.GrapplingHook;
-import items.InfinitySidedDie;
-import items.IterdimensionalRift;
-import items.LaserArmCannon;
-import items.Latex;
-import items.LeafBlower;
-import items.LightBulb;
-import items.MagicFlashLight;
-import items.MagnetGun;
-import items.MemoryGun;
-import items.PresidentKey;
-import items.QuantumDestabilizer;
-import items.Rift;
-import items.Rubber;
-import items.TimeTape;
-import items.TimeWish;
-import items.UraniumBucket;
-import main.Reference;
-import net.minecraft.block.material.Material;
-import net.minecraft.init.MobEffects;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
-import net.minecraft.item.Item.ToolMaterial;
-import net.minecraft.item.ItemArmor.ArmorMaterial;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
-import net.minecraftforge.common.util.EnumHelper;
-import potions.PotionFreeze;
+import net.minecraft.potion.PotionType;
+import net.minecraft.util.math.MathHelper;
+import net.minecraftforge.fml.common.registry.ForgeRegistries;
+import potions.Freeze;
 
 public class PotionInit 
 {
-
-	public static final List<Potion> POTIONS = new ArrayList<Potion>();
-
-	public static final Potion POTION_FREEZE = new PotionFreeze("freeze", true, 25);
+	//.registerPotionAttributeModifier(SharedMonsterAttributes.ATTACK_DAMAGE, MathHelper.getRandomUUID().toString(), 3.0D, 2)
 	
+	public static final Potion FREEZE_EFFECT = new Freeze("freeze_potion", true, 16529206, 0, 0).registerPotionAttributeModifier(SharedMonsterAttributes.MOVEMENT_SPEED, MathHelper.getRandomUUID().toString(), -1.0D, 2).registerPotionAttributeModifier(SharedMonsterAttributes.ATTACK_SPEED, MathHelper.getRandomUUID().toString(), -1.0D, 2);
+
+	public static final PotionType FREEZE_POTION = new PotionType("freeze_potion", new PotionEffect[] {new PotionEffect(FREEZE_EFFECT, 400)}).setRegistryName("freeze_potion");
+	public static final PotionType FREEZE_POTION_LONG = new PotionType("freeze_potion", new PotionEffect[] {new PotionEffect(FREEZE_EFFECT, 800)}).setRegistryName("freeze_potion_long");
+
+	public static void registerPotions()
+	{
+		registerPotion(FREEZE_POTION, FREEZE_POTION_LONG, FREEZE_EFFECT);
+		registerPotionMixes();
+	}
+	
+	public static void registerPotion(PotionType defaultPotion, PotionType longPotion, Potion  effect)
+	{
+		ForgeRegistries.POTIONS.register(effect);
+		ForgeRegistries.POTION_TYPES.register(defaultPotion);
+		ForgeRegistries.POTION_TYPES.register(longPotion);
+	}
+	
+	private static void registerPotionMixes()
+	{
+		//PotionHelper.addMix(TUBERCULOSIS_EFFECT, Items.REDSTONE, TUBERCULOSIS_POTION_LONG);
+		//PotionHelper.addMix(PotionTypes.AWKWARD, ItemInit.SALT_PETRE_DUST, TUBERCULOSIS_EFFECT);
+	}
 }

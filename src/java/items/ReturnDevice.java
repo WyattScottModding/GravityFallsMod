@@ -5,8 +5,6 @@ import handlers.RegistryHandler;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import main.Reference;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -14,6 +12,7 @@ import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import updates.PortalUpdate;
 
 public class ReturnDevice extends Item implements IHasModel
 {
@@ -33,14 +32,14 @@ public class ReturnDevice extends Item implements IHasModel
 	{
 		boolean active = false;
 
-		if(RegistryHandler.nbt.hasKey("portalActive"))
-			active = RegistryHandler.nbt.getBoolean("portalActive");
+		if(PortalUpdate.nbt.hasKey("portalActive"))
+			active = PortalUpdate.nbt.getBoolean("portalActive");
 
 		if(player.dimension == 3 && !world.isRemote && active)
 		{
-			if(RegistryHandler.nbt != null && RegistryHandler.nbt.hasKey("PortalX"))
+			if(PortalUpdate.nbt != null && PortalUpdate.nbt.hasKey("PortalX"))
 			{
-				Teleport.teleportToDimension(player, 0, RegistryHandler.nbt.getInteger("PortalX"), RegistryHandler.nbt.getInteger("PortalY"), RegistryHandler.nbt.getInteger("PortalZ"));
+				Teleport.teleportToDimension(player, 0, PortalUpdate.nbt.getInteger("PortalX"), PortalUpdate.nbt.getInteger("PortalY"), PortalUpdate.nbt.getInteger("PortalZ"));
 			}
 			else if(player.bedLocation != null)
 			{

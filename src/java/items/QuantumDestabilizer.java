@@ -82,7 +82,7 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 			EntityPlayer player = (EntityPlayer) entityIn;
 
 			boolean flag = player.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
-			boolean hasItemStack = player.inventory.hasItemStack(new ItemStack(Items.DIAMOND));
+			boolean hasItemStack = player.inventory.hasItemStack(new ItemStack(BlockInit.HIDDEN_ELEMENT));
 			
 			int i = this.getMaxItemUseDuration(stack);
 			i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, player, i, hasItemStack || flag);
@@ -197,11 +197,11 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 	
 	private ItemStack findAmmo(EntityPlayer player)
 	{
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(Items.DIAMOND)))
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(BlockInit.HIDDEN_ELEMENT)))
 		{
 			return player.getHeldItem(EnumHand.OFF_HAND);
 		}
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(Items.DIAMOND)))
+		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(BlockInit.HIDDEN_ELEMENT)))
 		{
 			return player.getHeldItem(EnumHand.MAIN_HAND);
 		}
@@ -211,7 +211,7 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 			{
 				ItemStack itemstack = player.inventory.getStackInSlot(i);
 
-				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(Items.DIAMOND)))
+				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(BlockInit.HIDDEN_ELEMENT)))
 
 				{
 					return itemstack;

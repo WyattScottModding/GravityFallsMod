@@ -15,6 +15,7 @@ import com.google.common.collect.Lists;
 
 import entity.EntityForget;
 import entity.EntitySecurityDroid;
+import handlers.KeyBindings;
 import handlers.SoundsHandler;
 import init.BlockInit;
 import init.ItemInit;
@@ -158,7 +159,7 @@ public class MagnetGun extends ItemBow implements IHasModel
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
 
-			if(Keyboard.isKeyDown(Keyboard.KEY_V))
+			if(KeyBindings.ITEM1.isDown())
 			{
 				//	if(attackCooldown == 100)
 				//	{

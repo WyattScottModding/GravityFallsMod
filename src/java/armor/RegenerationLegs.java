@@ -50,15 +50,19 @@ public class RegenerationLegs extends ItemArmor implements IHasModel
 		else if(counter == 22)
 			counter = 0;
 		
-		if(entityIn instanceof EntityPlayer && RegistryHandler.getRegenerate())
+		if(entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
 
-			player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 5, 2));
-			player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 5, 2));
-			
-			player.fallDistance = 0;
+			if(player.getItemStackFromSlot(EntityEquipmentSlot.LEGS).getItem() == ItemInit.REGENERATION_LEGS)
+			{
+				player.addPotionEffect(new PotionEffect(MobEffects.REGENERATION, 5, 1));
+				player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 5, 3));
+
+				player.fallDistance = 0;	
+			}
 		}
+
 
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}

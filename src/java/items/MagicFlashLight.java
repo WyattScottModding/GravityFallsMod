@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import org.lwjgl.input.Keyboard;
 
+import handlers.KeyBindings;
 import handlers.RegistryHandler;
 import init.ItemInit;
 import main.GravityFalls;
@@ -26,10 +27,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import updates.PlayerUpdate;
 
 public class MagicFlashLight extends ItemSword implements IHasModel
 {
-
 	public float height = 1.8F;
 	public float eyeHeight = 1.62F;
 
@@ -85,22 +86,22 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 			EntityPlayer player = (EntityPlayer) entityIn;
 
 			if(stack.getItemDamage() >= 99)
-				RegistryHandler.magicClicked = false;
+				PlayerUpdate.magicClicked = false;
 			else
-				RegistryHandler.magicClicked = clicked;
+				PlayerUpdate.magicClicked = clicked;
 
 			if(player.getHeldItemMainhand().getItem() instanceof MagicFlashLight)
 			{
-				if(Keyboard.isKeyDown(Keyboard.KEY_B))
+				if(KeyBindings.ITEM1.isDown())
 				{
 					grow = true;
 				}
 
-				if(Keyboard.isKeyDown(Keyboard.KEY_V))
+				if(KeyBindings.ITEM2.isDown())
 				{
 					grow = false;
 				}
-				if(clicked && worldIn.isRemote)
+				if(clicked && !worldIn.isRemote)
 				{
 					if(grow)
 					{
@@ -131,14 +132,14 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 					if(nbt.hasKey("height"))
 						height = nbt.getFloat("height");
 
-					System.out.println("Player height: " + height);
-
 					float heightChange = 0.015F;
 
 					float scale = (float)(height / 1.8);
-
-					RegistryHandler.scale = scale;
-					RegistryHandler.nbt = nbt;
+					
+					NBTTagCompound nbtPlayer = player.getEntityData();
+					
+					nbtPlayer.setFloat("scale", scale);
+					//player.writeToNBT(nbtPlayer);
 
 
 					if(grow)
@@ -166,7 +167,7 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 					stack.damageItem(1, player);
 				}
 
-				if(stack.getItemDamage() >= 50 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
+				if(stack.getItemDamage() >= 50 &&  KeyBindings.BATTERY.isDown())
 				{
 					ItemStack itemstack = findAmmo(player);
 

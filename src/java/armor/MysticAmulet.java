@@ -12,6 +12,7 @@ import com.google.common.base.Predicates;
 
 import entity.EntityBill;
 import handlers.BlockHandler;
+import handlers.KeyBindings;
 import handlers.RegistryHandler;
 import init.BlockInit;
 import init.ItemInit;
@@ -85,7 +86,7 @@ public class MysticAmulet extends ItemArmor implements IHasModel
             @SideOnly(Side.CLIENT)
             public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
             {
-                return active ? 0.0F : 1.0F;
+                return (active && entityIn.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == ItemInit.MYSTIC_AMULET) ? 0.0F : 1.0F;
             }
         });
 
@@ -152,11 +153,11 @@ public class MysticAmulet extends ItemArmor implements IHasModel
 
 			if(player.getArmorInventoryList().toString().contains("mysticamulet") && !thrown)
 			{
-				if(entity == null && Keyboard.isKeyDown(Keyboard.KEY_G) && getMouseOver(player, world))
+				if(entity == null && KeyBindings.ITEM1.isDown() && getMouseOver(player, world))
 				{
 
 				}
-				else if(Keyboard.isKeyDown(Keyboard.KEY_G) && entity != null && !(entity instanceof EntityBill))
+				else if(KeyBindings.ITEM1.isDown() && entity != null && !(entity instanceof EntityBill))
 				{
 					if(entity instanceof EntityLivingBase)
 					{
@@ -196,11 +197,11 @@ public class MysticAmulet extends ItemArmor implements IHasModel
 
 				}
 
-				if(!Keyboard.isKeyDown(Keyboard.KEY_G))
+				if(!KeyBindings.ITEM1.isDown())
 				{
 					entity = null;
 				}
-				if(entity != null && Keyboard.isKeyDown(Keyboard.KEY_C))
+				if(entity != null && KeyBindings.ITEM2.isDown())
 				{
 					RayTraceResult blockPosition = player.rayTrace(1, 1.0F);
 

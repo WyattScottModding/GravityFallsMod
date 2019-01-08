@@ -3,6 +3,7 @@ package init;
 import java.util.ArrayList;
 import java.util.List;
 
+import armor.ArmorModel;
 import armor.CloakOfInvisibility;
 import armor.Dipper;
 import armor.FireHelmet;
@@ -36,7 +37,7 @@ import items.GideonBotPart;
 import items.GolfCart;
 import items.GrapplingHook;
 import items.InfinitySidedDie;
-import items.IterdimensionalRift;
+import items.InterdimensionalRift;
 import items.LaserArmCannon;
 import items.Latex;
 import items.LeafBlower;
@@ -53,6 +54,7 @@ import items.Rubber;
 import items.TimeTape;
 import items.TimeWish;
 import items.UraniumBucket;
+import main.GravityFalls;
 import main.Reference;
 import net.minecraft.block.material.Material;
 import net.minecraft.init.MobEffects;
@@ -64,7 +66,6 @@ import net.minecraft.item.ItemArmor.ArmorMaterial;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraftforge.common.util.EnumHelper;
-import potions.PotionFreeze;
 
 public class ItemInit {
 
@@ -73,6 +74,7 @@ public class ItemInit {
 
 
 	//Armor Material
+	public static final ArmorMaterial DIPPER2= EnumHelper.addArmorMaterial("dipper2", Reference.MODID + ":dipper2", 20, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
 	public static final ArmorMaterial DIPPER = EnumHelper.addArmorMaterial("dipper", Reference.MODID + ":dipper", 20, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
 	public static final ArmorMaterial MABEL = EnumHelper.addArmorMaterial("mabel", Reference.MODID + ":mabel", 20, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
 	public static final ArmorMaterial RUBBER = EnumHelper.addArmorMaterial("rubber", Reference.MODID + ":rubber", 10, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
@@ -83,7 +85,7 @@ public class ItemInit {
 	public static final ArmorMaterial TIE = EnumHelper.addArmorMaterial("tie", Reference.MODID + ":tie", 40, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
 
 	//Armor
-	public static final Item PINE_HAT = new Dipper("pinehat", DIPPER, 1, EntityEquipmentSlot.HEAD);
+	public static final Item PINE_HAT = new ArmorModel("pinehat", GravityFalls.gravityfallsarmor, DIPPER2, EntityEquipmentSlot.HEAD);
 	public static final Item PINE_SHIRT = new Dipper("pinevest", DIPPER, 1, EntityEquipmentSlot.CHEST);
 	public static final Item PINE_PANTS = new Dipper("pinepants", DIPPER, 1, EntityEquipmentSlot.LEGS);
 	public static final Item PINE_SHOES = new Dipper("pineshoes", DIPPER, 1, EntityEquipmentSlot.FEET);
@@ -172,7 +174,7 @@ public class ItemInit {
 	public static final Item GIDEONBOT_LEG	= new GideonBotPart("gideonbot_leg");
 	public static final Item GIDEONBOT_ARM	= new GideonBotPart("gideonbot_arm");
 	
-	public static final Item INTERDIMENSIONAL_RIFT = new IterdimensionalRift("interdimensional_rift");
+	public static final Item INTERDIMENSIONAL_RIFT = new InterdimensionalRift("interdimensional_rift");
 	
 	public static final Item RETURN_DEVICE = new ReturnDevice("return_device");
 	

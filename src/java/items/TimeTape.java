@@ -10,9 +10,11 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import commands.Teleport;
+import handlers.KeyBindings;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
@@ -129,15 +131,15 @@ public class TimeTape extends Item implements IHasModel
 
 			if(player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.TIME_TAPE)))
 			{
-				if(Keyboard.isKeyDown(Keyboard.KEY_R))
+				if(KeyBindings.ITEM1.isDown())
 				{
-					if(Keyboard.isKeyDown(Keyboard.KEY_W))
+					if(Minecraft.getMinecraft().gameSettings.keyBindForward.isKeyDown())
 					{
-						worldIn.setWorldTime(worldIn.getWorldTime() + 150);
+						worldIn.setWorldTime(worldIn.getWorldTime() + 100);
 					}
-					if(Keyboard.isKeyDown(Keyboard.KEY_S))
+					if(Minecraft.getMinecraft().gameSettings.keyBindBack.isKeyDown())
 					{
-						worldIn.setWorldTime(worldIn.getWorldTime() - 150);
+						worldIn.setWorldTime(worldIn.getWorldTime() - 100);
 					}
 				}
 			}

@@ -16,6 +16,7 @@ public class SoundsHandler
 	public static SoundEvent ENTITY_GNOME_ANGRY;
 	
 	public static SoundEvent ENTITY_BILL_DEATH;
+	public static SoundEvent ENTITY_BILL_SUMMONED;
 	
 	public static SoundEvent ENTITY_DROID_AMBIENT;
 	public static SoundEvent ENTITY_DROID_DEATH;
@@ -35,6 +36,7 @@ public class SoundsHandler
 	
 	public static SoundEvent ITEM_MAGNETGUN;
 
+	public static SoundEvent ITEM_RAISEDEAD;
 
 
 	static
@@ -54,7 +56,8 @@ public class SoundsHandler
 		ENTITY_GNOME_ANGRY = registerSound("entity.gnome.angry");
 		
 		ENTITY_BILL_DEATH = registerSound("entity.bill.death");
-		
+		ENTITY_BILL_SUMMONED = registerSound("entity.bill.summoned");
+
 		ENTITY_DROID_AMBIENT = registerSound("entity.securitydroid.ambient");
 		ENTITY_DROID_DEATH = registerSound("entity.securitydroid.death");
 		
@@ -66,6 +69,8 @@ public class SoundsHandler
 		PORTAL_FINISHED = registerSound("portal.finished");
 		
 		ITEM_MAGNETGUN = registerSound("item.magnetgun");
+		
+		ITEM_RAISEDEAD = registerSound("item.raisedead");
 	}
 
 	private static SoundEvent registerSound(String name)

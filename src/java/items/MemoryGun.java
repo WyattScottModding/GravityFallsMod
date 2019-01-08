@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import org.lwjgl.input.Keyboard;
 
 import entity.EntityForget;
+import handlers.KeyBindings;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
@@ -72,11 +73,6 @@ public class MemoryGun extends ItemBow implements IHasModel
 		if (entityIn instanceof EntityPlayerMP && forget != null)
 		{
 			EntityPlayerMP player = (EntityPlayerMP)entityIn;
-			Entity entityHit = forget.getEntityHit();
-			if(entityHit != null && player != null)
-			{
-				entityHit.removeTrackingPlayer(player);
-			}
 			
 			boolean flag = player.capabilities.isCreativeMode;
 			
@@ -88,7 +84,7 @@ public class MemoryGun extends ItemBow implements IHasModel
 				fired = false;
 			}
 			
-			if(stack.getItemDamage() >= 1 && Keyboard.isKeyDown(Keyboard.KEY_R))
+			if(stack.getItemDamage() >= 1 && KeyBindings.BATTERY.isDown())
 			{
 				ItemStack itemstack = findAmmo(player);
 
@@ -119,11 +115,11 @@ public class MemoryGun extends ItemBow implements IHasModel
 			{
 				if (!worldIn.isRemote)
 				{
-					EntityForget entityforget = new EntityForget(worldIn, entityplayer.posX + Math.sin(-entityplayer.rotationYaw * Math.PI / 180) * 1.5, entityplayer.posY + .5 + Math.sin(-entityplayer.rotationPitch * Math.PI / 180) * 1.5, entityplayer.posZ + Math.cos(-entityplayer.rotationYaw * Math.PI / 180) * 1.5, entityplayer);
-
-					entityforget.shoot(entityplayer, entityplayer.rotationPitch, entityplayer.rotationYaw, 3.0F, 0.0F);
-					entityforget.isInvisible();
-					entityforget.isInvisibleToPlayer(entityplayer);
+				//	EntityForget entityforget = new EntityForget(worldIn, entityplayer.posX + Math.sin(-entityplayer.rotationYaw * Math.PI / 180) * 1.5, entityplayer.posY + .5 + Math.sin(-entityplayer.rotationPitch * Math.PI / 180) * 1.5, entityplayer.posZ + Math.cos(-entityplayer.rotationYaw * Math.PI / 180) * 1.5, entityplayer);
+					
+					EntityForget entityforget = new EntityForget(worldIn, entityplayer, entityplayer.posX + ((double)entityplayer.width * .5), entityplayer.posY + (double)entityplayer.eyeHeight - (double)entityplayer.getYOffset() - .4, entityplayer.posZ + (double)entityplayer.width * .5);
+					
+					entityforget.shoot(entityplayer, entityplayer.rotationPitch, entityplayer.rotationYaw, 0.0F, 3.0F, 0.0F);
 					worldIn.spawnEntity(entityforget);
 					forget = entityforget;
 					fired = true;

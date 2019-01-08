@@ -7,6 +7,7 @@ import javax.annotation.Nullable;
 import org.lwjgl.input.Keyboard;
 
 import handlers.BlockHandler;
+import handlers.KeyBindings;
 import handlers.RegistryHandler;
 import init.ItemInit;
 import main.GravityFalls;
@@ -35,6 +36,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 import net.minecraftforge.fml.common.network.simpleimpl.SimpleNetworkWrapper;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import updates.PlayerUpdate;
 
 public class FlashLight extends ItemSword implements IHasModel
 {
@@ -98,14 +100,14 @@ public class FlashLight extends ItemSword implements IHasModel
 			counter--;
 		this.stack = stack;
 		
-		if(entity instanceof EntityPlayer)
+		if(entity instanceof EntityPlayer && !world.isRemote)
 		{
 			EntityPlayer player = (EntityPlayer) entity;
 
 			if(stack.getItemDamage() >= 99)
-				RegistryHandler.clicked = false;
+				PlayerUpdate.clicked = false;
 			else
-				RegistryHandler.clicked = clicked;
+				PlayerUpdate.clicked = clicked;
 
 			if(clicked && world.getWorldTime() % 120 == 0)
 			{
@@ -113,7 +115,7 @@ public class FlashLight extends ItemSword implements IHasModel
 			}
 			
 			
-			if(stack.getItemDamage() >= 50 &&  Keyboard.isKeyDown(Keyboard.KEY_R))
+			if(stack.getItemDamage() >= 50 &&  KeyBindings.BATTERY.isDown())
 			{
 				ItemStack itemstack = findAmmo(player);
 
@@ -152,10 +154,7 @@ public class FlashLight extends ItemSword implements IHasModel
 					return itemstack;
 				}
 			}
-
 			return ItemStack.EMPTY;
 		}
 	}
-
-
 }

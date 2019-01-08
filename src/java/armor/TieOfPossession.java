@@ -11,6 +11,7 @@ import org.lwjgl.input.Keyboard;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
+import handlers.KeyBindings;
 import handlers.RegistryHandler;
 import init.BlockInit;
 import init.ItemInit;
@@ -18,6 +19,7 @@ import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityAreaEffectCloud;
@@ -156,24 +158,12 @@ public class TieOfPossession extends ItemArmor implements IHasModel
 				possessedEntity.stepHeight = 1;
 
 				//Turn
-				if(Keyboard.isKeyDown(Keyboard.KEY_J))
+				if(KeyBindings.ARMOR1.isDown())
 					possessedEntity.rotationYaw -= 6;
-				else if(Keyboard.isKeyDown(Keyboard.KEY_K))
+				else if(KeyBindings.ARMOR2.isDown())
 					possessedEntity.rotationYaw += 6;
 				
 				possessedEntity.setPositionAndUpdate(possessedEntity.posX, possessedEntity.posY, possessedEntity.posZ);
-
-				//Attack
-				if(Keyboard.isKeyDown(Keyboard.KEY_H))
-				{
-					EntityLivingBase entityLiving = getMouseOver(possessedEntity, world);
-					
-					if(entityLiving != null)
-					{
-						//entityLiving.attackEntityFrom(DamageSource.GENERIC, 3.0F);
-						possessedEntity.attackEntityAsMob(entityLiving);
-					}
-				}
 			}
 			
 			//Explode if Creeper
@@ -181,7 +171,7 @@ public class TieOfPossession extends ItemArmor implements IHasModel
 			{
 				EntityCreeper creeper = (EntityCreeper) possessedEntity;
 				
-				 if (!world.isRemote && Keyboard.isKeyDown(Keyboard.KEY_M))
+				 if (!world.isRemote && KeyBindings.ARMOR3.isDown())
 			        {
 			            boolean flag = net.minecraftforge.event.ForgeEventFactory.getMobGriefingEvent(world, creeper);
 			            float f = creeper.getPowered() ? 2.0F : 1.0F;
@@ -192,7 +182,6 @@ public class TieOfPossession extends ItemArmor implements IHasModel
 			            possessedEntity = null;
 			        }
 			}
-
 		}
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}
@@ -258,6 +247,4 @@ public class TieOfPossession extends ItemArmor implements IHasModel
 		}
 		return null;
 	}
-
-
 }

@@ -47,6 +47,7 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
@@ -61,15 +62,20 @@ public class PowerCord extends Block implements IHasModel
 	public static final PropertyBool WEST = PropertyBool.create("west");
 
 	public static AxisAlignedBB POWERCORD = new AxisAlignedBB(0.0D, 0D, 0.0D, 1.0D, 0.2D, 1.0D);
+	public boolean powered = false;
 
-	public PowerCord(String name)
+	public PowerCord(String name, boolean powered)
 	{
 		super(Material.CIRCUITS);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsblocks);
+		this.powered = powered;
+
+		if(!powered)
+			this.setCreativeTab(GravityFalls.gravityfallsblocks);
+
+
 		this.setDefaultState(this.blockState.getBaseState().withProperty(NORTH, Boolean.valueOf(false)).withProperty(EAST, Boolean.valueOf(false)).withProperty(SOUTH, Boolean.valueOf(false)).withProperty(WEST, Boolean.valueOf(false)));
-		this.setTickRandomly(true);
 
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
@@ -91,8 +97,7 @@ public class PowerCord extends Block implements IHasModel
 	@Override
 	public ItemStack getItem(World worldIn, BlockPos pos, IBlockState state)
 	{
-		//return new ItemStack(BlockInit.POWER_CORD);
-		return null;
+		return new ItemStack(BlockInit.POWER_CORD);
 	}
 
 
@@ -108,7 +113,124 @@ public class PowerCord extends Block implements IHasModel
 		IBlockState iblockstate = worldIn.getBlockState(blockpos);
 		Block block = iblockstate.getBlock();
 
-		return (block == BlockInit.POWER_CORD) || (block == BlockInit.HYPER_DRIVE) || (block == BlockInit.PORTAL_LEVER) || (block == BlockInit.POWER_CORD_ON);
+		return (block == BlockInit.POWER_CORD) || (block == BlockInit.HYPER_DRIVE) || (block == BlockInit.HYPER_DRIVE_ON) || (block == BlockInit.PORTAL_LEVER) || (block == BlockInit.POWER_CORD_ON);
+	}
+
+	@Override
+	public void onBlockAdded(World world, BlockPos pos, IBlockState state) 
+	{
+		world.scheduleBlockUpdate(pos, this, 0, 1);
+
+		super.onBlockAdded(world, pos, state);
+	}
+
+	@Override
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) 
+	{
+		world.scheduleBlockUpdate(pos, this, 0, 1);
+		
+		if(powered && (world.getBlockState(fromPos).getBlock() != BlockInit.POWER_CORD && world.getBlockState(fromPos).getBlock() != BlockInit.POWER_CORD_ON))
+		{
+			List<BlockPos> listBlocks = new ArrayList<BlockPos>();
+			listBlocks.add(pos);
+
+			if(!shouldBePowered(world, pos, listBlocks))
+				world.setBlockState(pos, BlockInit.POWER_CORD.getDefaultState());
+		}
+
+		super.neighborChanged(state, world, pos, blockIn, fromPos);
+	}
+
+	@Override
+	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) 
+	{
+		//if(world.isBlockPowered(pos) || powerCordPower(world, pos))
+		if(powerCordPower(world, pos))
+		{
+			//When Powered
+			world.setBlockState(pos, BlockInit.POWER_CORD_ON.getDefaultState());
+			world.notifyNeighborsOfStateChange(pos, this, false);
+		}
+		else
+		{
+			//When Not Powered
+			world.setBlockState(pos, BlockInit.POWER_CORD.getDefaultState());
+			world.notifyNeighborsOfStateChange(pos, this, false);
+		}
+
+		super.updateTick(world, pos, state, rand);
+	}
+
+	public boolean shouldBePowered(World world, BlockPos pos, List listBlocks)
+	{
+		List<BlockPos> list = new ArrayList<BlockPos>();
+
+		list.add(pos.up());
+		list.add(pos.down());
+		list.add(pos.east());
+		list.add(pos.west());
+		list.add(pos.north());
+		list.add(pos.south());
+
+		for(BlockPos element : list)
+		{
+			if(!listBlocks.contains(element))
+			{
+				listBlocks.add(element);
+				
+				if(world.getBlockState(element).getBlock() == BlockInit.HYPER_DRIVE_ON)
+				{
+					return true;
+				}
+				else if(world.getBlockState(element).getBlock() == BlockInit.POWER_CORD_ON)
+				{
+					if(!shouldBePowered(world, element, listBlocks))
+						world.setBlockState(element, BlockInit.POWER_CORD.getDefaultState());
+
+				}
+			}
+		}
+
+
+		return false;
+	}
+
+	public boolean powerCordPower(World world, BlockPos pos)
+	{
+		Block up = world.getBlockState(pos.up()).getBlock();
+		Block down = world.getBlockState(pos.down()).getBlock();
+		Block west = world.getBlockState(pos.west()).getBlock();
+		Block east = world.getBlockState(pos.east()).getBlock();
+		Block south = world.getBlockState(pos.south()).getBlock();
+		Block north = world.getBlockState(pos.north()).getBlock();
+				
+		
+		if (up == BlockInit.POWER_CORD_ON || up  == BlockInit.HYPER_DRIVE_ON)
+		{
+			return true;
+		}
+		else if (down == BlockInit.POWER_CORD_ON || down  == BlockInit.HYPER_DRIVE_ON)
+		{
+			return true;
+		}
+		else if (east == BlockInit.POWER_CORD_ON || east  == BlockInit.HYPER_DRIVE_ON)
+		{
+			return true;
+		}
+		else if (west == BlockInit.POWER_CORD_ON || west  == BlockInit.HYPER_DRIVE_ON)
+		{
+			return true;
+		}
+		else if (north == BlockInit.POWER_CORD_ON || north  == BlockInit.HYPER_DRIVE_ON)
+		{
+			return true;
+		}
+		else if (south == BlockInit.POWER_CORD_ON || south  == BlockInit.HYPER_DRIVE_ON)
+		{
+			return true;
+		}
+		else 
+			return false;
 	}
 
 
@@ -122,54 +244,6 @@ public class PowerCord extends Block implements IHasModel
 		return state.withProperty(NORTH, Boolean.valueOf(isConnectedTo(worldIn, pos, state, EnumFacing.NORTH))).withProperty(EAST, Boolean.valueOf(isConnectedTo(worldIn, pos, state, EnumFacing.EAST))).withProperty(SOUTH, Boolean.valueOf(isConnectedTo(worldIn, pos, state, EnumFacing.SOUTH))).withProperty(WEST, Boolean.valueOf(isConnectedTo(worldIn, pos, state, EnumFacing.WEST)));
 	}
 
-
-	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) 
-	{
-		boolean power = checkPower(world, pos);
-		
-		if(power)
-			world.setBlockState(pos, BlockInit.POWER_CORD_ON.getDefaultState().withProperty(NORTH, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.NORTH))).withProperty(EAST, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.EAST))).withProperty(SOUTH, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.SOUTH))).withProperty(WEST, Boolean.valueOf(isConnectedTo(world, pos, state, EnumFacing.WEST))));
-
-		super.neighborChanged(state, world, pos, blockIn, fromPos);
-	}
-
-	public boolean checkPower(World world, BlockPos pos)
-	{
-		ArrayList<BlockPos> list = new ArrayList<BlockPos>();
-		list.add(pos.up());
-		list.add(pos.down());
-		list.add(pos.north());
-		list.add(pos.south());
-		list.add(pos.west());
-		list.add(pos.east());
-
-
-		Block cord = BlockInit.POWER_CORD_ON;
-		Block drive = BlockInit.HYPER_DRIVE;
-
-		for(BlockPos element: list)
-		{
-			Block block = world.getBlockState(element).getBlock();
-			if(block == cord)
-			{				
-					return true;
-			}
-			else if(block == drive)
-			{
-				Block block2 = world.getBlockState(element.east()).getBlock();
-				Block block3 = world.getBlockState(element.west()).getBlock();
-				Block block4 = world.getBlockState(element.north()).getBlock();
-				Block block5 = world.getBlockState(element.south()).getBlock();
-
-				if(block2 == BlockInit.URANIUM_TANK_FILLED && block3 == BlockInit.URANIUM_TANK_FILLED)
-					return true;
-				else if(block4 == BlockInit.URANIUM_TANK_FILLED && block5 == BlockInit.URANIUM_TANK_FILLED)
-					return true;
-			}
-		}
-		return false;
-	}
 
 
 	@Override
@@ -248,28 +322,69 @@ public class PowerCord extends Block implements IHasModel
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) 
 	{
-		return new ItemStack(Item.getItemFromBlock(this));
+		return new ItemStack(BlockInit.POWER_CORD);
 	}
 
 	@Override
-	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) 
+	public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player) 
 	{
-		this.setDefaultState(this.getActualState(state, world, pos));
-		super.updateTick(world, pos, state, rand);
+		List<BlockPos> list = new ArrayList<BlockPos>();
+
+		list.add(pos.up());
+		list.add(pos.down());
+		list.add(pos.east());
+		list.add(pos.west());
+		list.add(pos.north());
+		list.add(pos.south());
+
+		List<BlockPos> listBlocks = new ArrayList<BlockPos>();
+		listBlocks.add(pos);
 		
-		if(world.getWorldTime() % 10 == 90)
-			this.setDefaultState(this.getDefaultState());
+		for(BlockPos element : list)
+		{
+			if(world.getBlockState(element).getBlock() == BlockInit.POWER_CORD_ON)
+			{
+				if(!shouldBePowered(world, element, listBlocks))
+					world.setBlockState(element, BlockInit.POWER_CORD.getDefaultState());
+			}
+		}
+
+		
+		super.onBlockHarvested(world, pos, state, player);
 	}
 	
 	@Override
-	public int tickRate(World world) 
+	public void onBlockDestroyedByExplosion(World world, BlockPos pos, Explosion explosionIn) 
+	{
+		List<BlockPos> list = new ArrayList<BlockPos>();
+
+		list.add(pos.up());
+		list.add(pos.down());
+		list.add(pos.east());
+		list.add(pos.west());
+		list.add(pos.north());
+		list.add(pos.south());
+
+		List<BlockPos> listBlocks = new ArrayList<BlockPos>();
+		listBlocks.add(pos);
+		
+		for(BlockPos element : list)
+		{
+			if(world.getBlockState(element).getBlock() == BlockInit.POWER_CORD_ON)
+			{
+				if(!shouldBePowered(world, element, listBlocks))
+					world.setBlockState(element, BlockInit.POWER_CORD.getDefaultState());
+			}
+		}
+
+		
+		super.onBlockDestroyedByExplosion(world, pos, explosionIn);
+	}
+	
+	@Override
+	public int tickRate(World worldIn) 
 	{
 		return 1;
 	}
-
-	@Override
-	public boolean requiresUpdates()
-	{
-		return true;
-	}
+	
 }

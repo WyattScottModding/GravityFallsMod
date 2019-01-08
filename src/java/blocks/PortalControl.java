@@ -1,12 +1,7 @@
 package blocks;
 
-import java.util.Random;
-
 import javax.annotation.Nullable;
 
-import blocks.HyperDrive;
-import blocks.PowerCord;
-import handlers.RegistryHandler;
 import init.BlockInit;
 import init.ItemInit;
 import items.BlackLight;
@@ -16,42 +11,31 @@ import items.Book3;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockCauldron;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyBool;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.block.state.IBlockProperties;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
-import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
-import net.minecraft.util.NonNullList;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
+import updates.PortalUpdate;
 
 public class PortalControl extends Block implements IHasModel
 {
@@ -62,10 +46,6 @@ public class PortalControl extends Block implements IHasModel
 	public static final PropertyBool BOOK2 = PropertyBool.create("book2");
 	public static final PropertyBool BOOK3 = PropertyBool.create("book3");
 
-	public boolean light = false;
-	public boolean book1 = false;
-	public boolean book2 = false;
-	public boolean book3 = false;
 
 	public boolean portalActive = false;
 	private boolean isPowered = false;
@@ -161,9 +141,14 @@ public class PortalControl extends Block implements IHasModel
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) 
-	{
+	{		
 		if(!worldIn.isRemote)
 		{
+			boolean book1 = false;
+			boolean book2 = false;
+			boolean book3 = false;
+			boolean light = false;
+
 			ItemStack itemstack = player.getHeldItem(hand);
 
 			//Put Book1 on the PortalControl
@@ -171,64 +156,118 @@ public class PortalControl extends Block implements IHasModel
 			{
 				EnumFacing face = (EnumFacing)state.getValue(FACING);
 
+				if(!(Boolean)state.getProperties().get(BOOK1))
+					itemstack.shrink(1);
+
+				book1 = true;
+				book2 = (Boolean)state.getProperties().get(BOOK2);
+				book3 = (Boolean)state.getProperties().get(BOOK3);
+				light = (Boolean)state.getProperties().get(LIGHT);
+				
+				if(book1 && book2 && book3)
+					PortalUpdate.nbt.setBoolean("portalControl", true);
+				else
+				{
+					PortalUpdate.nbt.setBoolean("portalControl", false);
+				}
+
 				IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, true).withProperty(BOOK2, book2).withProperty(BOOK3, book3).withProperty(LIGHT, light);
 				worldIn.setBlockState(pos, state2);
-				book1 = true;
-				itemstack.shrink(1);
 			}
 			//Put Book2 on the PortalControl
 			else if(itemstack.getItem() instanceof Book2)
 			{
 				EnumFacing face = (EnumFacing)state.getValue(FACING);
 
+				if(!(Boolean)state.getProperties().get(BOOK2))
+					itemstack.shrink(1);
+
+				book1 = (Boolean)state.getProperties().get(BOOK1);
+				book2 = true;
+				book3 = (Boolean)state.getProperties().get(BOOK3);
+				light = (Boolean)state.getProperties().get(LIGHT);
+				
+				if(book1 && book2 && book3)
+					PortalUpdate.nbt.setBoolean("portalControl", true);
+				else
+				{
+					PortalUpdate.nbt.setBoolean("portalControl", false);
+				}
+
+
 				IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, book1).withProperty(BOOK2, true).withProperty(BOOK3, book3).withProperty(LIGHT, light);
 				worldIn.setBlockState(pos, state2);
-				book2 = true;
-				itemstack.shrink(1);
 			}
 			//Put Book3 on the PortalControl
 			else if(itemstack.getItem() instanceof Book3)
 			{
 				EnumFacing face = (EnumFacing)state.getValue(FACING);
 
-				IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, book1).withProperty(BOOK2, book2).withProperty(BOOK3, true).withProperty(LIGHT, light);
-				worldIn.setBlockState(pos, state2);
+				if(!(Boolean)state.getProperties().get(BOOK3))
+					itemstack.shrink(1);
+
+				book1 = (Boolean)state.getProperties().get(BOOK1);
+				book2 = (Boolean)state.getProperties().get(BOOK2);
 				book3 = true;
-				itemstack.shrink(1);
+				light = (Boolean)state.getProperties().get(LIGHT);
+				
+				if(book1 && book2 && book3)
+					PortalUpdate.nbt.setBoolean("portalControl", true);
+				else
+				{
+					PortalUpdate.nbt.setBoolean("portalControl", false);
+				}
+
+
+				IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, book1).withProperty(BOOK2, book2).withProperty(BOOK3, true).withProperty(LIGHT, light);
+				worldIn.setBlockState(pos, state2);				
 			}
 			//Turn BlackLight ON
-			else if(player.getHeldItemMainhand().getItem() instanceof BlackLight && !light)
+			else if(player.getHeldItemMainhand().getItem() instanceof BlackLight)
 			{
 				EnumFacing face = (EnumFacing)state.getValue(FACING);
 
+				book1 = (Boolean)state.getProperties().get(BOOK1);
+				book2 = (Boolean)state.getProperties().get(BOOK2);
+				book3 = (Boolean)state.getProperties().get(BOOK3);
+				
+				if(book1 && book2 && book3)
+					PortalUpdate.nbt.setBoolean("portalControl", true);
+				else
+				{
+					PortalUpdate.nbt.setBoolean("portalControl", false);
+				}
+
 				IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, book1).withProperty(BOOK2, book2).withProperty(BOOK3, book3).withProperty(LIGHT, true);
 				worldIn.setBlockState(pos, state2);
-				light = true;
 			}
 			//Turn BlackLight OFF
-			else if(!(player.getHeldItemMainhand().getItem() instanceof BlackLight) && light)
+			else if(!(player.getHeldItemMainhand().getItem() instanceof BlackLight))
 			{				
 				EnumFacing face = (EnumFacing)state.getValue(FACING);
 
+				book1 = (Boolean)state.getProperties().get(BOOK1);
+				book2 = (Boolean)state.getProperties().get(BOOK2);
+				book3 = (Boolean)state.getProperties().get(BOOK3);
+				
+				if(book1 && book2 && book3)
+					PortalUpdate.nbt.setBoolean("portalControl", true);
+				else
+				{
+					PortalUpdate.nbt.setBoolean("portalControl", false);
+				}
+
 				IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, book1).withProperty(BOOK2, book2).withProperty(BOOK3, book3).withProperty(LIGHT, false);
 				worldIn.setBlockState(pos, state2);
-				light = false;
 			}
 
-			EnumFacing face = (EnumFacing)state.getValue(FACING);
+			book1 = (Boolean)state.getProperties().get(BOOK1);
+			book2 = (Boolean)state.getProperties().get(BOOK2);
+			book3 = (Boolean)state.getProperties().get(BOOK3);
+			light = (Boolean)state.getProperties().get(LIGHT);
 
-			IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, book1).withProperty(BOOK2, book2).withProperty(BOOK3, book3).withProperty(LIGHT, light);
-			worldIn.setBlockState(pos, state2);
+			
 		}
-
-		if(book1 && book2 && book3)
-			RegistryHandler.portalControl = true;
-		else
-		{
-			RegistryHandler.portalControl = false;
-			RegistryHandler.removePortal();
-		}
-
 
 		return super.onBlockActivated(worldIn, pos, state, player, hand, facing, hitX, hitY, hitZ);
 	}
@@ -256,7 +295,8 @@ public class PortalControl extends Block implements IHasModel
 	@Override
 	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) 
 	{
-		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing()).withProperty(BOOK1, book1).withProperty(BOOK2, book2).withProperty(BOOK3, book3).withProperty(LIGHT, light);
+
+		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
 	}
 
 	@Override
@@ -297,75 +337,47 @@ public class PortalControl extends Block implements IHasModel
 	@Override
 	public IBlockState getStateFromMeta(int meta) 
 	{
-		EnumFacing facing = EnumFacing.getFront(meta);
-		if(facing.getAxis() == EnumFacing.Axis.Y) facing = EnumFacing.NORTH;
-		return this.getDefaultState().withProperty(FACING, facing).withProperty(BOOK1, book1).withProperty(BOOK2, book2).withProperty(BOOK3, book3).withProperty(LIGHT, light);
+		return this.getDefaultState().withProperty(FACING, EnumFacing.getHorizontal(meta)).withProperty(BOOK1, Boolean.valueOf((meta & 9) > 0)).withProperty(BOOK2, Boolean.valueOf((meta & 8) > 0)).withProperty(BOOK3, Boolean.valueOf((meta & 7) > 0)).withProperty(LIGHT, Boolean.valueOf((meta & 6) > 0));
+	}
+
+	@Nullable
+	public static EnumFacing getFacing(int meta)
+	{
+		int i = meta & 7;
+		return i > 5 ? null : EnumFacing.getFront(i);
 	}
 
 	@Override
-	public int getMetaFromState(IBlockState state) 
+	public int getMetaFromState(IBlockState state)
 	{
-		//return ((EnumFacing)state.getValue(FACING)).getIndex();
-		return 0;
-	}	
+		int i = 0;
+		i = i | ((EnumFacing)state.getValue(FACING)).getHorizontalIndex();
 
-	@Override
-	public void onNeighborChange(IBlockAccess world, BlockPos pos, BlockPos neighbor) 
-	{
-		BlockPos posNorth = pos.north();
-		BlockPos posSouth = pos.south();
-		BlockPos posWest = pos.west();
-		BlockPos posEast = pos.east();
-
-		if(shouldBePowered(world, posNorth) || shouldBePowered(world, posSouth) || shouldBePowered(world, posWest) || shouldBePowered(world, posEast))
+		if (((Boolean)state.getValue(BOOK1)).booleanValue())
 		{
-			//	this.isPowered = true;
-			//	RegistryHandler.portalActive = true;
-		}
-		else
-		{
-			//	this.isPowered = false;
-			//	RegistryHandler.portalActive = false;
+			i |= 9;
 		}
 
-
-		super.onNeighborChange(world, pos, neighbor);
-	}
-
-	public static boolean isConnectedTo(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing direction)
-	{
-		BlockPos blockpos = pos.offset(direction);
-		IBlockState iblockstate = worldIn.getBlockState(blockpos);
-		Block block = iblockstate.getBlock();
-
-		return block == BlockInit.POWER_CORD;
-	}
-
-	public boolean shouldBePowered(IBlockAccess world, BlockPos pos)
-	{
-		IBlockState iblockstate = world.getBlockState(pos);
-		Block block = iblockstate.getBlock();
-
-		this.isPowered = false;
-
-		if(block == BlockInit.POWER_CORD)
+		if (((Boolean)state.getValue(BOOK2)).booleanValue())
 		{
-			PowerCord powercord = (PowerCord) block;
+			i |= 8;
 		}
-
-		return false;
-	}
-
-	public boolean isPowered()
-	{
-		return isPowered;
+		if (((Boolean)state.getValue(BOOK3)).booleanValue())
+		{
+			i |= 7;
+		}
+		if (((Boolean)state.getValue(LIGHT)).booleanValue())
+		{
+			i |= 6;
+		}
+		return i;
 	}
 
 	@Override
 	public void onBlockDestroyedByExplosion(World worldIn, BlockPos pos, Explosion explosionIn) 
 	{
-		RegistryHandler.portalControl = false;
-		RegistryHandler.removePortal();
+		PortalUpdate.nbt.setBoolean("portalControl", false);
+
 		super.onBlockDestroyedByExplosion(worldIn, pos, explosionIn);
 	}
 
@@ -374,6 +386,11 @@ public class PortalControl extends Block implements IHasModel
 	{
 		if(!world.isRemote)
 		{
+			boolean book1 = (Boolean)state.getProperties().get(BOOK1);
+			boolean book2 = (Boolean)state.getProperties().get(BOOK2);
+			boolean book3 = (Boolean)state.getProperties().get(BOOK3);
+			boolean light = (Boolean)state.getProperties().get(LIGHT);
+
 			if(book1)
 			{
 				EntityItem item = new EntityItem(world);
@@ -400,46 +417,8 @@ public class PortalControl extends Block implements IHasModel
 			}
 		}
 
-		RegistryHandler.portalControl = false;
-		RegistryHandler.removePortal();
+		PortalUpdate.nbt.setBoolean("portalControl", false);
 
 		super.onBlockDestroyedByPlayer(world, pos, state);
-	}
-
-	@Override
-	public void onBlockHarvested(World world, BlockPos pos, IBlockState state, EntityPlayer player) 
-	{
-		if(!world.isRemote)
-		{
-			if(book1)
-			{
-				EntityItem item = new EntityItem(world);
-				item.setItem(new ItemStack(ItemInit.BOOK1));
-				item.setPosition(pos.getX(), pos.getY(), pos.getZ());
-				world.spawnEntity(item);
-				book1 = false;
-			}
-			if(book2)
-			{
-				EntityItem item = new EntityItem(world);
-				item.setItem(new ItemStack(ItemInit.BOOK2));
-				item.setPosition(pos.getX(), pos.getY(), pos.getZ());
-				world.spawnEntity(item);
-				book2 = false;
-			}
-			if(book3)
-			{
-				EntityItem item = new EntityItem(world);
-				item.setItem(new ItemStack(ItemInit.BOOK3));
-				item.setPosition(pos.getX(), pos.getY(), pos.getZ());
-				world.spawnEntity(item);
-				book3 = false;
-			}		
-		}
-
-		RegistryHandler.portalControl = false;
-		RegistryHandler.removePortal();
-
-		super.onBlockHarvested(world, pos, state, player);
 	}
 }

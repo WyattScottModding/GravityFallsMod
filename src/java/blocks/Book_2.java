@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 
 import entity.EntityBill;
 import handlers.RegistryHandler;
+import handlers.SoundsHandler;
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
@@ -30,17 +31,20 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import updates.SummonBillUpdate;
 
 public class Book_2 extends Block implements IHasModel
 {
 	public static AxisAlignedBB Book = new AxisAlignedBB(0.3D, 0D, 0.2D, .7D, 0.30D, .8D);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
+	public boolean billSummoned = false;
 
 	public Book_2(String name, Material material)
 	{
@@ -67,14 +71,14 @@ public class Book_2 extends Block implements IHasModel
 	{
 		return false;
 	}
-	
+
 
 	@Override
 	public boolean isFullCube(IBlockState state) 
 	{
 		return false;
 	}
-	
+
 	@Override
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) 
 	{
@@ -175,29 +179,29 @@ public class Book_2 extends Block implements IHasModel
 	{
 		return Book;
 	}
-	
-	@Override
-	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) 
-	{
-		super.updateTick(world, pos, state, rand);
-		
-		System.out.println("Update Tick");
 
-		if(world.getBlockState(pos.west()).getBlock() == Blocks.TORCH && !RegistryHandler.billSummoned)
+	@Override
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) 
+	{
+		if(!billSummoned)
 		{
-			if(world.getBlockState(pos.north()).getBlock() == Blocks.TORCH)
+			Block block1 = world.getBlockState(pos.north()).getBlock();
+			Block block2 = world.getBlockState(pos.south()).getBlock();
+			Block block3 = world.getBlockState(pos.west()).getBlock();
+			Block block4 = world.getBlockState(pos.east()).getBlock();
+
+			Block torch  = Blocks.TORCH;
+
+			if(block1 == torch && block2 == torch && block3 == torch && block4 == torch)
 			{
-				if(world.getBlockState(pos.south()).getBlock() == Blocks.TORCH)
-				{
-					if(world.getBlockState(pos.east()).getBlock() == Blocks.TORCH)
-					{
-						EntityBill bill = new EntityBill(world);
-						world.spawnEntity(bill);
-						RegistryHandler.billSummoned = true;
-						System.out.println("Bill Summoned");
-					}
-				}
+				SummonBillUpdate.billSummoning = true;
+				SummonBillUpdate.billPos = pos.up();
+				billSummoned = true;
+				
 			}
 		}
+		super.neighborChanged(state, world, pos, blockIn, fromPos);
 	}
+
+
 }

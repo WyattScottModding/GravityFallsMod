@@ -18,7 +18,10 @@ import net.minecraft.block.BlockPortal;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
+import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
+import net.minecraft.block.state.BlockFaceShape;
+import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.creativetab.CreativeTabs;
@@ -32,6 +35,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
+import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -40,7 +44,10 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.Rotation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.EnumFacing.Axis;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
@@ -50,7 +57,7 @@ import net.minecraft.world.WorldServer;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
-public class BlockTeleporter extends BlockPortal implements IHasModel
+public class BlockTeleporter extends Block implements IHasModel
 {
 	public static final PropertyEnum<EnumFacing.Axis> AXIS = PropertyEnum.<EnumFacing.Axis>create("axis", EnumFacing.Axis.class, EnumFacing.Axis.X, EnumFacing.Axis.Z);
 	protected static final AxisAlignedBB X_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.375D, 1.0D, 1.0D, 0.625D);
@@ -59,12 +66,12 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 
 	public BlockTeleporter(String name)
 	{
-		super();
+		super(Material.PORTAL);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setSoundType(SoundType.STONE);
 		this.setBlockUnbreakable();
-		this.setDefaultState(this.blockState.getBaseState().withProperty(AXIS, EnumFacing.Axis.X));
+		this.setDefaultState(this.blockState.getBaseState().withProperty(AXIS, EnumFacing.Axis.Z));
 		this.setLightLevel(0.5F);
 
 
@@ -79,51 +86,45 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 	}
 
 	@Override
-	public void randomTick(World world, BlockPos pos, IBlockState state, Random random) 
+	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) 
 	{
-		AxisAlignedBB entityPos = new AxisAlignedBB(pos.getX() - 8, pos.getY() - 8, pos.getZ() - 8, pos.getX() + 8, pos.getY() + 8, pos.getZ() + 8);
-
-		EntityPig entity = null;
-
-		List<Entity> list = world.getEntitiesInAABBexcluding(entity, entityPos, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
-		{
-			public boolean apply(@Nullable Entity p_apply_1_)
-			{
-				return p_apply_1_ != null && p_apply_1_.canBeCollidedWith();
-			}
-		}));	
+		List<EntityPlayer> list = world.playerEntities;
 
 		for(int j = 0; j < list.size(); ++j)
-		{
-			Entity entity2 = list.get(j);
-			if(entity2 instanceof EntityPlayer)
+		{	
+			EntityPlayer player = list.get(j);
+
+			if(player.posX > (pos.getX() - 8) && player.posX < (pos.getX() + 8))
 			{
-				EntityPlayer player = (EntityPlayer) entity2;
+				if(player.posY > (pos.getY() - 8) && player.posY < (pos.getY() + 8))
+				{
+					if(player.posZ > (pos.getZ() - 8) && player.posZ < (pos.getZ() + 8))
+					{
 
-				if((int)player.posX > pos.getX())
-					player.motionX = -1;
-				else if((int)player.posX < pos.getX())
-					player.motionX = 1;
-				else if((int)player.posX == pos.getX())
-					player.motionX = 0;
+						if((int)player.posX > pos.getX())
+							player.motionX -= -1;
+						else if((int)player.posX < pos.getX())
+							player.motionX += 1;
+						
 
-				if((int)player.posY > pos.getY())
-					player.motionY = -1;
-				else if((int)player.posY < pos.getY())
-					player.motionY = 1;
-				else if((int)player.posY == pos.getY())
-					player.motionY = 0;
+						if((int)player.posY > pos.getY())
+							player.motionY -= -1;
+						else if((int)player.posY < pos.getY())
+							player.motionY += 1;
+						
 
-				if((int)player.posZ > pos.getZ())
-					player.motionZ = -1;
-				else if((int)player.posZ < pos.getZ())
-					player.motionZ = 1;
-				else if((int)player.posZ == pos.getZ())
-					player.motionZ = 0;
+						if((int)player.posZ > pos.getZ())
+							player.motionZ -= -1;
+						else if((int)player.posZ < pos.getZ())
+							player.motionZ += 1;
+						
+					}
+				}
 			}
 		}
 
-		super.randomTick(world, pos, state, random);
+
+		super.updateTick(world, pos, state, rand);
 	}
 
 	@Override
@@ -132,10 +133,9 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 		if(entity != null && entity instanceof EntityPlayerMP)
 		{
 			EntityPlayerMP player = (EntityPlayerMP) entity;
-		//	Teleport.teleportToDimension(player, 3, player.posX, player.posY, player.posZ);
-			
-			//attemptTeleport(player, world);
-			entity.setPortal(pos);
+			//	Teleport.teleportToDimension(player, 3, player.posX, player.posY, player.posZ);
+
+			attemptTeleport(player, world);
 		}
 
 	}
@@ -173,7 +173,7 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 				y = (int) (Math.random() * 20) - 10;
 			}
 		}
-		
+
 		try
 		{
 			WorldServer worldServer = world.getMinecraftServer().getWorld(3);
@@ -186,8 +186,8 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 		{
 			return;
 		}
-		
-		//	Teleport.teleportToDimension(player, 3, x, y, z);
+
+		Teleport.teleportToDimension(player, 3, x, y, z);
 
 	}
 
@@ -227,6 +227,19 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 	{
 		return false;
 	}
+
+	@Override
+	public BlockFaceShape getBlockFaceShape(IBlockAccess worldIn, IBlockState state, BlockPos pos, EnumFacing face)
+	{
+		return BlockFaceShape.UNDEFINED;
+	}
+
+	@Override
+	public boolean isOpaqueCube(IBlockState state)
+	{
+		return false;
+	}
+
 
 	@SideOnly(Side.CLIENT)
 	public boolean shouldSideBeRendered(IBlockState blockState, IBlockAccess blockAccess, BlockPos pos, EnumFacing side)
@@ -279,6 +292,41 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 		}
 	}
 
+	@Override
+	public IBlockState getActualState(IBlockState state, IBlockAccess world, BlockPos pos)
+	{
+		if(isConnectedTo(world, pos, state, EnumFacing.NORTH))
+			return state.withProperty(AXIS, Axis.Z);
+		else if(isConnectedTo(world, pos, state, EnumFacing.SOUTH))
+			return state.withProperty(AXIS, Axis.Z);
+		else if(isConnectedTo(world, pos, state, EnumFacing.WEST))
+			return state.withProperty(AXIS, Axis.X);
+		else
+			return state.withProperty(AXIS, Axis.X);
+	}
+
+	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block block, BlockPos fromPos)
+	{
+		if(isConnectedTo(world, pos, state, EnumFacing.WEST))
+			world.setBlockState(pos, BlockInit.BLOCKTELEPORTER.getDefaultState().withProperty(AXIS, Axis.X));
+		else if(isConnectedTo(world, pos, state, EnumFacing.EAST))
+			world.setBlockState(pos, BlockInit.BLOCKTELEPORTER.getDefaultState().withProperty(AXIS, Axis.X));
+		else if(isConnectedTo(world, pos, state, EnumFacing.NORTH))
+			world.setBlockState(pos, BlockInit.BLOCKTELEPORTER.getDefaultState().withProperty(AXIS, Axis.Z));
+		else if(isConnectedTo(world, pos, state, EnumFacing.SOUTH))
+			world.setBlockState(pos, BlockInit.BLOCKTELEPORTER.getDefaultState().withProperty(AXIS, Axis.Z));
+	}
+
+	public static boolean isConnectedTo(IBlockAccess worldIn, BlockPos pos, IBlockState state, EnumFacing direction)
+	{
+		BlockPos blockpos = pos.offset(direction);
+		IBlockState iblockstate = worldIn.getBlockState(blockpos);
+		Block block = iblockstate.getBlock();
+
+		return (block == BlockInit.BLOCKTELEPORTER) ;
+	}
+
+
 	public IBlockState getStateFromMeta(int meta)
 	{
 		return this.getDefaultState().withProperty(AXIS, (meta & 3) == 2 ? EnumFacing.Axis.Z : EnumFacing.Axis.X);
@@ -288,6 +336,39 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 	public BlockRenderLayer getBlockLayer()
 	{
 		return BlockRenderLayer.TRANSLUCENT;
+	}
+
+	@SideOnly(Side.CLIENT)
+	public void randomDisplayTick(IBlockState stateIn, World worldIn, BlockPos pos, Random rand)
+	{
+		if (rand.nextInt(100) == 0)
+		{
+			worldIn.playSound((double)pos.getX() + 0.5D, (double)pos.getY() + 0.5D, (double)pos.getZ() + 0.5D, SoundEvents.BLOCK_PORTAL_AMBIENT, SoundCategory.BLOCKS, 0.5F, rand.nextFloat() * 0.4F + 0.8F, false);
+		}
+
+		for (int i = 0; i < 4; ++i)
+		{
+			double d0 = (double)((float)pos.getX() + rand.nextFloat());
+			double d1 = (double)((float)pos.getY() + rand.nextFloat());
+			double d2 = (double)((float)pos.getZ() + rand.nextFloat());
+			double d3 = ((double)rand.nextFloat() - 0.5D) * 0.5D;
+			double d4 = ((double)rand.nextFloat() - 0.5D) * 0.5D;
+			double d5 = ((double)rand.nextFloat() - 0.5D) * 0.5D;
+			int j = rand.nextInt(2) * 2 - 1;
+
+			if (worldIn.getBlockState(pos.west()).getBlock() != this && worldIn.getBlockState(pos.east()).getBlock() != this)
+			{
+				d0 = (double)pos.getX() + 0.5D + 0.25D * (double)j;
+				d3 = (double)(rand.nextFloat() * 2.0F * (float)j);
+			}
+			else
+			{
+				d2 = (double)pos.getZ() + 0.5D + 0.25D * (double)j;
+				d5 = (double)(rand.nextFloat() * 2.0F * (float)j);
+			}
+
+			worldIn.spawnParticle(EnumParticleTypes.PORTAL, d0, d1, d2, d3, d4, d5);
+		}
 	}
 
 	public int getMetaFromState(IBlockState state)
@@ -309,9 +390,9 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 			switch ((EnumFacing.Axis)state.getValue(AXIS))
 			{
 			case X:
-				return state.withProperty(AXIS, EnumFacing.Axis.Z);
-			case Z:
 				return state.withProperty(AXIS, EnumFacing.Axis.X);
+			case Z:
+				return state.withProperty(AXIS, EnumFacing.Axis.Z);
 			default:
 				return state;
 			}
@@ -319,5 +400,10 @@ public class BlockTeleporter extends BlockPortal implements IHasModel
 		default:
 			return state;
 		}
+	}
+
+	protected BlockStateContainer createBlockState()
+	{
+		return new BlockStateContainer(this, new IProperty[] {AXIS});
 	}
 }

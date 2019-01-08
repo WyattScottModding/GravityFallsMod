@@ -25,7 +25,7 @@ public class HiddenElement extends Block implements IHasModel{
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setSoundType(SoundType.STONE);
-	//	this.setCreativeTab(GravityFalls.gravityfallsmagic);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 
 		
 		BlockInit.BLOCKS.add(this);

@@ -1,6 +1,10 @@
 package blocks;
 
 import java.util.ArrayList;
+import java.util.Random;
+import java.util.Set;
+
+import com.google.common.collect.Sets;
 
 import init.BlockInit;
 import init.ItemInit;
@@ -29,6 +33,7 @@ import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
@@ -36,19 +41,23 @@ public class HyperDrive extends Block implements IHasModel{
 
 	public static final AxisAlignedBB HYPERDRIVE = new AxisAlignedBB(0.1875D, 0D, 0.1875D, .8125D, 1.0D, .8125D);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-	public static final PropertyBool POWERED = PropertyBool.create("powered");
 
-	
 	public boolean power = false;
 
-	public HyperDrive(String name, Material material)
+	public HyperDrive(String name, Material material, boolean power)
 	{
 		super(material);
 		this.setLightOpacity(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsblocks);
+
+		if(name.equals("hyperdrive"))
+			this.setCreativeTab(GravityFalls.gravityfallsblocks);
+		
 		this.setSoundType(SoundType.METAL);
+		this.setTickRandomly(true);
+		this.power = power;
+
 
 
 		BlockInit.BLOCKS.add(this);
@@ -77,11 +86,11 @@ public class HyperDrive extends Block implements IHasModel{
 	{
 		return new ItemStack(Item.getItemFromBlock(this));
 	}
-	
+
 	@Override
 	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
 	{
-		return state.withProperty(POWERED, power).withProperty(FACING, state.getValue(FACING));
+		return state.withProperty(FACING, state.getValue(FACING));
 	}
 
 
@@ -97,52 +106,31 @@ public class HyperDrive extends Block implements IHasModel{
 		Block block2 = world.getBlockState(pos2).getBlock();
 		Block block3 = world.getBlockState(pos3).getBlock();
 		Block block4 = world.getBlockState(pos4).getBlock();
-		
+
 		Block uranium = BlockInit.URANIUM_TANK_FILLED;
 
 		if((block1 == uranium && block2 == uranium) || (block3 == uranium && block4 == uranium))	
 		{
-			power = true;
-			world.setBlockState(pos, state.withProperty(POWERED, true));
+			world.setBlockState(pos, BlockInit.HYPER_DRIVE_ON.getDefaultState().withProperty(FACING, state.getValue(FACING)));
 		}
 		else
 		{
-			power = false;
-			world.setBlockState(pos, state.withProperty(POWERED, false));
+			world.setBlockState(pos, BlockInit.HYPER_DRIVE.getDefaultState().withProperty(FACING, state.getValue(FACING)));
 		}
-		
-		if(power)
-		{
-			ArrayList<BlockPos> list = new ArrayList<BlockPos>();
-			list.add(pos.up());
-			list.add(pos.down());
-			list.add(pos.north());
-			list.add(pos.south());
-			list.add(pos.west());
-			list.add(pos.east());
 
-
-			Block cord = BlockInit.POWER_CORD;
-
-			for(BlockPos element: list)
-			{
-				Block block = world.getBlockState(element).getBlock();
-				
-				if(block == cord)
-				{				
-					world.setBlockState(element, cord.getDefaultState().withProperty(POWERED, true));
-				}
-			}
-		}
-		
 		super.neighborChanged(state, world, pos, blockIn, fromPos);
 	}
 
-	public boolean isOn()
+
+	@Override
+	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) 
 	{
-		return power;
+
+
+		super.updateTick(world, pos, state, rand);
 	}
-	
+
+
 	@Override
 	public boolean canProvidePower(IBlockState state) 
 	{
@@ -177,7 +165,7 @@ public class HyperDrive extends Block implements IHasModel{
 			worldIn.setBlockState(pos, state.withProperty(FACING, face), 2);
 		}
 	}
-	
+
 
 	@Override
 	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) 
@@ -206,7 +194,7 @@ public class HyperDrive extends Block implements IHasModel{
 	@Override
 	protected BlockStateContainer createBlockState() 
 	{
-		return new BlockStateContainer(this, new IProperty[] {FACING, POWERED});
+		return new BlockStateContainer(this, new IProperty[] {FACING});
 	}
 
 	@Override
@@ -240,4 +228,5 @@ public class HyperDrive extends Block implements IHasModel{
 	{
 		return HYPERDRIVE;
 	}
+
 }

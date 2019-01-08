@@ -53,6 +53,7 @@ public class UraniumFurnace extends Block implements ITileEntityProvider, IHasMo
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
 	}
 	
+	@Override
 	public void registerModels()
 	{
 		GravityFalls.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");

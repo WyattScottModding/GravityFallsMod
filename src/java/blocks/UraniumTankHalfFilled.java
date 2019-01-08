@@ -88,7 +88,7 @@ public class UraniumTankHalfFilled extends Block implements IHasModel{
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) 
 	{
 		ItemStack itemstack = playerIn.getHeldItem(hand);
-		
+
 		if (itemstack.isEmpty())
 		{
 			return true;
@@ -101,14 +101,18 @@ public class UraniumTankHalfFilled extends Block implements IHasModel{
 			if (item == Items.BUCKET)
 			{
 				worldIn.setBlockState(pos, BlockInit.URANIUM_TANK.getDefaultState());
-				playerIn.setHeldItem(hand, new ItemStack(ItemInit.URANIUM_BUCKET));
+
+				if(!playerIn.capabilities.isCreativeMode)
+					playerIn.setHeldItem(hand, new ItemStack(ItemInit.URANIUM_BUCKET));
 
 				return true;
 			}
 			else if (item == ItemInit.URANIUM_BUCKET)
 			{
 				worldIn.setBlockState(pos, BlockInit.URANIUM_TANK_FILLED.getDefaultState());
-				playerIn.setHeldItem(hand, new ItemStack(Items.BUCKET));
+
+				if(!playerIn.capabilities.isCreativeMode)
+					playerIn.setHeldItem(hand, new ItemStack(Items.BUCKET));
 
 				return true;
 			}
@@ -119,8 +123,8 @@ public class UraniumTankHalfFilled extends Block implements IHasModel{
 	}
 
 
-	
-	
+
+
 
 
 }

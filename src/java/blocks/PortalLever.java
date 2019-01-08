@@ -1,32 +1,22 @@
 package blocks;
 
 import java.util.ArrayList;
-import java.util.Random;
-
-import org.fusesource.jansi.Ansi.Color;
 
 import handlers.PortalBlocks;
-import handlers.RegistryHandler;
-import handlers.SoundsHandler;
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockColored;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -34,13 +24,12 @@ import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import updates.PortalUpdate;
 
 public class PortalLever extends Block implements IHasModel
 {
@@ -48,7 +37,6 @@ public class PortalLever extends Block implements IHasModel
 	public static final AxisAlignedBB PORTALLEVER2 = new AxisAlignedBB(0.25D, 0D, 0.0D, 0.75D, 1.2875D, 1.0D);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
-	public boolean active = true;
 	public boolean powered = false;
 	public boolean clicked = false;
 
@@ -61,6 +49,7 @@ public class PortalLever extends Block implements IHasModel
 		this.setHardness(6.0F);
 		this.setResistance(20.0F);
 		this.setTickRandomly(true);
+		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
@@ -205,11 +194,10 @@ public class PortalLever extends Block implements IHasModel
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) 
 	{
-		if(!clicked)
-		{				
-			this.powered = checkPower(worldIn, pos);
-			//this.powered = true;
+		this.powered = checkPower(worldIn, pos);
 
+		if(!clicked && powered)
+		{				
 			ArrayList<BlockPos> triangleBlocks = new ArrayList<BlockPos>();
 			ArrayList<BlockPos> circleBlocks = new ArrayList<BlockPos>();
 			ArrayList<BlockPos> ringBlocks = new ArrayList<BlockPos>();
@@ -269,7 +257,7 @@ public class PortalLever extends Block implements IHasModel
 			ringBlocks.add(pos.add(-6, 9, -1));
 			ringBlocks.add(pos.add(-6, 9, 1));
 			ringBlocks.add(pos.add(-6, 9, 0));
-			
+
 
 			//Right Bottom
 			circleBlocks.add(pos.add(1,-1,-6));
@@ -334,8 +322,8 @@ public class PortalLever extends Block implements IHasModel
 			portalBlocks.add(pos.add(-6, 5, -2));
 			portalBlocks.add(pos.add(-6, 5, -1));
 			portalBlocks.add(pos.add(-6, 5, 0));
-			portalBlocks.add(pos.add(-6, 5, -1));
-			portalBlocks.add(pos.add(-6, 5, -2));
+			portalBlocks.add(pos.add(-6, 5, 1));
+			portalBlocks.add(pos.add(-6, 5, 2));
 			portalBlocks.add(pos.add(-6, 6, -2));
 			portalBlocks.add(pos.add(-6, 6, -1));
 			portalBlocks.add(pos.add(-6, 6, 0));
@@ -352,40 +340,30 @@ public class PortalLever extends Block implements IHasModel
 
 
 			PortalBlocks blocks = new PortalBlocks(pos, portalBlocks, ringBlocks, triangleBlocks, circleBlocks);
-			RegistryHandler.portalBlocks = blocks;
+			PortalUpdate.portalBlocks = blocks;
 
-			System.out.println("Active: " + active);
-			System.out.println("Powered: " + powered);
 
 			//Change portal blocks if there is a power source and switched to on
-			if(active && powered)
+			if(PortalUpdate.nbt.getBoolean("portalActive"))
 			{
-				RegistryHandler.portalActive = true;
-				RegistryHandler.countdown = 36000;
-				//RegistryHandler.setPortal();
+				PortalUpdate.nbt.setBoolean("portalActive", false);
+				PortalUpdate.removePortal(worldIn);
 			}
-			else
+			else if(PortalUpdate.nbt.getBoolean("portalControl"))
 			{
-				RegistryHandler.portalActive = false;
-				//RegistryHandler.removePortal();
-			}
-			if(active && powered && RegistryHandler.countdown == 0)
-			{
-				worldIn.setBlockState(pos.up(), Blocks.DIRT.getDefaultState());
+				PortalUpdate.nbt.setBoolean("portalActive", true);
+				PortalUpdate.countdown = 36000;
+
+				PortalUpdate.setPortal(worldIn);
 			}
 
-			if(active)
-				active = false;
-			else
-				active = true;
-			
 			clicked = true;
 
 			return true;
 		}
-		
+
 		clicked = false;
-		
+
 		return false;
 	}
 
@@ -393,9 +371,8 @@ public class PortalLever extends Block implements IHasModel
 	@Override
 	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) 
 	{
-		if(RegistryHandler.countdown < 0)
-			this.active = false;
-
+		this.powered = checkPower(world, pos);
+		
 
 		super.neighborChanged(state, world, pos, blockIn, fromPos);
 	}

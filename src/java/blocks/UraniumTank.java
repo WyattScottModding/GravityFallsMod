@@ -32,7 +32,7 @@ import net.minecraft.world.World;
 public class UraniumTank extends Block implements IHasModel{
 
 	public static final AxisAlignedBB URANIUMTANK = new AxisAlignedBB(0D, 0D, 0D, 1.0D, 1.0D, 1.0D);
-	
+
 
 	public UraniumTank(String name, Material material)
 	{
@@ -54,19 +54,19 @@ public class UraniumTank extends Block implements IHasModel{
 	{
 		GravityFalls.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
 	}
-	
+
 	@Override
 	public boolean isOpaqueCube(IBlockState state) 
 	{
 		return false;
 	}
-	
+
 	@Override
 	public boolean isFullCube(IBlockState state) 
 	{
 		return false;
 	}
-	
+
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return URANIUMTANK;
@@ -92,17 +92,19 @@ public class UraniumTank extends Block implements IHasModel{
 		}
 		else
 		{
-			
+
 			Item item = itemstack.getItem();
 
 			if (item == ItemInit.URANIUM_BUCKET)
 			{			
 				worldIn.setBlockState(pos, BlockInit.URANIUM_TANK_HALFFILLED.getDefaultState());
-				playerIn.setHeldItem(hand, new ItemStack(Items.BUCKET));
-				
+
+				if(!playerIn.capabilities.isCreativeMode)
+					playerIn.setHeldItem(hand, new ItemStack(Items.BUCKET));
+
 				return true;
 			}
-			
+
 
 			return super.onBlockActivated(worldIn, pos, state, playerIn, hand, facing, hitX, hitY, hitZ);
 		}

@@ -5,11 +5,11 @@
         "1": "gravityfalls:blocks/controlfront",
         "2": "gravityfalls:blocks/journal_back",
         "3": "gravityfalls:blocks/journal_pages",
-        "4": "gravityfalls:blocks/journal2page",
+        "4": "gravityfalls:blocks/journal2page_light",
         "5": "gravityfalls:blocks/journal_pages",
         "6": "gravityfalls:blocks/journal_back",
         "7": "gravityfalls:blocks/journal_back",
-        "8": "gravityfalls:blocks/journal3page"
+        "8": "gravityfalls:blocks/journal3page_light"
     },
     "elements": [
         {

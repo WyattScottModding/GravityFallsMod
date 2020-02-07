@@ -1,7 +1,7 @@
 {
     "textures": {
-        "particle": "blocks/block_teleporter",
-        "portal": "blocks/block_teleporter"
+        "particle": "gravityfalls:blocks/block_teleporter",
+        "portal": "gravityfalls:blocks/block_teleporter"
     },
     "elements": [
         {   "from": [ 6, 0, 0 ],

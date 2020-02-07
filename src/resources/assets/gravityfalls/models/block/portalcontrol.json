@@ -1,27 +1,27 @@
 {
+    "parent": "block/orientable",
     "textures": {
         "0": "gravityfalls:blocks/black",
-        "1": "gravityfalls:blocks/controltopfrontright",
-        "2": "gravityfalls:blocks/controltopfrontleft",
-        "particle": "blocks/black"
+        "1": "gravityfalls:blocks/controlfront",
+        "particle": "gravityfalls:blocks/black"
         
     },
     "elements": [
         {
-            "name": "Cube",
+            "name": "FrontRight",
             "from": [ 16.0, 16.0, 0.0 ], 
             "to": [ 32.0, 32.0, 2.0 ], 
             "faces": {
                 "north": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
                 "east": { "texture": "#0", "uv": [ 0.0, 0.0, 4.0, 16.0 ] },
-                "south": { "texture": "#1", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+                "south": { "texture": "#1", "uv": [ 0.0, 0.0, 16.0, 6.0 ] },
                 "west": { "texture": "#0", "uv": [ 0.0, 0.0, 4.0, 16.0 ] },
                 "up": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 4.0 ] },
                 "down": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 4.0 ] }
             }
         },
         {
-            "name": "Cube",
+            "name": "Bottom",
             "from": [ 0.0, 0.0, 0.0 ], 
             "to": [ 32.0, 16.0, 16.0 ], 
             "faces": {
@@ -34,13 +34,13 @@
             }
         },
         {
-            "name": "Cube",
+            "name": "FrontLeft",
             "from": [ 0.0, 16.0, 0.0 ], 
             "to": [ 16.0, 32.0, 2.0 ], 
             "faces": {
                 "north": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
                 "east": { "texture": "#0", "uv": [ 0.0, 0.0, 4.0, 16.0 ] },
-                "south": { "texture": "#2", "uv": [ 0.0, 0.0, 16.0, 16.0 ] },
+                "south": { "texture": "#1", "uv": [ 0.0, 0.0, 16.0, 6.0 ] },
                 "west": { "texture": "#0", "uv": [ 0.0, 0.0, 4.0, 16.0 ] },
                 "up": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 4.0 ] },
                 "down": { "texture": "#0", "uv": [ 0.0, 0.0, 16.0, 4.0 ] }

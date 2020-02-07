@@ -1,0 +1,7 @@
+{
+    "parent": "block/door_top_rh",
+    "textures": {
+        "bottom": "gravityfalls:blocks/door_cursed_lower",
+        "top": "gravityfalls:blocks/door_cursed_upper"
+    }
+}

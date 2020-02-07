@@ -22,5 +22,101 @@
         "category": "entity",
         "subtitle": "entity.gnome.angry",
         "sounds": [{ "name": "gravityfalls:entity/gnome/angry", "stream": true}]
+    },
+    "record.themesong":
+    {
+        "category": "record",
+        "subtitle": "record.themesong",
+        "sounds": [{ "name": "gravityfalls:record/themesong", "stream": true}]
+    },
+     "record.weirdmageddon":
+    {
+        "category": "record",
+        "subtitle": "record.weirdmageddon",
+        "sounds": [{ "name": "gravityfalls:record/weirdmageddon", "stream": true}]
+    },
+    "record.themesong2":
+    {
+        "category": "record",
+        "subtitle": "record.themesong2",
+        "sounds": [{ "name": "gravityfalls:record/themesong2", "stream": true}]
+    },
+    "record.straightblanchin":
+    {
+        "category": "record",
+        "subtitle": "record.straightblanchin",
+        "sounds": [{ "name": "gravityfalls:record/straightblanchin", "stream": true}]
+    },
+    "record.discogirl":
+    {
+        "category": "record",
+        "subtitle": "record.discogirl",
+        "sounds": [{ "name": "gravityfalls:record/discogirl", "stream": true}]
+    },
+    "block.password":
+    {
+        "category": "block",
+        "subtitle": "block.password",
+        "sounds": [{ "name": "gravityfalls:block/password", "stream": true}]
+    },
+    "item.magnetgun":
+    {
+        "category": "item",
+        "subtitle": "item.magnetgun",
+        "sounds": [{ "name": "gravityfalls:item/magnetgun", "stream": true}]
+    },
+    "entity.bill.death":
+    {
+        "category": "entity",
+        "subtitle": "entity.bill.death",
+        "sounds": [{ "name": "gravityfalls:entity/bill/death", "stream": true}]
+    },
+    "entity.bill.summoned":
+    {
+        "category": "entity",
+        "subtitle": "entity.bill.summoned",
+        "sounds": [{ "name": "gravityfalls:entity/bill/summoned", "stream": true}]
+    },
+    "entity.securitydroid.ambient":
+    {
+        "category": "entity",
+        "subtitle": "entity.securitydroid.ambient",
+        "sounds": [{ "name": "gravityfalls:entity/securitydroid/ambient", "stream": true}]
+    },
+    "entity.securitydroid.death":
+    {
+        "category": "entity",
+        "subtitle": "entity.securitydroid.death",
+        "sounds": [{ "name": "gravityfalls:entity/securitydroid/death", "stream": true}]
+    },
+    "entity.unicorn.ambient":
+    {
+        "category": "entity",
+        "subtitle": "entity.unicorn.ambient",
+        "sounds": [{ "name": "gravityfalls:entity/unicorn/ambient", "stream": true}]
+    },
+    "portal.finished":
+    {
+        "category": "portal",
+        "subtitle": "portal.finished",
+        "sounds": [{ "name": "gravityfalls:portal/finished", "stream": true}]
+    },
+    "portal.working":
+    {
+        "category": "portal",
+        "subtitle": "portal.working",
+        "sounds": [{ "name": "gravityfalls:portal/working", "stream": true}]
+    },
+    "item.raisedead":
+    {
+        "category": "item",
+        "subtitle": "item.raisedead",
+        "sounds": [{ "name": "gravityfalls:item/raisedead", "stream": true}]
+    },
+    "tiembaby.crying":
+    {
+        "category": "item",
+        "subtitle": "item.raisedead",
+        "sounds": [{ "name": "gravityfalls:entity/timebaby/crying", "stream": true}]
     }
 }

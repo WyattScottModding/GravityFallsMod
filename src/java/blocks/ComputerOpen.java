@@ -6,6 +6,7 @@ import org.lwjgl.input.Keyboard;
 
 import init.BlockInit;
 import init.ItemInit;
+import main.ConfigHandler;
 import main.GravityFalls;
 import main.IHasModel;
 import main.Reference;
@@ -22,6 +23,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
@@ -35,13 +37,17 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import network.MessageOpenBook1;
+import network.MessageOpenComputer;
+import network.Messages;
 import tileEntities.TileEntityComputer;
+import tileEntities.TileEntityPortalLever;
 import tileEntities.TileEntityUraniumFurnace;
 
-public class ComputerOpen extends Block implements IHasModel, ITileEntityProvider
+public class ComputerOpen extends Block implements IHasModel
 {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-	
+
 	public ComputerOpen(String name, Material material)
 	{
 		super(material);
@@ -86,20 +92,37 @@ public class ComputerOpen extends Block implements IHasModel, ITileEntityProvide
 			worldIn.setBlockState(pos, state2);
 		}
 		else if(!worldIn.isRemote)
-		{
-			playerIn.openGui(GravityFalls.instance, Reference.COMPUTER, worldIn, pos.getX(), pos.getY(), pos.getZ());
+		{	
+			if(!worldIn.isRemote && playerIn instanceof EntityPlayerMP) {
+				EntityPlayerMP serverPlayer = (EntityPlayerMP) playerIn;
+				Messages.INSTANCE.sendTo(new MessageOpenComputer(),  serverPlayer);
+
+			}
 		}
 
 		return true;
+	}
+
+	public static TileEntityPortalLever searchForLever(World world, BlockPos pos) {
+		for(int x = pos.getX() - 20; x <= pos.getX() + 20; x++) {
+			for(int y = pos.getY() - 20; y <= pos.getY() + 20; y++) {
+				for(int z = pos.getZ() - 20; z <= pos.getZ() + 20; z++) {
+					if(world.getTileEntity(new BlockPos(x, y, z)) instanceof TileEntityPortalLever) {
+						return (TileEntityPortalLever) world.getTileEntity(new BlockPos(x, y, z));
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
 			EntityPlayer player) 
 	{
-		return new ItemStack(Item.getItemFromBlock(BlockInit.COMPUTER_CLOSED), 1, getMetaFromState(world.getBlockState(pos)));
+		return new ItemStack(Item.getItemFromBlock(BlockInit.COMPUTER_CLOSED), 1);
 	}
-	
+
 	@Override
 	public Item getItemDropped(IBlockState state, Random rand, int fortune) 
 	{
@@ -169,10 +192,15 @@ public class ComputerOpen extends Block implements IHasModel, ITileEntityProvide
 		return ((EnumFacing)state.getValue(FACING)).getIndex();
 	}	
 
+	
 	@Override
-	public TileEntity createNewTileEntity(World worldIn, int meta) 
-	{
+	public TileEntity createTileEntity(World world, IBlockState state) {
 		return new TileEntityComputer();
+	}
+	
+	@Override
+	public boolean hasTileEntity() {
+		return true;
 	}
 
 }

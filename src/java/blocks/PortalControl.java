@@ -35,7 +35,7 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.Explosion;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import updates.PortalUpdate;
+import tileEntities.TileEntityPortalLever;
 
 public class PortalControl extends Block implements IHasModel
 {
@@ -141,7 +141,7 @@ public class PortalControl extends Block implements IHasModel
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) 
-	{		
+	{
 		if(!worldIn.isRemote)
 		{
 			boolean book1 = false;
@@ -150,6 +150,11 @@ public class PortalControl extends Block implements IHasModel
 			boolean light = false;
 
 			ItemStack itemstack = player.getHeldItem(hand);
+			
+			book1 = state.getValue(BOOK1);
+			book2 = state.getValue(BOOK2);
+			book3 = state.getValue(BOOK3);
+			light = state.getValue(LIGHT);
 
 			//Put Book1 on the PortalControl
 			if(itemstack.getItem() instanceof Book1)
@@ -160,16 +165,7 @@ public class PortalControl extends Block implements IHasModel
 					itemstack.shrink(1);
 
 				book1 = true;
-				book2 = (Boolean)state.getProperties().get(BOOK2);
-				book3 = (Boolean)state.getProperties().get(BOOK3);
-				light = (Boolean)state.getProperties().get(LIGHT);
-				
-				if(book1 && book2 && book3)
-					PortalUpdate.nbt.setBoolean("portalControl", true);
-				else
-				{
-					PortalUpdate.nbt.setBoolean("portalControl", false);
-				}
+
 
 				IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, true).withProperty(BOOK2, book2).withProperty(BOOK3, book3).withProperty(LIGHT, light);
 				worldIn.setBlockState(pos, state2);
@@ -182,18 +178,7 @@ public class PortalControl extends Block implements IHasModel
 				if(!(Boolean)state.getProperties().get(BOOK2))
 					itemstack.shrink(1);
 
-				book1 = (Boolean)state.getProperties().get(BOOK1);
 				book2 = true;
-				book3 = (Boolean)state.getProperties().get(BOOK3);
-				light = (Boolean)state.getProperties().get(LIGHT);
-				
-				if(book1 && book2 && book3)
-					PortalUpdate.nbt.setBoolean("portalControl", true);
-				else
-				{
-					PortalUpdate.nbt.setBoolean("portalControl", false);
-				}
-
 
 				IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, book1).withProperty(BOOK2, true).withProperty(BOOK3, book3).withProperty(LIGHT, light);
 				worldIn.setBlockState(pos, state2);
@@ -206,17 +191,7 @@ public class PortalControl extends Block implements IHasModel
 				if(!(Boolean)state.getProperties().get(BOOK3))
 					itemstack.shrink(1);
 
-				book1 = (Boolean)state.getProperties().get(BOOK1);
-				book2 = (Boolean)state.getProperties().get(BOOK2);
 				book3 = true;
-				light = (Boolean)state.getProperties().get(LIGHT);
-				
-				if(book1 && book2 && book3)
-					PortalUpdate.nbt.setBoolean("portalControl", true);
-				else
-				{
-					PortalUpdate.nbt.setBoolean("portalControl", false);
-				}
 
 
 				IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, book1).withProperty(BOOK2, book2).withProperty(BOOK3, true).withProperty(LIGHT, light);
@@ -226,17 +201,8 @@ public class PortalControl extends Block implements IHasModel
 			else if(player.getHeldItemMainhand().getItem() instanceof BlackLight)
 			{
 				EnumFacing face = (EnumFacing)state.getValue(FACING);
-
-				book1 = (Boolean)state.getProperties().get(BOOK1);
-				book2 = (Boolean)state.getProperties().get(BOOK2);
-				book3 = (Boolean)state.getProperties().get(BOOK3);
 				
-				if(book1 && book2 && book3)
-					PortalUpdate.nbt.setBoolean("portalControl", true);
-				else
-				{
-					PortalUpdate.nbt.setBoolean("portalControl", false);
-				}
+				light = true;
 
 				IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, book1).withProperty(BOOK2, book2).withProperty(BOOK3, book3).withProperty(LIGHT, true);
 				worldIn.setBlockState(pos, state2);
@@ -246,30 +212,41 @@ public class PortalControl extends Block implements IHasModel
 			{				
 				EnumFacing face = (EnumFacing)state.getValue(FACING);
 
-				book1 = (Boolean)state.getProperties().get(BOOK1);
-				book2 = (Boolean)state.getProperties().get(BOOK2);
-				book3 = (Boolean)state.getProperties().get(BOOK3);
-				
-				if(book1 && book2 && book3)
-					PortalUpdate.nbt.setBoolean("portalControl", true);
-				else
-				{
-					PortalUpdate.nbt.setBoolean("portalControl", false);
-				}
+				light = false;
 
 				IBlockState state2 = BlockInit.PORTAL_CONTROL.getDefaultState().withProperty(FACING, face).withProperty(BOOK1, book1).withProperty(BOOK2, book2).withProperty(BOOK3, book3).withProperty(LIGHT, false);
 				worldIn.setBlockState(pos, state2);
 			}
-
-			book1 = (Boolean)state.getProperties().get(BOOK1);
-			book2 = (Boolean)state.getProperties().get(BOOK2);
-			book3 = (Boolean)state.getProperties().get(BOOK3);
-			light = (Boolean)state.getProperties().get(LIGHT);
-
 			
+			TileEntityPortalLever tileEntity = searchForLever(worldIn, pos);
+
+			if(book1 && book2 && book3) {
+				if(tileEntity != null) {
+					System.out.println("Tile Entity: " + tileEntity.toString());
+					tileEntity.nbt.setBoolean("portalControl", true);
+				}
+			}
+			else
+			{
+				if(tileEntity != null)
+					tileEntity.nbt.setBoolean("portalControl", false);				
+			}			
 		}
 
 		return super.onBlockActivated(worldIn, pos, state, player, hand, facing, hitX, hitY, hitZ);
+	}
+
+	public static TileEntityPortalLever searchForLever(World world, BlockPos pos) {
+		for(int x = pos.getX() - 20; x <= pos.getX() + 20; x++) {
+			for(int y = pos.getY() - 20; y <= pos.getY() + 20; y++) {
+				for(int z = pos.getZ() - 20; z <= pos.getZ() + 20; z++) {
+					if(world.getTileEntity(new BlockPos(x, y, z)) instanceof TileEntityPortalLever) {
+						return (TileEntityPortalLever) world.getTileEntity(new BlockPos(x, y, z));
+					}
+				}
+			}
+		}
+		return null;
 	}
 
 
@@ -376,7 +353,10 @@ public class PortalControl extends Block implements IHasModel
 	@Override
 	public void onBlockDestroyedByExplosion(World worldIn, BlockPos pos, Explosion explosionIn) 
 	{
-		PortalUpdate.nbt.setBoolean("portalControl", false);
+		TileEntityPortalLever tileEntity = searchForLever(worldIn, pos);
+
+		if(tileEntity != null)
+			tileEntity.nbt.setBoolean("portalControl", false);
 
 		super.onBlockDestroyedByExplosion(worldIn, pos, explosionIn);
 	}
@@ -416,8 +396,11 @@ public class PortalControl extends Block implements IHasModel
 				book3 = false;
 			}
 		}
+		
+		TileEntityPortalLever tileEntity = searchForLever(world, pos);
 
-		PortalUpdate.nbt.setBoolean("portalControl", false);
+		if(tileEntity != null)
+			tileEntity.nbt.setBoolean("portalControl", false);
 
 		super.onBlockDestroyedByPlayer(world, pos, state);
 	}

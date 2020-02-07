@@ -80,15 +80,15 @@ public class MysticAmulet extends ItemArmor implements IHasModel
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsarmor);
-		
+
 		this.addPropertyOverride(new ResourceLocation("on"), new IItemPropertyGetter()
-        {
-            @SideOnly(Side.CLIENT)
-            public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
-            {
-                return (active && entityIn.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == ItemInit.MYSTIC_AMULET) ? 0.0F : 1.0F;
-            }
-        });
+		{
+			@SideOnly(Side.CLIENT)
+			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
+			{
+				return (active && entityIn.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == ItemInit.MYSTIC_AMULET) ? 0.0F : 1.0F;
+			}
+		});
 
 		ItemInit.ITEMS.add(this);
 	}
@@ -118,6 +118,7 @@ public class MysticAmulet extends ItemArmor implements IHasModel
 					active = false;
 			}
 
+			/*
 			if(!player.capabilities.isCreativeMode)
 			{
 				if(player.getArmorInventoryList().toString().contains("mysticamulet") && testGround(player, world))
@@ -135,6 +136,7 @@ public class MysticAmulet extends ItemArmor implements IHasModel
 					player.capabilities.disableDamage = false;
 				}
 			}
+			 */
 
 			if(thrown)
 			{
@@ -151,7 +153,7 @@ public class MysticAmulet extends ItemArmor implements IHasModel
 				}
 			}
 
-			if(player.getArmorInventoryList().toString().contains("mysticamulet") && !thrown)
+			if(player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem() == ItemInit.MYSTIC_AMULET && !thrown && !world.isRemote)
 			{
 				if(entity == null && KeyBindings.ITEM1.isDown() && getMouseOver(player, world))
 				{
@@ -280,7 +282,6 @@ public class MysticAmulet extends ItemArmor implements IHasModel
 				RayTraceResult blockPosition = player.rayTrace(5, 1.0F);
 
 				entity.moveToBlockPosAndAngles(blockPosition.getBlockPos(), player.rotationYaw * -1, player.rotationPitch * -1);
-
 			}
 
 		}

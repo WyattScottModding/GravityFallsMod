@@ -1,41 +1,27 @@
 package blocks;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
-
-import javax.swing.text.Utilities;
-
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockAir;
 import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.BlockRenderLayer;
 import net.minecraft.util.EnumBlockRenderType;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import tileEntities.TileEntityLightSource;
 
 public class LightSource extends Block implements ITileEntityProvider, IHasModel
@@ -44,6 +30,7 @@ public class LightSource extends Block implements ITileEntityProvider, IHasModel
 	{
 		{
 			add(ItemInit.FLASHLIGHT);
+			add(ItemInit.LIGHT_SWEATER);
 		}
 	};
 

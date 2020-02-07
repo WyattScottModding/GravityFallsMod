@@ -1,7 +1,6 @@
 package armor;
 
-import java.util.Collection;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Nullable;
@@ -11,44 +10,31 @@ import org.lwjgl.input.Keyboard;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
+import entity.EntityBill;
 import handlers.KeyBindings;
-import handlers.RegistryHandler;
-import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAreaEffectCloud;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.boss.EntityDragon;
+import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class TieOfPossession extends ItemArmor implements IHasModel
 {
@@ -77,7 +63,12 @@ public class TieOfPossession extends ItemArmor implements IHasModel
 		if(possessedEntity != null && possessedEntity.isDead)
 			possessedEntity = null;
 		
-		if(entityIn instanceof EntityPlayer && possessedEntity != null)
+		ArrayList<EntityLivingBase> entities = new ArrayList<EntityLivingBase>();
+		entities.add(new EntityBill(world));
+		entities.add(new EntityDragon(world));
+		entities.add(new EntityWither(world));
+
+		if(entityIn instanceof EntityPlayer && possessedEntity != null && !entities.contains(possessedEntity))
 		{
 			EntityPlayer player = (EntityPlayer) entityIn;
 

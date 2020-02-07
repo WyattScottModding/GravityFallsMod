@@ -13,6 +13,7 @@ import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
@@ -27,6 +28,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
@@ -37,14 +39,12 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import updates.SummonBillUpdate;
+import tileEntities.TileEntityBook2;
 
-public class Book_2 extends Block implements IHasModel
+public class Book_2 extends Block implements IHasModel, ITileEntityProvider
 {
 	public static AxisAlignedBB Book = new AxisAlignedBB(0.3D, 0D, 0.2D, .7D, 0.30D, .8D);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-
-	public boolean billSummoned = false;
 
 	public Book_2(String name, Material material)
 	{
@@ -181,27 +181,12 @@ public class Book_2 extends Block implements IHasModel
 	}
 
 	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) 
-	{
-		if(!billSummoned)
-		{
-			Block block1 = world.getBlockState(pos.north()).getBlock();
-			Block block2 = world.getBlockState(pos.south()).getBlock();
-			Block block3 = world.getBlockState(pos.west()).getBlock();
-			Block block4 = world.getBlockState(pos.east()).getBlock();
-
-			Block torch  = Blocks.TORCH;
-
-			if(block1 == torch && block2 == torch && block3 == torch && block4 == torch)
-			{
-				SummonBillUpdate.billSummoning = true;
-				SummonBillUpdate.billPos = pos.up();
-				billSummoned = true;
-				
-			}
-		}
-		super.neighborChanged(state, world, pos, blockIn, fromPos);
+	public TileEntity createNewTileEntity(World worldIn, int meta) {
+		return new TileEntityBook2();
 	}
-
-
+	
+	@Override
+	public boolean hasTileEntity() {
+		return true;
+	}
 }

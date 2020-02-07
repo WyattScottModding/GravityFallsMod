@@ -16,34 +16,31 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
 
-public class Asteroid extends Block implements IHasModel{
-
-	
-	public Asteroid(String name, Material material)
+public class Ore extends Block implements IHasModel
+{
+	public Ore(String name) 
 	{
-		super(material);
+		super(Material.ROCK);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
+		this.setHardness(3.0F);
+		this.setResistance(15.0F);
+
 		this.setSoundType(SoundType.STONE);
-		this.setHardness(2.0F);
-		this.setResistance(10.0F);
-		this.setCreativeTab(GravityFalls.gravityfallsblocks);
-		
+
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
 	}
 	
-	public void registerModels()
+	@Override
+	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) 
 	{
-		GravityFalls.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
+		return new ItemStack(Item.getItemFromBlock(this));
 	}
 	
 	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,
-			EntityPlayer player) 
+	public void registerModels() 
 	{
-		return new ItemStack(Item.getItemFromBlock(this), 1, getMetaFromState(world.getBlockState(pos)));
+		GravityFalls.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
 	}
-
-
 }

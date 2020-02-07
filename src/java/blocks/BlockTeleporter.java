@@ -1,48 +1,35 @@
 package blocks;
 
-import java.util.List;
 import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-
 import commands.Teleport;
 import init.BlockInit;
 import init.ItemInit;
+import main.ConfigHandler;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockPortal;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyEnum;
 import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.command.ICommandSender;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityPig;
-import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockRenderLayer;
-import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.Rotation;
@@ -54,10 +41,12 @@ import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import tileEntities.TileEntityBlockTeleporter;
 
-public class BlockTeleporter extends Block implements IHasModel
+public class BlockTeleporter extends Block implements IHasModel, ITileEntityProvider
 {
 	public static final PropertyEnum<EnumFacing.Axis> AXIS = PropertyEnum.<EnumFacing.Axis>create("axis", EnumFacing.Axis.class, EnumFacing.Axis.X, EnumFacing.Axis.Z);
 	protected static final AxisAlignedBB X_AABB = new AxisAlignedBB(0.0D, 0.0D, 0.375D, 1.0D, 1.0D, 0.625D);
@@ -86,56 +75,20 @@ public class BlockTeleporter extends Block implements IHasModel
 	}
 
 	@Override
-	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) 
-	{
-		List<EntityPlayer> list = world.playerEntities;
-
-		for(int j = 0; j < list.size(); ++j)
-		{	
-			EntityPlayer player = list.get(j);
-
-			if(player.posX > (pos.getX() - 8) && player.posX < (pos.getX() + 8))
-			{
-				if(player.posY > (pos.getY() - 8) && player.posY < (pos.getY() + 8))
-				{
-					if(player.posZ > (pos.getZ() - 8) && player.posZ < (pos.getZ() + 8))
-					{
-
-						if((int)player.posX > pos.getX())
-							player.motionX -= -1;
-						else if((int)player.posX < pos.getX())
-							player.motionX += 1;
-						
-
-						if((int)player.posY > pos.getY())
-							player.motionY -= -1;
-						else if((int)player.posY < pos.getY())
-							player.motionY += 1;
-						
-
-						if((int)player.posZ > pos.getZ())
-							player.motionZ -= -1;
-						else if((int)player.posZ < pos.getZ())
-							player.motionZ += 1;
-						
-					}
-				}
-			}
-		}
-
-
-		super.updateTick(world, pos, state, rand);
-	}
-
-	@Override
 	public void onEntityCollidedWithBlock(World world, BlockPos pos, IBlockState state, Entity entity) 
 	{				
-		if(entity != null && entity instanceof EntityPlayerMP)
+		if(entity != null && !world.isRemote)
 		{
-			EntityPlayerMP player = (EntityPlayerMP) entity;
-			//	Teleport.teleportToDimension(player, 3, player.posX, player.posY, player.posZ);
-
-			attemptTeleport(player, world);
+			if(entity instanceof EntityPlayerMP){
+				EntityPlayerMP player = (EntityPlayerMP) entity;
+				attemptTeleport(world, player);
+			}
+			/*
+			else if(entity instanceof EntityLivingBase) {
+				EntityLivingBase entityLiving = (EntityLivingBase) entity;
+				attemptTeleportEntity(world, entityLiving);
+			}
+			*/
 		}
 
 	}
@@ -152,43 +105,72 @@ public class BlockTeleporter extends Block implements IHasModel
 		return new ItemStack(Item.getItemFromBlock(this), 1, getMetaFromState(world.getBlockState(pos)));
 	}
 
-	public void attemptTeleport(EntityPlayer player, World world)
+	public void attemptTeleport(World world, EntityPlayerMP player)
 	{
-		int x = 0;
-		int y = 70;
-		int z = 0;
-		BlockPos pos = new BlockPos(x, y, z);
-		int counter = 0;
+		WorldServer worldServer = world.getMinecraftServer().getWorld(ConfigHandler.NIGHTMARE_REALM);
+		int dimension = worldServer.provider.getDimension();
 
-		while(world.getBlockState(pos).getBlock() != Blocks.AIR && world.getBlockState(pos.down()).getBlock() == Blocks.AIR)
-		{
-			x = (int) (Math.random() * 400) - 200;
-			z = (int) (Math.random() * 400) - 200;
-
-			pos = new BlockPos(x, y, z);
-
-			if(counter > 150000)
+		if(dimension == ConfigHandler.NIGHTMARE_REALM) {
+			BlockPos pos = generateSpawn(worldServer);
+			int x = pos.getX();
+			int y = pos.getY();
+			int z = pos.getZ();
+			/*
+			try
 			{
-				counter = 0;
-				y = (int) (Math.random() * 20) - 10;
+				worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(player, ConfigHandler.NIGHTMARE_REALM, new Teleport(worldServer, x, y, z));
+				player.setPositionAndUpdate(x, y, z);
+			}
+			catch(NullPointerException exception)
+			{
+				return;
+			}
+			 */
+			Teleport.teleportToDimension(player, ConfigHandler.NIGHTMARE_REALM, x, y, z);
+		}
+	}
+
+	public void attemptTeleportEntity(World world, EntityLivingBase entity)
+	{
+		WorldServer worldServer = world.getMinecraftServer().getWorld(ConfigHandler.NIGHTMARE_REALM);
+		int dimension = worldServer.provider.getDimension();
+
+		if(dimension == ConfigHandler.NIGHTMARE_REALM) {
+			BlockPos pos = generateSpawn(worldServer);
+			int x = pos.getX();
+			int y = pos.getY();
+			int z = pos.getZ();
+
+
+			entity.changeDimension(ConfigHandler.NIGHTMARE_REALM);
+			entity.setPositionAndUpdate(x, y, z);
+
+		}
+	}
+
+	private BlockPos generateSpawn(World world)
+	{
+		int x = (int) ((Math.random() * 200) - 100);
+		int z = (int) ((Math.random() * 200) - 100);
+
+		int y = 100;
+		boolean foundGround = false;
+
+		while(!foundGround && y-- >= 0)
+		{
+			Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
+			Block blockUp = world.getBlockState(new BlockPos(x, y + 1, z)).getBlock();
+			Block blockDown = world.getBlockState(new BlockPos(x, y - 1, z)).getBlock();
+
+			if(block == Blocks.AIR && blockUp == Blocks.AIR && blockDown != Blocks.AIR) {
+				foundGround = true;
 			}
 		}
 
-		try
-		{
-			WorldServer worldServer = world.getMinecraftServer().getWorld(3);
-
-			EntityPlayerMP entityPlayerMP = (EntityPlayerMP) player;
-			worldServer.getMinecraftServer().getPlayerList().transferPlayerToDimension(entityPlayerMP, 3, new Teleport(worldServer, x, y, z));
-			entityPlayerMP.setPositionAndUpdate(x, y, z);
-		}
-		catch(NullPointerException exception)
-		{
-			return;
-		}
-
-		Teleport.teleportToDimension(player, 3, x, y, z);
-
+		if(foundGround)
+			return new BlockPos(x, y, z);
+		else
+			return generateSpawn(world);
 	}
 
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos)
@@ -405,5 +387,15 @@ public class BlockTeleporter extends Block implements IHasModel
 	protected BlockStateContainer createBlockState()
 	{
 		return new BlockStateContainer(this, new IProperty[] {AXIS});
+	}
+
+	@Override
+	public TileEntity createNewTileEntity(World worldIn, int meta) {
+		return new TileEntityBlockTeleporter();
+	}
+
+	@Override
+	public boolean hasTileEntity() {
+		return true;
 	}
 }

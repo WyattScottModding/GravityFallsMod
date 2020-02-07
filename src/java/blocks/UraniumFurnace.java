@@ -4,6 +4,7 @@ import java.util.Random;
 
 import init.BlockInit;
 import init.ItemInit;
+import main.ConfigHandler;
 import main.GravityFalls;
 import main.IHasModel;
 import main.Reference;
@@ -77,7 +78,7 @@ public class UraniumFurnace extends Block implements ITileEntityProvider, IHasMo
 	{
 		if(!worldIn.isRemote)
 		{
-			playerIn.openGui(GravityFalls.instance, Reference.GUI_URANIUM_FURNACE, worldIn, pos.getX(), pos.getY(), pos.getZ());
+			playerIn.openGui(GravityFalls.instance, ConfigHandler.GUI_URANIUM_FURNACE, worldIn, pos.getX(), pos.getY(), pos.getZ());
 		}
 		
 		return true;

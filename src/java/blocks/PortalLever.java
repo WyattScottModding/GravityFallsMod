@@ -1,14 +1,12 @@
 package blocks;
 
-import java.util.ArrayList;
-
-import handlers.PortalBlocks;
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
+import net.minecraft.block.ITileEntityProvider;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
@@ -20,6 +18,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.Mirror;
@@ -29,16 +28,13 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import updates.PortalUpdate;
+import tileEntities.TileEntityPortalLever;
 
-public class PortalLever extends Block implements IHasModel
+public class PortalLever extends Block implements IHasModel, ITileEntityProvider
 {
 	public static final AxisAlignedBB PORTALLEVER1 = new AxisAlignedBB(0.0D, 0D, 0.25D, 1.0D, 1.2875D, .75D);
 	public static final AxisAlignedBB PORTALLEVER2 = new AxisAlignedBB(0.25D, 0D, 0.0D, 0.75D, 1.2875D, 1.0D);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-
-	public boolean powered = false;
-	public boolean clicked = false;
 
 	public PortalLever(String name, Material material)
 	{
@@ -46,8 +42,8 @@ public class PortalLever extends Block implements IHasModel
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setSoundType(SoundType.STONE);
-		this.setHardness(6.0F);
-		this.setResistance(20.0F);
+		this.setHardness(-1.0F);
+		this.setResistance(3600000.0F);
 		this.setTickRandomly(true);
 		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 
@@ -139,8 +135,7 @@ public class PortalLever extends Block implements IHasModel
 	public int getMetaFromState(IBlockState state) 
 	{
 		return ((EnumFacing)state.getValue(FACING)).getIndex();
-	}	
-
+	}
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) 
@@ -192,207 +187,11 @@ public class PortalLever extends Block implements IHasModel
 
 	@Override
 	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
-			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ) 
+			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)  
 	{
-		this.powered = checkPower(worldIn, pos);
-
-		if(!clicked && powered)
-		{				
-			ArrayList<BlockPos> triangleBlocks = new ArrayList<BlockPos>();
-			ArrayList<BlockPos> circleBlocks = new ArrayList<BlockPos>();
-			ArrayList<BlockPos> ringBlocks = new ArrayList<BlockPos>();
-			ArrayList<BlockPos> portalBlocks = new ArrayList<BlockPos>();
-
-
-			//Triangle
-			triangleBlocks.add(pos.add(-6, 0, 0));
-			triangleBlocks.add(pos.add(-6, 1, 1));
-			triangleBlocks.add(pos.add(-6, 1, -1));
-			triangleBlocks.add(pos.add(-6, 2, 2));
-			triangleBlocks.add(pos.add(-6, 2, -2));
-			triangleBlocks.add(pos.add(-6, 3, 3));
-			triangleBlocks.add(pos.add(-6, 3, -3));
-			triangleBlocks.add(pos.add(-6, 4, 4));
-			triangleBlocks.add(pos.add(-6, 4, -4));
-			triangleBlocks.add(pos.add(-6, 5, 5));
-			triangleBlocks.add(pos.add(-6, 5, -5));
-			triangleBlocks.add(pos.add(-6, 6, 6));
-			triangleBlocks.add(pos.add(-6, 6, -6));
-			triangleBlocks.add(pos.add(-6, 7, 6));
-			triangleBlocks.add(pos.add(-6, 7, -6));
-			triangleBlocks.add(pos.add(-6, 8, 7));
-			triangleBlocks.add(pos.add(-6, 8, -7));
-			triangleBlocks.add(pos.add(-6, 9, 7));
-			triangleBlocks.add(pos.add(-6, 9, -7));
-			triangleBlocks.add(pos.add(-6, 10, 7));
-			triangleBlocks.add(pos.add(-6, 10, -7));
-			triangleBlocks.add(pos.add(-6, 10, 6));
-			triangleBlocks.add(pos.add(-6, 10, -6));
-			triangleBlocks.add(pos.add(-6, 10, 5));
-			triangleBlocks.add(pos.add(-6, 10, -5));
-			triangleBlocks.add(pos.add(-6, 10, 4));
-			triangleBlocks.add(pos.add(-6, 10, -4));
-			triangleBlocks.add(pos.add(-6, 10, 3));
-			triangleBlocks.add(pos.add(-6, 10, -3));
-			triangleBlocks.add(pos.add(-6, 10, 2));
-			triangleBlocks.add(pos.add(-6, 10, -2));
-			triangleBlocks.add(pos.add(-6, 10, 1));
-			triangleBlocks.add(pos.add(-6, 10, -1));
-			triangleBlocks.add(pos.add(-6, 10, 0));
-
-			//Ring
-			ringBlocks.add(pos.add(-6, 3, 0));
-			ringBlocks.add(pos.add(-6, 3, 1));
-			ringBlocks.add(pos.add(-6, 3, -1));
-			ringBlocks.add(pos.add(-6, 4, -2));
-			ringBlocks.add(pos.add(-6, 4, 2));
-			ringBlocks.add(pos.add(-6, 5, -3));
-			ringBlocks.add(pos.add(-6, 5, 3));
-			ringBlocks.add(pos.add(-6, 6, -3));
-			ringBlocks.add(pos.add(-6, 6, 3));
-			ringBlocks.add(pos.add(-6, 7, -3));
-			ringBlocks.add(pos.add(-6, 7, 3));
-			ringBlocks.add(pos.add(-6, 8, -2));
-			ringBlocks.add(pos.add(-6, 8, 2));
-			ringBlocks.add(pos.add(-6, 9, -1));
-			ringBlocks.add(pos.add(-6, 9, 1));
-			ringBlocks.add(pos.add(-6, 9, 0));
-
-
-			//Right Bottom
-			circleBlocks.add(pos.add(1,-1,-6));
-			circleBlocks.add(pos.add(2,-1,-6));
-			circleBlocks.add(pos.add(0,-1,-7));
-			circleBlocks.add(pos.add(1,-1,-7));
-			circleBlocks.add(pos.add(2,-1,-7));
-			circleBlocks.add(pos.add(3,-1,-7));
-			circleBlocks.add(pos.add(0,-1,-8));
-			circleBlocks.add(pos.add(1,-1,-8));
-			circleBlocks.add(pos.add(2,-1,-8));
-			circleBlocks.add(pos.add(3,-1,-8));
-			circleBlocks.add(pos.add(1,-1,-9));
-			circleBlocks.add(pos.add(2,-1,-9));
-
-			//Right Top
-			circleBlocks.add(pos.add(1, 11,-6));
-			circleBlocks.add(pos.add(2, 11,-6));
-			circleBlocks.add(pos.add(0,11,-7));
-			circleBlocks.add(pos.add(1,11,-7));
-			circleBlocks.add(pos.add(2,11,-7));
-			circleBlocks.add(pos.add(3,11,-7));
-			circleBlocks.add(pos.add(0,11,-8));
-			circleBlocks.add(pos.add(1,11,-8));
-			circleBlocks.add(pos.add(2,11,-8));
-			circleBlocks.add(pos.add(3,11,-8));
-			circleBlocks.add(pos.add(1,11,-9));
-			circleBlocks.add(pos.add(2,11,-9));
-
-			//Left Bottom
-			circleBlocks.add(pos.add(1,-1,6));
-			circleBlocks.add(pos.add(2,-1,6));
-			circleBlocks.add(pos.add(0,-1,7));
-			circleBlocks.add(pos.add(1,-1,7));
-			circleBlocks.add(pos.add(2,-1,7));
-			circleBlocks.add(pos.add(3,-1,7));
-			circleBlocks.add(pos.add(0,-1,8));
-			circleBlocks.add(pos.add(1,-1,8));
-			circleBlocks.add(pos.add(2,-1,8));
-			circleBlocks.add(pos.add(3,-1,8));
-			circleBlocks.add(pos.add(1,-1,9));
-			circleBlocks.add(pos.add(2,-1,9));
-
-			//Left Top
-			circleBlocks.add(pos.add(1, 11,6));
-			circleBlocks.add(pos.add(2, 11,6));
-			circleBlocks.add(pos.add(0,11,7));
-			circleBlocks.add(pos.add(1,11,7));
-			circleBlocks.add(pos.add(2,11,7));
-			circleBlocks.add(pos.add(3,11,7));
-			circleBlocks.add(pos.add(0,11,8));
-			circleBlocks.add(pos.add(1,11,8));
-			circleBlocks.add(pos.add(2,11,8));
-			circleBlocks.add(pos.add(3,11,8));
-			circleBlocks.add(pos.add(1,11,9));
-			circleBlocks.add(pos.add(2,11,9));
-
-			//Portal
-			portalBlocks.add(pos.add(-6, 4, -1));
-			portalBlocks.add(pos.add(-6, 4, 0));
-			portalBlocks.add(pos.add(-6, 4, 1));
-			portalBlocks.add(pos.add(-6, 5, -2));
-			portalBlocks.add(pos.add(-6, 5, -1));
-			portalBlocks.add(pos.add(-6, 5, 0));
-			portalBlocks.add(pos.add(-6, 5, 1));
-			portalBlocks.add(pos.add(-6, 5, 2));
-			portalBlocks.add(pos.add(-6, 6, -2));
-			portalBlocks.add(pos.add(-6, 6, -1));
-			portalBlocks.add(pos.add(-6, 6, 0));
-			portalBlocks.add(pos.add(-6, 6, 1));
-			portalBlocks.add(pos.add(-6, 6, 2));
-			portalBlocks.add(pos.add(-6, 7, -2));
-			portalBlocks.add(pos.add(-6, 7, -1));
-			portalBlocks.add(pos.add(-6, 7, 0));
-			portalBlocks.add(pos.add(-6, 7, 1));
-			portalBlocks.add(pos.add(-6, 7, 2));
-			portalBlocks.add(pos.add(-6, 8, -1));
-			portalBlocks.add(pos.add(-6, 8, 0));
-			portalBlocks.add(pos.add(-6, 8, 1));
-
-
-			PortalBlocks blocks = new PortalBlocks(pos, portalBlocks, ringBlocks, triangleBlocks, circleBlocks);
-			PortalUpdate.portalBlocks = blocks;
-
-
-			//Change portal blocks if there is a power source and switched to on
-			if(PortalUpdate.nbt.getBoolean("portalActive"))
-			{
-				PortalUpdate.nbt.setBoolean("portalActive", false);
-				PortalUpdate.removePortal(worldIn);
-			}
-			else if(PortalUpdate.nbt.getBoolean("portalControl"))
-			{
-				PortalUpdate.nbt.setBoolean("portalActive", true);
-				PortalUpdate.countdown = 36000;
-
-				PortalUpdate.setPortal(worldIn);
-			}
-
-			clicked = true;
-
-			return true;
-		}
-
-		clicked = false;
-
-		return false;
-	}
-
-
-	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) 
-	{
-		this.powered = checkPower(world, pos);
-		
-
-		super.neighborChanged(state, world, pos, blockIn, fromPos);
-	}
-
-	public boolean checkPower(World world, BlockPos pos)
-	{
-		ArrayList<IBlockState> list = new ArrayList<IBlockState>();
-		list.add(world.getBlockState(pos.up()));
-		list.add(world.getBlockState(pos.down()));
-		list.add(world.getBlockState(pos.north()));
-		list.add(world.getBlockState(pos.south()));
-		list.add(world.getBlockState(pos.west()));
-		list.add(world.getBlockState(pos.east()));
-
-		for(IBlockState element: list)
-		{
-			if(element.getBlock() == BlockInit.POWER_CORD_ON)
-			{
-				return true;
-			}
+		if(!worldIn.isRemote) {
+			TileEntityPortalLever tileEntity = (TileEntityPortalLever) worldIn.getTileEntity(pos);
+			return tileEntity.activate();
 		}
 		return false;
 	}
@@ -402,6 +201,11 @@ public class PortalLever extends Block implements IHasModel
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) 
 	{
 		return new ItemStack(Item.getItemFromBlock(this));
+	}
+
+	@Override
+	public TileEntity createNewTileEntity(World worldIn, int meta) {
+		return new TileEntityPortalLever();
 	}
 
 }

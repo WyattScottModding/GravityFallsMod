@@ -8,6 +8,7 @@ import armor.CloakOfInvisibility;
 import armor.Dipper;
 import armor.FireHelmet;
 import armor.GoldKnuckles;
+import armor.LightSweater;
 import armor.Mabel;
 import armor.MysticAmulet;
 import armor.RegenerationLegs;
@@ -22,13 +23,15 @@ import armor.TieOfPossession2;
 import food.InfinityPizza;
 import food.SmileDip;
 import handlers.SoundsHandler;
-import items.Battery;
+import items.ItemBasic;
 import items.BlackLight;
 import items.Book1;
 import items.Book2;
 import items.Book3;
 import items.CopperIngot;
+import items.CryogenicTubeItem;
 import items.CrystalShard;
+import items.CursedDoorItem;
 import items.CustomRecords;
 import items.EyeBat;
 import items.FlashLight;
@@ -37,7 +40,6 @@ import items.GideonBotPart;
 import items.GolfCart;
 import items.GrapplingHook;
 import items.InfinitySidedDie;
-import items.InterdimensionalRift;
 import items.LaserArmCannon;
 import items.Latex;
 import items.LeafBlower;
@@ -56,7 +58,6 @@ import items.TimeWish;
 import items.UraniumBucket;
 import main.GravityFalls;
 import main.Reference;
-import net.minecraft.block.material.Material;
 import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -83,6 +84,7 @@ public class ItemInit {
 	public static final ArmorMaterial KNUCKLES = EnumHelper.addArmorMaterial("knuckles", Reference.MODID + ":knuckles", 30, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
 	public static final ArmorMaterial AMULET = EnumHelper.addArmorMaterial("amulet", Reference.MODID + ":amulet", 30, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, 0.0F);
 	public static final ArmorMaterial TIE = EnumHelper.addArmorMaterial("tie", Reference.MODID + ":tie", 40, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
+	public static final ArmorMaterial SWEATER = EnumHelper.addArmorMaterial("sweater", Reference.MODID + ":sweater", 40, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
 
 	//Armor
 	public static final Item PINE_HAT = new ArmorModel("pinehat", GravityFalls.gravityfallsarmor, DIPPER2, EntityEquipmentSlot.HEAD);
@@ -110,11 +112,14 @@ public class ItemInit {
 	public static final Item MYSTIC_AMULET = new MysticAmulet("mysticamulet", AMULET, 1, EntityEquipmentSlot.CHEST);
 	public static final Item TIE_OF_POSSESSION = new TieOfPossession("tie", TIE, 1, EntityEquipmentSlot.CHEST);
 	public static final Item TIE_OF_POSSESSION2 = new TieOfPossession2("tie2", TIE, 1, EntityEquipmentSlot.CHEST);
+	public static final Item LIGHT_SWEATER = new LightSweater("light_sweater", SWEATER, 1, EntityEquipmentSlot.CHEST);
 
 	
 	
 	//Items
 	public static final Item CRYSTALSHARD = new CrystalShard("crystalshard");
+
+	//public static final Item CRYSTALFLAKE = new ItemBasic("crystalflake");
 
 	public static final Item FLASHLIGHT = new FlashLight("flashlight");
 
@@ -156,7 +161,7 @@ public class ItemInit {
 
 	public static final Item COPPER_INGOT = new CopperIngot("copper_ingot");
 
-	public static final Item BATTERY = new Battery("battery");
+	public static final Item BATTERY = new ItemBasic("battery");
 	
 	public static final Item LEAFBLOWER = new LeafBlower("leafblower", ToolMaterial.IRON);
 	
@@ -173,14 +178,16 @@ public class ItemInit {
 	public static final Item GIDEONBOT_BODY	= new GideonBotPart("gideonbot_body");
 	public static final Item GIDEONBOT_LEG	= new GideonBotPart("gideonbot_leg");
 	public static final Item GIDEONBOT_ARM	= new GideonBotPart("gideonbot_arm");
-	
-	public static final Item INTERDIMENSIONAL_RIFT = new InterdimensionalRift("interdimensional_rift");
-	
+		
 	public static final Item RETURN_DEVICE = new ReturnDevice("return_device");
 	
 	public static final Item EYEBAT = new EyeBat("eyebat");
 
 	public static final Item NET = new Net("net", ToolMaterial.STONE);
+
+	public static final Item CURSED_DOOR_ITEM = new CursedDoorItem("cursed_door_item");
+
+	public static final Item CRYOGENICTUBE_ITEM = new CryogenicTubeItem("cryogenictube_item");
 
 
 	//Discs

@@ -1,52 +1,46 @@
 package gui;
 
-import containers.ContainerBook1;
-import containers.ContainerUraniumFurnace;
 import main.Reference;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.player.InventoryPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import tileEntities.TileEntityBook1;
-import tileEntities.TileEntityUraniumFurnace;
 
 @SideOnly(Side.CLIENT)
-public class GuiScope extends GuiContainer
+public class GuiScope extends GuiScreen
 {
 	private static final ResourceLocation TEXTURES = new ResourceLocation(Reference.MODID + ":textures/gui/scope.png");
+	protected int xSize = 176;
+	protected int ySize = 166;
 
-	private final InventoryPlayer playerInv;
-	public TileEntityBook1 tileBook1;
-
-	public GuiScope(InventoryPlayer playerInventory, TileEntityBook1 furnaceInventory) 
+	public GuiScope() 
 	{
-		super(new ContainerBook1(playerInventory, furnaceInventory));
-		playerInv = playerInventory;
-		tileBook1 = furnaceInventory;
+		super();
 	}
 
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) 
 	{
 		this.drawDefaultBackground();
+		
+		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+		this.mc.getTextureManager().bindTexture(TEXTURES);
+        Gui.drawModalRectWithCustomSizedTexture((width / 2) - (xSize / 2), (height / 2) - (ySize / 2), 0, 0, 175, 165, 175, 165);
+
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		this.renderHoveredToolTip(mouseX, mouseY);
 	}
 
 	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) 
-	{
-		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-		this.mc.getTextureManager().bindTexture(TEXTURES);
-		int i = (this.width - this.xSize) / 2;
-		int j = (this.height - this.ySize) / 2;
-        this.drawModalRectWithCustomSizedTexture((width / 2) - (xSize / 2), (height / 2) - (ySize / 2), 0, 0, 175, 165, 175, 165);
-
-	
+	protected void renderToolTip(ItemStack stack, int x, int y) {
+		super.renderToolTip(stack, x, y);
 	}
 	
+	@Override
+	public boolean doesGuiPauseGame() {
+		return false;
+	}
 	
 }

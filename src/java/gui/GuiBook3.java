@@ -2,29 +2,32 @@ package gui;
 
 import java.io.IOException;
 
-import org.lwjgl.input.Keyboard;
-
-import containers.ContainerBook1;
-import handlers.RegistryHandler;
+import handlers.KeyBindings;
+import handlers.SoundsHandler;
 import init.ItemInit;
+import main.GravityFalls;
 import main.Reference;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.inventory.GuiContainer;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import tileEntities.TileEntityBook1;
+import updates.RaiseDeadUpdate;
 
 @SideOnly(Side.CLIENT)
-public class GuiBook3 extends GuiContainer
+public class GuiBook3 extends GuiScreen
 {
 	private static final ResourceLocation PAGE1 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page1.png");
 	private static final ResourceLocation PAGE2 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page2.png");
@@ -39,23 +42,21 @@ public class GuiBook3 extends GuiContainer
 	private static final ResourceLocation PAGE3_2 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page3-2.png");
 	private static final ResourceLocation PAGE5_2 = new ResourceLocation(Reference.MODID + ":textures/gui/journal3/page5-2.png");
 
-	private final InventoryPlayer playerInv;
-	public TileEntityBook1 tileBook3;
 	public int currentPage = 1;
 	public final int pageCount = 7;
+	protected int xSize = 176;
+	protected int ySize = 166;
 
-	public GuiBook3(InventoryPlayer playerInventory, TileEntityBook1 furnaceInventory) 
+	public GuiBook3() 
 	{
-		super(new ContainerBook1(playerInventory, furnaceInventory));
-		playerInv = playerInventory;
-		tileBook3 = furnaceInventory;
+		super();
 	}
 
 	@Override
 	public void initGui() 
 	{
-		buttonList.add(new GuiButtonExt(1, width/2 - 150, 200, 60, 20, "Left"));
-		buttonList.add(new GuiButtonExt(2, width/2 + 100, 200, 60, 20, "Right"));
+		buttonList.add(new GuiButtonExt(1, (width / 2) - (xSize) + 10, (height / 2) - (ySize / 2) + 161, 60, 20, "Left"));
+		buttonList.add(new GuiButtonExt(2, (width / 2) - (xSize) + 282, (height / 2) - (ySize / 2) + 161, 60, 20, "Right"));
 
 		super.initGui();
 	}
@@ -80,19 +81,11 @@ public class GuiBook3 extends GuiContainer
 	{
 		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		this.renderHoveredToolTip(mouseX, mouseY);
 
-		//LeftButton
-		((GuiButton)this.buttonList.get(0)).drawButton(this.mc, mouseX, mouseY, partialTicks);
-
-		//RightButton
-		((GuiButton)this.buttonList.get(1)).drawButton(this.mc, mouseX, mouseY, partialTicks);
-	}
-
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) 
-	{
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
+		EntityPlayer player = GravityFalls.proxy.getClientPlayer();
+		InventoryPlayer playerInv = player.inventory;
 
 		if(currentPage == 1)
 		{
@@ -129,9 +122,7 @@ public class GuiBook3 extends GuiContainer
 		else if(currentPage == 7)
 			this.mc.getTextureManager().bindTexture(PAGE7);
 
-		int i = (this.width - this.xSize) / 2;
-		int j = (this.height - this.ySize) / 2;
-		this.drawModalRectWithCustomSizedTexture((width / 2) - (xSize), (height / 2) - (ySize / 2) - 5, 0, 0, xSize * 2, ySize, 355, 170);
+		Gui.drawModalRectWithCustomSizedTexture((width / 2) - (xSize), (height / 2) - (ySize / 2) - 5, 0, 0, xSize * 2, ySize, 355, 170);
 
 		if(currentPage == 1)
 			buttonList.get(0).enabled = false;
@@ -144,25 +135,36 @@ public class GuiBook3 extends GuiContainer
 			buttonList.get(1).enabled = true;
 
 
-		if(currentPage == 4)
-		{
-			if(Keyboard.isKeyDown(Keyboard.KEY_B) && !RegistryHandler.nbt.getBoolean("raiseDead"))
-			{
-				EntityPlayer player = playerInv.player;
+		//LeftButton
+		((GuiButton)this.buttonList.get(0)).drawButton(this.mc, mouseX, mouseY, partialTicks);
 
-				if(player.world.getDifficulty().equals(EnumDifficulty.PEACEFUL))
-				{
-					ITextComponent msg = new TextComponentString("You must not be in peaceful mode to raise the dead.");
-					player.sendMessage(msg);
-				}
-				else
-				{
-					RegistryHandler.nbt.setBoolean("raiseDead", true);
-				}
-			}
+		//RightButton
+		((GuiButton)this.buttonList.get(1)).drawButton(this.mc, mouseX, mouseY, partialTicks);
+
+		switchPage();
+	}
+
+	@Override
+	protected void renderToolTip(ItemStack stack, int x, int y) {
+		super.renderToolTip(stack, x, y);
+	}
+
+	public void switchPage()
+	{
+		GameSettings settings = Minecraft.getMinecraft().gameSettings;
+
+		if(settings.keyBindLeft.isKeyDown())
+		{
+			currentPage--;
+		}
+		if(settings.keyBindRight.isKeyDown())
+		{
+			currentPage++;
 		}
 	}
 
-
-
+	@Override
+	public boolean doesGuiPauseGame() {
+		return false;
+	}
 }

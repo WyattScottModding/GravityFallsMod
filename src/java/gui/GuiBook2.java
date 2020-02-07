@@ -2,25 +2,25 @@ package gui;
 
 import java.io.IOException;
 
-import containers.ContainerBook1;
-import containers.ContainerUraniumFurnace;
 import init.ItemInit;
+import main.GravityFalls;
 import main.Reference;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.settings.GameSettings;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.client.config.GuiButtonExt;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import tileEntities.TileEntityBook1;
-import tileEntities.TileEntityUraniumFurnace;
 
 @SideOnly(Side.CLIENT)
-public class GuiBook2 extends GuiContainer
+public class GuiBook2 extends GuiScreen
 {
 	private static final ResourceLocation PAGE1 = new ResourceLocation(Reference.MODID + ":textures/gui/journal2/page1.png");
 	private static final ResourceLocation PAGE2 = new ResourceLocation(Reference.MODID + ":textures/gui/journal2/page2.png");
@@ -33,23 +33,21 @@ public class GuiBook2 extends GuiContainer
 
 	private static final ResourceLocation PAGE1_2 = new ResourceLocation(Reference.MODID + ":textures/gui/journal2/page1-2.png");
 
-	private final InventoryPlayer playerInv;
-	public TileEntityBook1 tileBook2;
 	public int currentPage = 1;
 	public final int pageCount = 8;
-
-	public GuiBook2(InventoryPlayer playerInventory, TileEntityBook1 furnaceInventory) 
+	protected int xSize = 176;
+	protected int ySize = 166;
+	
+	public GuiBook2() 
 	{
-		super(new ContainerBook1(playerInventory, furnaceInventory));
-		playerInv = playerInventory;
-		tileBook2 = furnaceInventory;
+		super();
 	}
 
 	@Override
 	public void initGui() 
 	{
-		buttonList.add(new GuiButtonExt(1, width/2 - 150, 200, 60, 20, "Left"));
-		buttonList.add(new GuiButtonExt(2, width/2 + 100, 200, 60, 20, "Right"));
+		buttonList.add(new GuiButtonExt(1, (width / 2) - (xSize) + 10, (height / 2) - (ySize / 2) + 161, 60, 20, "Left"));
+		buttonList.add(new GuiButtonExt(2, (width / 2) - (xSize) + 282, (height / 2) - (ySize / 2) + 161, 60, 20, "Right"));
 
 		super.initGui();
 	}
@@ -74,22 +72,14 @@ public class GuiBook2 extends GuiContainer
 	{
 		this.drawDefaultBackground();
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		this.renderHoveredToolTip(mouseX, mouseY);
-
-		//LeftButton
-		((GuiButton)this.buttonList.get(0)).drawButton(this.mc, mouseX, mouseY, partialTicks);
-
-		//RightButton
-		((GuiButton)this.buttonList.get(1)).drawButton(this.mc, mouseX, mouseY, partialTicks);
-	}
-
-	@Override
-	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) 
-	{
+		
 		GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
 		if(currentPage == 1)
 		{
+			EntityPlayer player = GravityFalls.proxy.getClientPlayer();
+			InventoryPlayer playerInv = player.inventory;
+			
 			if(playerInv.hasItemStack(new ItemStack(ItemInit.BLACK_LIGHT)))
 				this.mc.getTextureManager().bindTexture(PAGE1_2);
 			else
@@ -110,9 +100,7 @@ public class GuiBook2 extends GuiContainer
 		else if(currentPage == 8)
 			this.mc.getTextureManager().bindTexture(PAGE8);
 
-		int i = (this.width - this.xSize) / 2;
-		int j = (this.height - this.ySize) / 2;
-		this.drawModalRectWithCustomSizedTexture((width / 2) - (xSize), (height / 2) - (ySize / 2) - 5, 0, 0, xSize * 2, ySize, 355, 170);
+		Gui.drawModalRectWithCustomSizedTexture((width / 2) - (xSize), (height / 2) - (ySize / 2) - 5, 0, 0, xSize * 2, ySize, 355, 170);
 
 		if(currentPage == 1)
 			buttonList.get(0).enabled = false;
@@ -123,5 +111,38 @@ public class GuiBook2 extends GuiContainer
 			buttonList.get(1).enabled = false;
 		else
 			buttonList.get(1).enabled = true;
+		
+		
+		//LeftButton
+				((GuiButton)this.buttonList.get(0)).drawButton(this.mc, mouseX, mouseY, partialTicks);
+
+				//RightButton
+				((GuiButton)this.buttonList.get(1)).drawButton(this.mc, mouseX, mouseY, partialTicks);
+		
+		switchPage();
+	}
+	
+	@Override
+	protected void renderToolTip(ItemStack stack, int x, int y) {
+		super.renderToolTip(stack, x, y);
+	}
+
+	public void switchPage()
+	{
+		GameSettings settings = Minecraft.getMinecraft().gameSettings;
+		
+		if(settings.keyBindLeft.isKeyDown())
+		{
+			currentPage--;
+		}
+		if(settings.keyBindRight.isKeyDown())
+		{
+			currentPage++;
+		}
+	}
+	
+	@Override
+	public boolean doesGuiPauseGame() {
+		return false;
 	}
 }

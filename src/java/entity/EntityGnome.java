@@ -1,6 +1,5 @@
 package entity;
 
-import java.rmi.registry.Registry;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,81 +9,72 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import handlers.LootTableHandler;
-import handlers.RegistryHandler;
 import handlers.SoundsHandler;
-import init.BlockInit;
 import net.minecraft.block.Block;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityLiving;
+import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIAttackMelee;
-import net.minecraft.entity.ai.EntityAIAvoidEntity;
-import net.minecraft.entity.ai.EntityAIBeg;
-import net.minecraft.entity.ai.EntityAIFollowOwner;
 import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILeapAtTarget;
 import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMate;
-import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
-import net.minecraft.entity.ai.EntityAIOwnerHurtTarget;
-import net.minecraft.entity.ai.EntityAISit;
+import net.minecraft.entity.ai.EntityAIMoveTowardsRestriction;
+import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
 import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAITargetNonTamed;
-import net.minecraft.entity.ai.EntityAITempt;
-import net.minecraft.entity.ai.EntityAIWander;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
 import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
-import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.monster.EntityCreeper;
-import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.passive.AbstractHorse;
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityLlama;
-import net.minecraft.entity.passive.EntityWolf;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
+import net.minecraft.entity.monster.EntityMob;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.datasync.DataParameter;
-import net.minecraft.network.datasync.DataSerializers;
-import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
-public class EntityGnome extends EntityPigZombie
+public class EntityGnome extends EntityMob
 {
-	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
+	protected static final IAttribute SPAWN_REINFORCEMENTS_CHANCE = (new RangedAttribute((IAttribute)null, "zombie.spawnReinforcements", 0.0D, 0.0D, 1.0D)).setDescription("Spawn Reinforcements Chance");
+
 	private static final UUID ATTACK_SPEED_BOOST_MODIFIER_UUID = UUID.fromString("49455A49-7EC5-45BA-B886-3B90B23A1718");
 	private static final AttributeModifier ATTACK_SPEED_BOOST_MODIFIER = (new AttributeModifier(ATTACK_SPEED_BOOST_MODIFIER_UUID, "Attacking speed boost", 0.05D, 0)).setSaved(false);
 	private int angerLevel;
-    private UUID angerTargetUUID;
+	private UUID angerTargetUUID;
 
 	public EntityGnome(World par1World)
 	{
 		super(par1World);
-		this.setSize(0.3F, 0.85F);
+		this.setSize(0.3F, 0.8F);
+		this.experienceValue = 4;
 	}
 
+	@Override
+	protected void initEntityAI()
+	{
+		this.tasks.addTask(1, new EntityAISwimming(this));
+		this.tasks.addTask(2, new EntityAIAttackMelee(this, 1.0D, true));
+		this.tasks.addTask(5, new EntityAIMoveTowardsRestriction(this, 1.0D));
+		this.tasks.addTask(7, new EntityAIWanderAvoidWater(this, 1.0D));
+		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
+		this.tasks.addTask(8, new EntityAILookIdle(this));
+		this.applyEntityAI();
+	}
+
+
+	protected void applyEntityAI() 
+	{
+		this.targetTasks.addTask(1, new EntityGnome.AIHurtByAggressor(this));
+		this.targetTasks.addTask(2, new EntityGnome.AITargetAggressor(this));
+		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[] {}));
+	}
 
 	@Override
 	protected void applyEntityAttributes() 
@@ -97,10 +87,9 @@ public class EntityGnome extends EntityPigZombie
 
 		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(1.0D);;
 
-		this.getEntityAttribute(SPAWN_REINFORCEMENTS_CHANCE).setBaseValue(0.5D);
-
+		this.getAttributeMap().registerAttribute(SPAWN_REINFORCEMENTS_CHANCE).setBaseValue(0.5D);
 	}
-	
+
 	@Override
 	protected void updateAITasks()
 	{
@@ -141,7 +130,6 @@ public class EntityGnome extends EntityPigZombie
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn)
 	{
-
 		return SoundsHandler.ENTITY_GNOME_HURT;
 	}
 
@@ -172,12 +160,6 @@ public class EntityGnome extends EntityPigZombie
 	{
 		return LootTableHandler.GNOME;
 
-	}
-
-	@Override
-	protected void setEquipmentBasedOnDifficulty(DifficultyInstance difficulty)
-	{
-		//this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(Items.GOLDEN_SWORD));
 	}
 
 	@Override
@@ -223,13 +205,14 @@ public class EntityGnome extends EntityPigZombie
 				averageX /= count - 1;
 				averageY /= count - 1;
 				averageZ /= count - 1;
-
+				/*
 				System.out.println("averageX: " + averageX);
 				System.out.println("averageY: " + averageY);
 				System.out.println("averageZ: " + averageZ);
 				System.out.println("list count: " + count);
 
 				System.out.println(list.get(entity).toString());
+				 */
 				if((int)list.get(entity).posX != (int)averageX && (int)list.get(entity).posY!= (int)averageY && (int)list.get(entity).posZ != (int)averageZ)
 				{
 					//list.get(entity).motionX = (averageX - list.get(entity).posX) / 100;
@@ -247,51 +230,96 @@ public class EntityGnome extends EntityPigZombie
 			//	}
 		}
 
-		unicornDefence();		
-
 		super.onUpdate();
 	}
 
-	public void unicornDefence()
+	static class AIHurtByAggressor extends EntityAIHurtByTarget
 	{
-		Block blockNorth = world.getBlockState(this.getPosition().north()).getBlock();
-		Block blockSouth = world.getBlockState(this.getPosition().south()).getBlock();
-		Block blockEast = world.getBlockState(this.getPosition().east()).getBlock();
-		Block blockWest = world.getBlockState(this.getPosition().west()).getBlock();
-
-		Block hair = BlockInit.UNICORNHAIR;
-
-
-		if(blockNorth == hair && blockSouth == hair && blockEast == hair && blockWest == hair)
+		public AIHurtByAggressor(EntityGnome p_i45828_1_)
 		{
-			this.motionX = 0.0;
-			this.motionY = 0.0;
-			this.motionZ = 0.0;
+			super(p_i45828_1_, true);
 		}
-		
-		for(int i = 3; i >= -10; i--)
-		{	
-			Block blockNorth2 = world.getBlockState(this.getPosition().north().add(0, i, 0)).getBlock();
-			Block blockSouth2 = world.getBlockState(this.getPosition().south().add(0, i, 0)).getBlock();
-			Block blockEast2 = world.getBlockState(this.getPosition().east().add(0, i, 0)).getBlock();
-			Block blockWest2 = world.getBlockState(this.getPosition().west().add(0, i, 0)).getBlock();
-			
-			if(blockNorth2 == hair)
+
+		protected void setEntityAttackTarget(EntityCreature creatureIn, EntityLivingBase entityLivingBaseIn)
+		{
+			super.setEntityAttackTarget(creatureIn, entityLivingBaseIn);
+
+			if (creatureIn instanceof EntityGnome)
 			{
-				this.motionZ = 3.0;
+				((EntityGnome)creatureIn).becomeAngryAt(entityLivingBaseIn);
 			}
-			if(blockSouth2 == hair)
+		}
+	}
+
+	static class AITargetAggressor extends EntityAINearestAttackableTarget<EntityPlayer>
+	{
+		public AITargetAggressor(EntityGnome p_i45829_1_)
+		{
+			super(p_i45829_1_, EntityPlayer.class, true);
+		}
+
+		/**
+		 * Returns whether the EntityAIBase should begin execution.
+		 */
+		public boolean shouldExecute()
+		{
+			return ((EntityGnome)this.taskOwner).isAngry() && super.shouldExecute();
+		}
+	}
+
+
+	/**
+	 * Causes this PigZombie to become angry at the supplied Entity (which will be a player).
+	 */
+	private void becomeAngryAt(Entity p_70835_1_)
+	{
+		this.angerLevel = 400 + this.rand.nextInt(400);
+
+		if (p_70835_1_ instanceof EntityLivingBase)
+		{
+			this.setRevengeTarget((EntityLivingBase)p_70835_1_);
+		}
+	}
+
+	public boolean isAngry()
+	{
+		return this.angerLevel > 0;
+	}
+
+	/**
+	 * (abstract) Protected helper method to read subclass entity data from NBT.
+	 */
+	public void readEntityFromNBT(NBTTagCompound compound)
+	{
+		super.readEntityFromNBT(compound);
+		this.angerLevel = compound.getShort("Anger");
+		String s = compound.getString("HurtBy");
+
+		if (!s.isEmpty())
+		{
+			this.angerTargetUUID = UUID.fromString(s);
+			EntityPlayer entityplayer = this.world.getPlayerEntityByUUID(this.angerTargetUUID);
+			this.setRevengeTarget(entityplayer);
+
+			if (entityplayer != null)
 			{
-				this.motionZ = -3.0;
+				this.attackingPlayer = entityplayer;
+				this.recentlyHit = this.getRevengeTimer();
 			}
-			if(blockWest2 == hair)
-			{
-				this.motionX = 3.0;
-			}
-			if(blockEast2 == hair)
-			{
-				this.motionX = -3.0;
-			}
+		}
+	}
+
+	/**
+	 * Hint to AI tasks that we were attacked by the passed EntityLivingBase and should retaliate. Is not guaranteed to
+	 * change our actual active target (for example if we are currently busy attacking someone else)
+	 */
+	public void setRevengeTarget(@Nullable EntityLivingBase livingBase)
+	{
+		super.setRevengeTarget(livingBase);
+
+		if (livingBase != null)
+		{
+			this.angerTargetUUID = livingBase.getUniqueID();
 		}
 	}
 }

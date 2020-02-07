@@ -4,7 +4,6 @@ import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
@@ -16,7 +15,6 @@ public class SmileDip extends ItemFood implements IHasModel{
 
 	private PotionEffect[] effects;
 	public final int itemUseDuration;
-	private boolean alwaysEdible;
 	public boolean count = false;
 	public EntityLivingBase player;
 
@@ -26,11 +24,15 @@ public class SmileDip extends ItemFood implements IHasModel{
 		this.setMaxStackSize(64);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
 
 		this.effects = potionEffects;
 		this.itemUseDuration = 32;
 		ItemInit.ITEMS.add(this);
+	}
+	
+	public boolean isAlwaysEdible() {
+		return true;
 	}
 
 	@Override
@@ -68,7 +70,6 @@ public class SmileDip extends ItemFood implements IHasModel{
 	@Override
     public ItemFood setAlwaysEdible()
     {
-        this.alwaysEdible = true;
         return this;
     }
 

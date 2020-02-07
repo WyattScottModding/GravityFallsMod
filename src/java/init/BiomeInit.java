@@ -16,23 +16,37 @@ public class BiomeInit
 	public static final Biome GRAVITYFALLS = new BiomeGravityFalls();
 	public static final Biome NIGHTMAREREALM = new BiomeNightmareRealm();
 
-	
+
 	public static void registerBiomes()
 	{
-		initBiome(GRAVITYFALLS, "GravityFalls", BiomeType.COOL, Type.MAGICAL, Type.CONIFEROUS, Type.FOREST, Type.DEAD, Type.DRY);
-		initBiome(NIGHTMAREREALM, "NightmareRealm", BiomeType.DESERT, Type.MAGICAL, Type.HOT, Type.NETHER, Type.SPOOKY);
+		initGravityFalls(GRAVITYFALLS, "GravityFalls", BiomeType.COOL, Type.MAGICAL, Type.CONIFEROUS, Type.FOREST, Type.DEAD, Type.DRY);
+		initNightmareRealm(NIGHTMAREREALM, "NightmareRealm", BiomeType.DESERT, Type.MAGICAL, Type.HOT, Type.NETHER, Type.SPOOKY);
 
 	}
 
-	private static Biome initBiome(Biome biome, String name, BiomeType biometype, Type... types)
+	private static Biome initGravityFalls(Biome biome, String name, BiomeType biometype, Type... types)
 	{
 		biome.setRegistryName(name);
 		ForgeRegistries.BIOMES.register(biome);
 		BiomeDictionary.addTypes(biome, types);
 		BiomeManager.addBiome(biometype, new BiomeEntry(biome, 10));
+
 		BiomeManager.addSpawnBiome(biome);
-		
-		
+
+
+		return biome;
+	}
+	
+	private static Biome initNightmareRealm(Biome biome, String name, BiomeType biometype, Type... types)
+	{
+		biome.setRegistryName(name);
+		ForgeRegistries.BIOMES.register(biome);
+		BiomeDictionary.addTypes(biome, types);
+		BiomeManager.addBiome(biometype, new BiomeEntry(biome, 0));
+
+		BiomeManager.addSpawnBiome(biome);
+
+
 		return biome;
 	}
 }

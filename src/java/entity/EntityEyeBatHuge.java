@@ -1,82 +1,29 @@
 package entity;
 
-import java.util.List;
 import java.util.Random;
 
-import javax.annotation.Nullable;
-
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-
-import handlers.LootTableHandler;
-import handlers.SoundsHandler;
 import init.BlockInit;
-import init.ItemInit;
 import init.PotionInit;
 import net.minecraft.block.Block;
-import net.minecraft.enchantment.EnchantmentHelper;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityAgeable;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.MoverType;
 import net.minecraft.entity.SharedMonsterAttributes;
-import net.minecraft.entity.ai.EntityAIAttackMelee;
-import net.minecraft.entity.ai.EntityAIAvoidEntity;
 import net.minecraft.entity.ai.EntityAIBase;
-import net.minecraft.entity.ai.EntityAIBeg;
 import net.minecraft.entity.ai.EntityAIFindEntityNearestPlayer;
-import net.minecraft.entity.ai.EntityAIFollowOwner;
-import net.minecraft.entity.ai.EntityAIHurtByTarget;
-import net.minecraft.entity.ai.EntityAILeapAtTarget;
-import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAIMate;
-import net.minecraft.entity.ai.EntityAINearestAttackableTarget;
-import net.minecraft.entity.ai.EntityAIOwnerHurtByTarget;
-import net.minecraft.entity.ai.EntityAIOwnerHurtTarget;
-import net.minecraft.entity.ai.EntityAISit;
-import net.minecraft.entity.ai.EntityAISwimming;
-import net.minecraft.entity.ai.EntityAITargetNonTamed;
-import net.minecraft.entity.ai.EntityAITempt;
-import net.minecraft.entity.ai.EntityAIWander;
-import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
-import net.minecraft.entity.ai.EntityAIWatchClosest;
 import net.minecraft.entity.ai.EntityMoveHelper;
-import net.minecraft.entity.item.EntityBoat;
-import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityGhast;
-import net.minecraft.entity.monster.EntityPigZombie;
-import net.minecraft.entity.passive.AbstractHorse;
-import net.minecraft.entity.passive.EntityAmbientCreature;
-import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.entity.passive.EntityLlama;
-import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityLargeFireball;
-import net.minecraft.init.Items;
-import net.minecraft.init.MobEffects;
 import net.minecraft.init.SoundEvents;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.EnumDyeColor;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundEvent;
-import net.minecraft.util.datafix.DataFixer;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.DifficultyInstance;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 
 public class EntityEyeBatHuge extends EntityGhast
@@ -86,15 +33,16 @@ public class EntityEyeBatHuge extends EntityGhast
 	public static int frozenCounter = 0;
 
 
-	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
+	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityEyeBatHuge.class, DataSerializers.FLOAT);
 
 	private BlockPos spawnPosition;
 
-	
+
 	public EntityEyeBatHuge(World par1World)
 	{
 		super(par1World);
 		this.setSize(8.0F, 5.0F);
+		this.experienceValue = 20;
 	}
 
 
@@ -103,7 +51,7 @@ public class EntityEyeBatHuge extends EntityGhast
 	{
 		super.applyEntityAttributes();
 
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(100.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(50.0D);
 
 		//	this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.1D);
 
@@ -113,10 +61,10 @@ public class EntityEyeBatHuge extends EntityGhast
 	@Override
 	protected void initEntityAI() 
 	{
-		this.tasks.addTask(7, new EntityEyeBatHuge.AIFreezeBeam(this));
-		this.tasks.addTask(5, new EntityEyeBatHuge.AIRandomFly(this));
-		this.tasks.addTask(7, new EntityEyeBatHuge.AILookAround(this));
-		this.targetTasks.addTask(1, new EntityAIFindEntityNearestPlayer(this));
+		this.tasks.addTask(1, new EntityEyeBatHuge.AILookAround(this));
+		this.tasks.addTask(2, new EntityEyeBatHuge.AIRandomFly(this));
+		this.tasks.addTask(3, new EntityAIFindEntityNearestPlayer(this));
+		this.tasks.addTask(4, new EntityEyeBatHuge.AIFreezeBeam(this));
 
 	}
 
@@ -124,8 +72,6 @@ public class EntityEyeBatHuge extends EntityGhast
 	protected void updateAITasks()
 	{
 		super.updateAITasks();
-		BlockPos blockpos = new BlockPos(this);
-		BlockPos blockpos1 = blockpos.up();
 
 		if (this.spawnPosition != null && (!this.world.isAirBlock(this.spawnPosition) || this.spawnPosition.getY() < 1))
 		{
@@ -160,7 +106,6 @@ public class EntityEyeBatHuge extends EntityGhast
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn)
 	{
-
 		return null;
 	}
 
@@ -220,26 +165,34 @@ public class EntityEyeBatHuge extends EntityGhast
 			this.motionZ = 0.0;
 		}
 
-		for(int i = 3; i >= -15; i--)
+		for(int i = 3; i >= -10; i--)
 		{	
 			Block blockNorth2 = world.getBlockState(this.getPosition().north().add(0, i, 0)).getBlock();
 			Block blockSouth2 = world.getBlockState(this.getPosition().south().add(0, i, 0)).getBlock();
 			Block blockEast2 = world.getBlockState(this.getPosition().east().add(0, i, 0)).getBlock();
 			Block blockWest2 = world.getBlockState(this.getPosition().west().add(0, i, 0)).getBlock();
 
-			if(blockNorth2 == hair)
+			if(blockNorth2 == hair && blockSouth2 == hair)
+			{
+				this.motionZ = 0.0;
+			}
+			else if(blockNorth2 == hair)
 			{
 				this.motionZ = 3.0;
 			}
-			if(blockSouth2 == hair)
+			else if(blockSouth2 == hair)
 			{
 				this.motionZ = -3.0;
 			}
-			if(blockWest2 == hair)
+			else if(blockWest2 == hair && blockEast2 == hair)
+			{
+				this.motionX = 0.0;
+			}
+			else if(blockWest2 == hair)
 			{
 				this.motionX = 3.0;
 			}
-			if(blockEast2 == hair)
+			else if(blockEast2 == hair)
 			{
 				this.motionX = -3.0;
 			}
@@ -289,11 +242,13 @@ public class EntityEyeBatHuge extends EntityGhast
 		{
 			EntityLivingBase entitylivingbase = this.parentEntity.getAttackTarget();
 
+			if(frozenCounter > 0)
+				frozenCounter--;
+
 			if(entitylivingbase instanceof EntityPlayer)
 			{
 				frozenPlayer = (EntityPlayer) entitylivingbase;
 			}
-			double d0 = 64.0D;
 
 			if (entitylivingbase.getDistanceSq(this.parentEntity) < 4096.0D && this.parentEntity.canEntityBeSeen(entitylivingbase))
 			{
@@ -305,31 +260,16 @@ public class EntityEyeBatHuge extends EntityGhast
 					world.playEvent((EntityPlayer)null, 1015, new BlockPos(this.parentEntity), 0);
 				}
 
-				if (this.attackTimer == 20)
+				if (this.attackTimer == 80 && frozenCounter == 0)
 				{
-					double d1 = 4.0D;
-					Vec3d vec3d = this.parentEntity.getLook(1.0F);
-					double d2 = entitylivingbase.posX - (this.parentEntity.posX + vec3d.x * 4.0D);
-					double d3 = entitylivingbase.getEntityBoundingBox().minY + (double)(entitylivingbase.height / 2.0F) - (0.5D + this.parentEntity.posY + (double)(this.parentEntity.height / 2.0F));
-					double d4 = entitylivingbase.posZ - (this.parentEntity.posZ + vec3d.z * 4.0D);
 					world.playEvent((EntityPlayer)null, 1016, new BlockPos(this.parentEntity), 0);
 
-					entitylivingbase.addPotionEffect(new PotionEffect(MobEffects.SLOWNESS, 80, 50));
-					entitylivingbase.addPotionEffect(new PotionEffect(MobEffects.MINING_FATIGUE, 80, 50));
+					entitylivingbase.addPotionEffect(new PotionEffect(PotionInit.FREEZE_EFFECT, 40, 0));
 					frozen = true;
-					frozenCounter = 80;
-					
-
-					/*
-					EntityFreezeBeam entityfreezebeam = new EntityFreezeBeam(world, this.parentEntity, d2, d3, d4);
+					frozenCounter = 200;
 
 
-					entityfreezebeam.posX = this.parentEntity.posX + vec3d.x * 4.0D;
-					entityfreezebeam.posY = this.parentEntity.posY + (double)(this.parentEntity.height / 2.0F) + 0.5D;
-					entityfreezebeam.posZ = this.parentEntity.posZ + vec3d.z * 4.0D;
-					world.spawnEntity(entityfreezebeam);
-					 */
-					this.attackTimer = -40;
+					//this.attackTimer = -40;
 				}
 			}
 			else if (this.attackTimer > 0)
@@ -487,7 +427,6 @@ public class EntityEyeBatHuge extends EntityGhast
 			else
 			{
 				EntityLivingBase entitylivingbase = this.parentEntity.getAttackTarget();
-				double d0 = 64.0D;
 
 				if (entitylivingbase.getDistanceSq(this.parentEntity) < 4096.0D)
 				{
@@ -507,34 +446,9 @@ public class EntityEyeBatHuge extends EntityGhast
 		super.onDeath(cause);
 	}
 
-	@Override
-	public void onEntityUpdate() 
-	{
-
-		if(frozenPlayer != null)
-		{
-			if(frozen)
-			{
-
-				frozenPlayer.motionY = -100;
-				frozenPlayer.rotationPitch = 0.0F;
-				frozenPlayer.rotationYaw = 0.0F;
-				frozenCounter --;
-			}
-			if(frozenCounter == 0)
-				frozen = false;
-		}
-		super.onEntityUpdate();
-	}
-
-	public static void freezeRender(EntityPlayer player)
-	{		
-		player.addPotionEffect(new PotionEffect(PotionInit.POTION_FREEZE, 200, 0));
-	}
 
 	public void setFrozenPlayer(EntityPlayer player)
 	{
-		this.frozenPlayer = player;
+		EntityEyeBatHuge.frozenPlayer = player;
 	}
-
 }

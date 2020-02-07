@@ -4,11 +4,9 @@ import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 
@@ -20,14 +18,14 @@ public class InfinityPizza extends ItemFood implements IHasModel{
 	public boolean count = false;
 	public EntityLivingBase player;
 
-
 	public InfinityPizza(String name, int amount, float saturation, boolean isWolfFood, PotionEffect...potionEffects) 
 	{
 		super(amount, saturation, isWolfFood);
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallstab);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
+
 
 		this.effects = potionEffects;
 		this.itemUseDuration = 32;
@@ -40,30 +38,28 @@ public class InfinityPizza extends ItemFood implements IHasModel{
 		stack.grow(1);
 		return super.onItemUseFinish(stack, worldIn, entityLiving);
 	}
-	
+
 	public boolean getCount()
 	{
 		return count;
 	}
-
 
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack)
 	{
 		return EnumAction.EAT;
 	}
-	
+
 	@Override
-    public ItemFood setAlwaysEdible()
-    {
-        this.alwaysEdible = true;
-        return this;
-    }
+	public ItemFood setAlwaysEdible()
+	{
+		//this.alwaysEdible = true;
+		return this;
+	}
 
 	@Override
 	public void registerModels()
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
-
 }

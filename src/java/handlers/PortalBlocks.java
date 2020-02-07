@@ -1,11 +1,16 @@
 package handlers;
 
 import java.util.ArrayList;
+import java.util.Map;
+
+import com.google.common.collect.Maps;
 
 import net.minecraft.util.math.BlockPos;
 
 public class PortalBlocks 
 {
+	public static final Map<BlockPos, Integer> portalMap = Maps.<BlockPos, Integer>newHashMap();
+
 	public BlockPos pos;
 	public ArrayList<BlockPos> triangleBlocks;
 	public ArrayList<BlockPos> circleBlocks;

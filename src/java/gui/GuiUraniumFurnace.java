@@ -4,25 +4,30 @@ import containers.ContainerUraniumFurnace;
 import main.Reference;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.InventoryPlayer;
-import net.minecraft.inventory.Container;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ResourceLocation;
 import tileEntities.TileEntityUraniumFurnace;
 
 public class GuiUraniumFurnace extends GuiContainer
 {
 	private static final ResourceLocation TEXTURES = new ResourceLocation(Reference.MODID + ":textures/gui/uranium_furnace_gui.png");
-	private final InventoryPlayer player;
+	private final EntityPlayer player;
 	private final TileEntityUraniumFurnace tileentity;
-	
-	public GuiUraniumFurnace(InventoryPlayer player, TileEntityUraniumFurnace tileentity) 
+
+	public GuiUraniumFurnace(ContainerUraniumFurnace container) 
 	{
-		super(new ContainerUraniumFurnace(player, tileentity));
-		this.player = player;
-		this.tileentity = tileentity;
+		super(container);
+		this.player = container.player.player;
+		this.tileentity = container.tileentity;
 	}
-	
+
+	@Override
+	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+		this.drawDefaultBackground();
+		super.drawScreen(mouseX, mouseY, partialTicks);
+		this.renderHoveredToolTip(mouseX, mouseY);
+	}
+
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY)
 	{
@@ -37,15 +42,15 @@ public class GuiUraniumFurnace extends GuiContainer
 		GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
 		this.mc.getTextureManager().bindTexture(TEXTURES);
 		this.drawTexturedModalRect(this.guiLeft, this.guiTop, 0, 0, this.xSize, this.ySize);
-	
+
 		/*
 		if(TileEntityUraniumFurnace.isBurning(tileentity))
 		{
 			int k = this.getBurnLeftScaled(13);
 			this.drawTexturedModalRect(this.guiLeft + 8, this.guiTop + 54 + 12 - k, 176, 12 - k, 14, k + 1);
 		}
-		*/
-		
+		 */
+
 		int l = this.getCookProgressScaled(26);
 		this.drawTexturedModalRect(this.guiLeft + 98, this.guiTop + 46, 177, 1, 7, l);
 	}
@@ -57,10 +62,10 @@ public class GuiUraniumFurnace extends GuiContainer
 		if(i == 0)
 			i = 200;
 		return this.tileentity.getField(0) * pixels / i;
-				
+
 	}
-	*/
-	
+	 */
+
 	private int getCookProgressScaled(int pixels)
 	{
 		int j = this.tileentity.getField(3);

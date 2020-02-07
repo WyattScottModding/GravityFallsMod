@@ -11,6 +11,7 @@ import entity.EntityHideBehind;
 import entity.EntityKeyhole;
 import entity.EntityGideonBot;
 import entity.EntitySecurityDroid;
+import entity.EntityShapeShifter;
 import entity.EntityTimeBaby;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
@@ -30,13 +31,14 @@ import render.RenderHideBehind;
 import render.RenderKeyhole;
 import render.RenderGideonBot;
 import render.RenderSecurityDroid;
+import render.RenderShapeShifter;
 import render.RenderTimeBaby;
 import render.RenderTimeCopDundgren;
 import render.RenderTimeCopLolph;
 import render.RenderUnicorn;
 
 public class RenderHandler {
-	
+
 
 	public static void registerEntityRenders()
 	{
@@ -47,9 +49,9 @@ public class RenderHandler {
 			{
 				return new RenderGnome(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityForget.class, new IRenderFactory<EntityForget>()
 		{
 			@Override
@@ -57,10 +59,10 @@ public class RenderHandler {
 			{
 				return new RenderForget(manager);
 			}
-			
+
 		});
 
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityTimeCopLolph.class, new IRenderFactory<EntityTimeCopLolph>()
 		{
 			@Override
@@ -68,9 +70,9 @@ public class RenderHandler {
 			{
 				return new RenderTimeCopLolph(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityTimeCopDundgren.class, new IRenderFactory<EntityTimeCopDundgren>()
 		{
 			@Override
@@ -78,9 +80,9 @@ public class RenderHandler {
 			{
 				return new RenderTimeCopDundgren(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityGolfCart.class, new IRenderFactory<EntityGolfCart>()
 		{
 			@Override
@@ -88,9 +90,9 @@ public class RenderHandler {
 			{
 				return new RenderGolfCart(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityEyeBat.class, new IRenderFactory<EntityEyeBat>()
 		{
 			@Override
@@ -98,9 +100,9 @@ public class RenderHandler {
 			{
 				return new RenderEyeBat(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityHideBehind.class, new IRenderFactory<EntityHideBehind>()
 		{
 			@Override
@@ -108,9 +110,9 @@ public class RenderHandler {
 			{
 				return new RenderHideBehind(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntitySecurityDroid.class, new IRenderFactory<EntitySecurityDroid>()
 		{
 			@Override
@@ -118,9 +120,9 @@ public class RenderHandler {
 			{
 				return new RenderSecurityDroid(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityBill.class, new IRenderFactory<EntityBill>()
 		{
 			@Override
@@ -128,9 +130,9 @@ public class RenderHandler {
 			{
 				return new RenderBill(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityEightBall.class, new IRenderFactory<EntityEightBall>()
 		{
 			@Override
@@ -138,9 +140,9 @@ public class RenderHandler {
 			{
 				return new RenderEightBall(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityEyeBatHuge.class, new IRenderFactory<EntityEyeBatHuge>()
 		{
 			@Override
@@ -148,9 +150,9 @@ public class RenderHandler {
 			{
 				return new RenderEyeBatHuge(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityKeyhole.class, new IRenderFactory<EntityKeyhole>()
 		{
 			@Override
@@ -158,9 +160,9 @@ public class RenderHandler {
 			{
 				return new RenderKeyhole(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityUnicorn.class, new IRenderFactory<EntityUnicorn>()
 		{
 			@Override
@@ -168,9 +170,9 @@ public class RenderHandler {
 			{
 				return new RenderUnicorn(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityGideonBot.class, new IRenderFactory<EntityGideonBot>()
 		{
 			@Override
@@ -178,9 +180,9 @@ public class RenderHandler {
 			{
 				return new RenderGideonBot(manager);
 			}
-			
+
 		});
-		
+
 		RenderingRegistry.registerEntityRenderingHandler(EntityTimeBaby.class, new IRenderFactory<EntityTimeBaby>()
 		{
 			@Override
@@ -188,7 +190,17 @@ public class RenderHandler {
 			{
 				return new RenderTimeBaby(manager);
 			}
-			
+
+		});
+
+		RenderingRegistry.registerEntityRenderingHandler(EntityShapeShifter.class, new IRenderFactory<EntityShapeShifter>()
+		{
+			@Override
+			public Render<? super EntityShapeShifter> createRenderFor(RenderManager manager)
+			{
+				return new RenderShapeShifter(manager);
+			}
+
 		});
 	}
 }

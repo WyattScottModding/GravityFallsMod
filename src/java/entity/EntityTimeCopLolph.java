@@ -8,6 +8,7 @@ import com.google.common.base.Predicate;
 import handlers.LootTableHandler;
 import handlers.SoundsHandler;
 import init.ItemInit;
+import items.LaserArmCannon;
 import net.minecraft.block.Block;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
@@ -80,6 +81,8 @@ public class EntityTimeCopLolph extends EntityEnderman
 		this.setSize(1.0F, 3.0F);
 		this.setPathPriority(PathNodeType.OPEN, -1.0F);
 		this.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, new ItemStack(ItemInit.LASER_ARM_CANNON));
+		this.experienceValue = 8;
+
 	}
 
 	@Override
@@ -161,6 +164,17 @@ public class EntityTimeCopLolph extends EntityEnderman
 		if((int) (Math.random() * 800) == 0)
 			this.teleportRandomly();
 
+		ItemStack stack = new ItemStack(ItemInit.LASER_ARM_CANNON);
+		Item item = stack.getItem();
+		
+		if(item instanceof LaserArmCannon && this.getAttackTarget() != null)
+		{
+			LaserArmCannon lasercannon = (LaserArmCannon) item;
+			
+			boolean fired = lasercannon.fireGun(world);
+			
+			System.out.println("Fired: " + fired);
+		}
 	}
 
 	protected boolean teleportRandomly()

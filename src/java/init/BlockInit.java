@@ -13,14 +13,14 @@ import blocks.ComputerClosed;
 import blocks.ComputerOpen;
 import blocks.Copper;
 import blocks.CopperBlock;
-import blocks.CryogenicTubeOff;
-import blocks.CryogenicTubeOn;
+import blocks.CryogenicTube;
 import blocks.Crystal;
 import blocks.CursedDoor;
 import blocks.HiddenElement;
 import blocks.HyperDrive;
 import blocks.LightSource;
 import blocks.MetalTree;
+import blocks.Ore;
 import blocks.PowerCord;
 import blocks.RedWoodLeaves;
 import blocks.RedWoodLogs;
@@ -37,6 +37,7 @@ import blocks.PortalLever;
 import blocks.slabs.RedWoodDoubleSlab;
 import blocks.slabs.RedWoodHalfSlab;
 import blocks.UnicornHair;
+import blocks.UnlitTorch;
 import main.GravityFalls;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
@@ -73,9 +74,7 @@ public class BlockInit
 	
 	public static final Block HYPER_DRIVE_ON = new HyperDrive("hyperdrive_on", Material.IRON, true);
 
-	public static final Block CRYOGENIC_TUBE_ON = new CryogenicTubeOn("cryogenictube_on", Material.IRON);
-
-	public static final Block CRYOGENIC_TUBE_OFF = new CryogenicTubeOff("cryogenictube_off", Material.IRON);
+	public static final Block CRYOGENIC_TUBE = new CryogenicTube("cryogenictube", Material.IRON);
 
 	public static final Block METAL_TREE = new MetalTree("metaltree", Material.BARRIER);
 
@@ -85,6 +84,12 @@ public class BlockInit
 	
 	public static final Block COPPER = new Copper("copper_ore");
 	
+	public static final Block COPPER_NIGHTMARE = new Ore("copper_ore_nightmare");
+
+	public static final Block IRON_NIGHTMARE = new Ore("iron_ore_nightmare");
+
+	public static final Block GOLD_NIGHTMARE = new Ore("gold_ore_nightmare");
+
 	public static final Block COMPUTER_CLOSED = new ComputerClosed("computer", Material.CLOTH);
 
 	public static final Block COMPUTER_OPEN = new ComputerOpen("computer_open", Material.CLOTH);
@@ -106,6 +111,8 @@ public class BlockInit
 	public static final Block PORTAL_CONTROL = new PortalControl("portalcontrol", Material.ANVIL);
 	
 	public static final Block PORTAL_LEVER = new PortalLever("portallever", Material.IRON);
+
+	public static final Block UNLIT_TORCH = new UnlitTorch("unlit_torch");
 
 	
 	//Lights

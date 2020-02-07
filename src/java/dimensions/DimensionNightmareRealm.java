@@ -13,6 +13,8 @@ import net.minecraft.world.gen.IChunkGenerator;
 
 public class DimensionNightmareRealm extends WorldProvider
 {
+	public static final BlockPos SPAWN = new BlockPos(1000, 100, 1000);
+
 
 	public DimensionNightmareRealm()
 	{
@@ -36,18 +38,16 @@ public class DimensionNightmareRealm extends WorldProvider
 	{
 		return false;
 	}
-	
+
 	@Override
 	public boolean isSurfaceWorld() 
 	{
 		return false;
 	}
-	
+
 	@Override
 	public void setSpawnPoint(BlockPos pos) 
-	{
-		Iterator iter = world.playerEntities.iterator();
-		
+	{		
 		for(EntityPlayer element : world.playerEntities)
 		{
 			element.setSpawnPoint(element.getPosition(), true);

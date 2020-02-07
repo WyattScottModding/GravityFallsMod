@@ -23,6 +23,8 @@ public class SoundsHandler
 	
 	public static SoundEvent ENTITY_UNICORN_AMBIENT;
 
+	public static SoundEvent ENTITY_TIMEBABY_CRYING;
+
 	public static final SoundEvent RECORD_THEMESONG;
 	public static final SoundEvent RECORD_THEMESONG2;
 	public static final SoundEvent RECORD_WEIRDMAGEDDON;
@@ -63,6 +65,8 @@ public class SoundsHandler
 		
 		ENTITY_UNICORN_AMBIENT = registerSound("entity.unicorn.ambient");
 		
+		ENTITY_UNICORN_AMBIENT = registerSound("entity.timebaby.crying");
+
 		BLOCK_PASSWORD = registerSound("block.password");
 		
 		PORTAL_WORKING = registerSound("portal.working");

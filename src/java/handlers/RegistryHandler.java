@@ -1,76 +1,48 @@
 package handlers;
 
-import java.util.List;
-
-import javax.annotation.Nullable;
-
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-
 import commands.CommandDimensionTeleport;
-import entity.EntityBill;
+import compatibilities.CapabilitiesHandler;
 import entity.EntityRegistry;
-import entity.EntityTimeBaby;
+import init.AttachAttributes;
 import init.BiomeInit;
 import init.BlockInit;
 import init.DimensionInit;
 import init.ItemInit;
 import init.PotionInit;
-import items.TimeTape;
+import items.QuantumDestabilizer;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockColored;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.MobEffects;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.potion.Potion;
-import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.EnumFacing;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.AxisAlignedBB;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TextComponentString;
-import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.PlayerTickEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent.WorldTickEvent;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import proxy.ClientProxy;
 import updates.GlobnarUpdate;
 import updates.PlayerUpdate;
-import updates.PortalUpdate;
 import updates.RaiseDeadUpdate;
-import updates.SummonBillUpdate;
+import updates.WeirdmageddonEvent;
 import worldgen.WorldGenCustomStructures;
 import worldgen.WorldGenOres;
+
 
 @EventBusSubscriber
 public class RegistryHandler 
 {
 	public static WorldGenCustomStructures structures = null;
+	public static WorldGenOres ores = null;
+	public static boolean weirdmageddon = false;
+	private static boolean endEvent = false;
 
 	@SubscribeEvent
 	public static void onItemRegister(RegistryEvent.Register<Item> event)
@@ -110,10 +82,9 @@ public class RegistryHandler
 	public static void preInitRegistries()
 	{
 		PotionInit.registerPotions();
-		GameRegistry.registerWorldGenerator(new WorldGenOres(), 0);
 
-		BiomeInit.registerBiomes();
 		DimensionInit.registerDimensions();
+		BiomeInit.registerBiomes();
 
 		EntityRegistry.registerEntities();
 		RenderHandler.registerEntityRenders();
@@ -128,13 +99,15 @@ public class RegistryHandler
 	}
 
 
-	public static void otherRegistries()
+	public static void generationRegistries()
 	{
 		//GameRegistry.registerWorldGenerator(new WorldGenTrees(), 0);
 
 		structures = new WorldGenCustomStructures();
+		ores = new WorldGenOres();
 
-		GameRegistry.registerWorldGenerator(structures, 0);
+		GameRegistry.registerWorldGenerator(ores, 0);
+		GameRegistry.registerWorldGenerator(structures, 1);
 	}
 
 	public static void serverRegistries(FMLServerStartingEvent event)
@@ -143,12 +116,9 @@ public class RegistryHandler
 		//event.registerServerCommand(new CommandLocate2());
 	}
 
-
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingUpdateEvent event)
 	{		
-		PortalUpdate.initEntityLiving(event.getEntityLiving());
-
 		if (event.getEntityLiving() instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)event.getEntity();
@@ -158,14 +128,7 @@ public class RegistryHandler
 			{
 				PlayerUpdate.init(world, player);
 				GlobnarUpdate.init(world, player);
-				PortalUpdate.init(world, player);
-				RaiseDeadUpdate.init(world, player);
-				SummonBillUpdate.init(world, player);
-			}
-			else
-			{
-				PlayerUpdate.heightRender(player);
-				PortalUpdate.playSound(player, world);
+				//RaiseDeadUpdate.init(world, player);
 			}
 		}
 
@@ -175,28 +138,34 @@ public class RegistryHandler
 
 			World world = entityLiving.world;
 
-			if(!world.isRemote)
-			{
-				PlayerUpdate.initEntityLiving(world, entityLiving);
-			}
+			PlayerUpdate.initEntityLiving(world, entityLiving);
+		}
+
+		if(weirdmageddon)
+			WeirdmageddonEvent.startEvent(event.getEntity().world);
+
+		if(endEvent) {
+			WeirdmageddonEvent.endEvent(event.getEntity().world);
+			endEvent = false;
 		}
 	}
 
+	//For the zooming effect of the Quantum Destabilizer
 	@SubscribeEvent
-	public static void onPlayerRenderPre(RenderPlayerEvent.Pre event)
-	{		
-		PlayerUpdate.onPlayerRenderPre(event);
+	public void zoom(FOVUpdateEvent event) {
+		if(event.getEntity().getActiveItemStack() != null)
+			if(event.getEntity().getActiveItemStack().getItem() == ItemInit.QUANTTUM_DESTABILIZER) {
+				event.setNewfov(event.getFov()*(((QuantumDestabilizer)event.getEntity().getActiveItemStack().getItem()).getZoom(event.getEntity())));
+
+			}
 	}
 
-	@SubscribeEvent
-	public static void onPlayerRenderPost(RenderPlayerEvent.Post event)
-	{		
-		PlayerUpdate.onPlayerRenderPost(event);
+	public static void startWeirdMageddon() {
+		weirdmageddon = true;
 	}
-	
-	@SubscribeEvent
-	public static void playerRender(PlayerTickEvent event)
-	{
-		PlayerUpdate.playerRender(event);
+
+	public static void endWeirdMageddon() {
+		endEvent = true;
+		weirdmageddon = false;
 	}
 }

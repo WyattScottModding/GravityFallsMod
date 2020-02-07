@@ -4,21 +4,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
-import commands.CommandLocate2;
-import handlers.RegistryHandler;
-import init.BiomeInit;
 import init.BlockInit;
+import main.ConfigHandler;
 import net.minecraft.block.Block;
-import net.minecraft.command.CommandLocate;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldType;
-import net.minecraft.world.biome.BiomeDesert;
-import net.minecraft.world.biome.BiomeForest;
-import net.minecraft.world.biome.BiomeHills;
-import net.minecraft.world.biome.BiomePlains;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.IChunkGenerator;
 import net.minecraft.world.gen.feature.WorldGenerator;
@@ -71,16 +63,15 @@ public class WorldGenCustomStructures implements IWorldGenerator
 			if(next == 4)
 				this.generateStructureUFO(new WorldGenStructure("ufo"), world, random, chunkX, chunkZ, 100, Blocks.GRASS, BiomeGravityFalls.class);
 
-			this.generateStructureCrystal(new WorldGenStructure("crystal"), world, random, chunkX, chunkZ, 200, Blocks.GRASS, BiomeGravityFalls.class);
+			this.generateStructureCrystal(new WorldGenStructure("crystal"), world, random, chunkX, chunkZ, 120, Blocks.GRASS, BiomeGravityFalls.class);
 			this.generateStructureTrees(new WorldGenStructure("redwoodtrees"), world, random, chunkX, chunkZ, Blocks.GRASS, BiomeGravityFalls.class);
-			this.generateStructureUranium(new WorldGenStructure("uranium"), world, random, chunkX, chunkZ);
-			this.generateStructureCopper(new WorldGenStructure("copper"), world, random, chunkX, chunkZ);
-			this.generateStructureNowYouSeeIt(new WorldGenStructure("nowyouseeitnowyoudontium"), world, random, chunkX, chunkZ);
+			this.generateStructureCursedDoor(new WorldGenStructure("cursed_door1"), world, random, chunkX, chunkZ, 1000);
 
 			break;
 		case 1:
 			break;
-		case 2:
+		}
+		if(world.provider.getDimension() == ConfigHandler.THE_FUTURE) {
 
 			if(!generated1)
 			{
@@ -178,12 +169,10 @@ public class WorldGenCustomStructures implements IWorldGenerator
 				this.generateStructureGlobnar(new WorldGenStructure("globnar16"), world, random, pos);
 				generated16 = true;
 			}
-
-			break;
-		case 3:
-			this.generateStructureCrystal(new WorldGenStructure("chest"), world, random, chunkX, chunkZ, 100, BlockInit.ASTEROID, BiomeNightmareRealm.class);
-
-			break;
+		}
+		if(world.provider.getDimension() == ConfigHandler.NIGHTMARE_REALM) {
+			this.generateChest(new WorldGenStructure("chest"), world, random, chunkX, chunkZ, 150, BlockInit.ASTEROID, BiomeNightmareRealm.class);
+			this.generateStructureCursedDoor(new WorldGenStructure("cursed_door2"), world, random, chunkX, chunkZ, 100);
 		}
 	}
 
@@ -220,7 +209,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 
 		int x = (chunkX * 16) + random.nextInt(15) + 8;
 		int z = (chunkZ * 16) + random.nextInt(15) + 8;
-		int y = calculateGenerationHeight(world, x, z, topBlock) - 1;
+		int y = calculateGenerationHeight(world, x + 4, z + 4, topBlock) - 1;
 
 
 		BlockPos pos = new BlockPos(x, y, z);
@@ -251,7 +240,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 
 		int x = (chunkX * 16) + random.nextInt(15) + 8;
 		int z = (chunkZ * 16) + random.nextInt(15) + 8;
-		int y = calculateGenerationHeight(world, x, z, topBlock) - 15;
+		int y = calculateGenerationHeight(world, x + 16, z + 16, topBlock) - 16;
 
 		BlockPos pos = new BlockPos(x, y, z);
 
@@ -277,7 +266,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 
 		int x = (chunkX * 16) + random.nextInt(15) + 8;
 		int z = (chunkZ * 16) + random.nextInt(15) + 8;
-		int y = calculateGenerationHeight(world, x, z, topBlock) - 17;
+		int y = calculateGenerationHeight(world, x + 16, z + 16, topBlock) - 17;
 
 
 		BlockPos pos = new BlockPos(x, y, z);
@@ -326,6 +315,100 @@ public class WorldGenCustomStructures implements IWorldGenerator
 		}
 	}
 
+	private void generateStructureCursedDoor(WorldGenerator generator, World world, Random random, int chunkX, int chunkZ, int chance)
+	{
+		int x = (chunkX * 16) + random.nextInt(15) + 8;
+		int z = (chunkZ * 16) + random.nextInt(15) + 8;
+		int y = calculateGenerationHeightDoor(world, x + 2, z + 2) + 1;
+
+
+		if(y != -1) {
+			BlockPos pos = new BlockPos(x, y, z);
+
+			if(world.getWorldType() != WorldType.FLAT  && world.getBlockState(pos).getBlock() == Blocks.AIR)
+			{
+				if(random.nextInt(chance) == 0)
+				{ 
+					generator.generate(world, random, pos);
+				}
+			}
+		}
+	}
+
+	private static int calculateGenerationHeightDoor(World world, int x, int z)
+	{
+		int y = world.getHeight();
+		int minHeight = 62;
+
+		if(world.provider.getDimension() == ConfigHandler.NIGHTMARE_REALM) {
+			y = 100;
+			minHeight = 5;
+		}
+
+		boolean foundGround = false;
+
+		while(!foundGround && y-- >= minHeight)
+		{
+			Block block = world.getBlockState(new BlockPos(x - 2, y, z + 4)).getBlock();
+			Block block2 = world.getBlockState(new BlockPos(x - 1, y, z + 4)).getBlock();
+			Block block3 = world.getBlockState(new BlockPos(x - 3, y, z + 4)).getBlock();
+
+			if((block == Blocks.GRASS || block == Blocks.SAND || block == BlockInit.ASTEROID) && (block2 == Blocks.GRASS || block2 == Blocks.SAND || block2 == BlockInit.ASTEROID) && (block3 == Blocks.GRASS || block3 == Blocks.SAND || block3 == BlockInit.ASTEROID))
+				foundGround = true;
+		}
+
+		if(foundGround)
+			return y;
+		else
+			return -1;
+	}
+
+
+	private void generateChest(WorldGenerator generator, World world, Random random, int chunkX, int chunkZ, int chance, Block topBlock, Class<?>...classes)
+	{
+		if(random.nextInt(chance) == 0)
+		{
+			ArrayList<Class<?>> classesList = new ArrayList<Class<?>> (Arrays.asList(classes));
+			BlockPos pos = findGround(chunkX, chunkZ, topBlock, world, 0);
+			Class<?> biome = world.provider.getBiomeForCoords(pos).getClass();
+
+			if(!pos.equals(new BlockPos(0, 0, 0))) {
+				if(world.getWorldType() != WorldType.FLAT  && world.getBlockState(pos).getBlock() == Blocks.AIR)
+				{
+					if(classesList.contains(biome))
+					{
+						generator.generate(world, random, pos);
+					}
+				}
+			}
+		}
+	}
+
+	private BlockPos findGround(int chunkX, int chunkZ, Block topBlock, World world, int counter) {
+		int y = 100;
+		boolean foundGround = false;
+
+		Random random = new Random();
+
+		int x = (chunkX * 16) + random.nextInt(15) + 8;
+		int z = (chunkZ * 16) + random.nextInt(15) + 8;
+
+		while(!foundGround && y-- >= 0)
+		{
+			Block block = world.getBlockState(new BlockPos(x, y, z)).getBlock();
+			Block blockUp = world.getBlockState(new BlockPos(x, y + 1, z)).getBlock();
+
+			foundGround = (block == topBlock && blockUp == Blocks.AIR);
+		}
+
+		if(foundGround)
+			return new BlockPos(x, y + 1, z);
+		else if(counter > 64)
+			return new BlockPos(0, 0, 0);
+		else
+			return findGround(chunkX, chunkZ, topBlock, world, counter++);
+	}
+
 
 	private void generateStructureUFO(WorldGenerator generator, World world, Random random, int chunkX, int chunkZ, int chance, Block topBlock, Class<?>...classes)
 	{
@@ -360,97 +443,6 @@ public class WorldGenCustomStructures implements IWorldGenerator
 		generator.generate(world, random, pos);
 	}
 
-	private void generateStructureUranium(WorldGenerator generator, World world, Random random, int chunkX, int chunkZ)
-	{
-		for(int i = 0; i < 4; i++)
-		{
-			int x = (chunkX * 16) + random.nextInt(15) + 8;
-			int z = (chunkZ * 16) + random.nextInt(15) + 8;
-			int y = random.nextInt(11) + 2;
-
-
-			BlockPos pos = new BlockPos(x, y, z);
-
-
-			if(world.getWorldType() != WorldType.FLAT)
-			{
-
-				Block block = world.getBlockState(pos).getBlock();
-
-				if(block == Blocks.STONE)
-				{
-					generator.generate(world, random, pos);
-				}
-
-			}
-		}
-	}
-
-	private void generateStructureCopper(WorldGenerator generator, World world, Random random, int chunkX, int chunkZ)
-	{
-		for(int q = 0; q < 10; q++)
-		{
-			int x = (chunkX * 16) + random.nextInt(15) + 8;
-			int z = (chunkZ * 16) + random.nextInt(15) + 8;
-			int y = random.nextInt(60) + 4;
-
-			for(int i = 0; i < 2; i++)
-			{
-				for(int k = 0; k < 2; k++)
-				{
-					for(int j = 0; j < 2; j++)
-					{
-						x += i - 1;
-						z += j - 1;
-						y += k - 1;
-
-
-						BlockPos pos = new BlockPos(x, y, z);
-
-						if(world.getWorldType() != WorldType.FLAT)
-						{
-							Block block = world.getBlockState(pos).getBlock();
-
-							if(block == Blocks.STONE)
-							{
-								generator.generate(world, random, pos);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private void generateStructureNowYouSeeIt(WorldGenerator generator, World world, Random random, int chunkX, int chunkZ, Class<?>...classes)
-	{
-		ArrayList<Class<?>> classesList = new ArrayList<Class<?>> (Arrays.asList(classes));
-
-		int x = (chunkX * 16) + random.nextInt(15) + 8;
-		int z = (chunkZ * 16) + random.nextInt(15) + 8;
-		int y = random.nextInt(11) + 2;
-
-
-		BlockPos pos = new BlockPos(x, y, z);
-
-
-		if(world.getWorldType() != WorldType.FLAT)
-		{
-			Block block = world.getBlockState(pos).getBlock();
-
-			if(block == Blocks.STONE)
-			{
-				Class<?> biome = world.provider.getBiomeForCoords(pos).getClass();
-
-				if(classesList.contains(biome))
-				{
-					generator.generate(world, random, pos);
-				}
-			}
-
-		}
-	}
-
 
 	private static int calculateGenerationHeight(World world, int x, int z, Block topBlock)
 	{
@@ -472,7 +464,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 		{
 			return chunkGenerator.getNearestStructurePos(world, name, pos, false);
 		}
-		
+
 		return new BlockPos(-1, -1, -1);
 	}
 

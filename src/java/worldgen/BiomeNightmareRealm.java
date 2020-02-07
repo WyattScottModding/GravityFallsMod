@@ -9,7 +9,9 @@ import entity.EntityKeyhole;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
 import net.minecraft.entity.monster.EntityEnderman;
+import net.minecraft.entity.monster.EntityGhast;
 import net.minecraft.entity.monster.EntityGolem;
+import net.minecraft.entity.monster.EntityMagmaCube;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntityShulker;
 import net.minecraft.entity.monster.EntitySkeleton;
@@ -60,9 +62,12 @@ public class BiomeNightmareRealm extends Biome
 		this.spawnableWaterCreatureList.clear();
 		
 		
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityEightBall.class, 1, 1, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityEightBall.class, 1, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityEyeBatHuge.class, 15, 3, 10));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityKeyhole.class, 1, 1, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityKeyhole.class, 1, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityMagmaCube.class, 3, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityGhast.class, 4, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityGnome.class, 1, 0, 6));
 
 	}
 	

@@ -1,16 +1,12 @@
 package tileEntities;
 
 import blocks.UraniumFurnace;
-import init.ItemInit;
 import init.UraniumFurnaceRecipes;
-import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.inventory.ItemStackHelper;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.tileentity.TileEntity;
@@ -28,13 +24,16 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 {
 	private NonNullList<ItemStack> inventory = NonNullList.<ItemStack>withSize(5, ItemStack.EMPTY);
 	private String customName;
-	
+
 	private int burnTime;
 	private int currentBurnTime;
 	private int cookTime;
 	private int totalCookTime;
+
+	public TileEntityUraniumFurnace() {
+	}
 	
-	
+
 	@Override
 	public String getName() 
 	{
@@ -46,7 +45,7 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 	{
 		return this.customName != null && !this.customName.isEmpty();
 	}
-	
+
 	public void setCustomName(String customName) 
 	{
 		this.customName = customName;
@@ -55,10 +54,9 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 	@Override
 	public ITextComponent getDisplayName() 
 	{
-	
 		return this.hasCustomName() ? new TextComponentString(this.getName()) : new TextComponentTranslation(this.getName());
 	}
-	
+
 	@Override
 	public int getSizeInventory()
 	{
@@ -75,7 +73,7 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 		}
 		return true;
 	}
-	
+
 
 	@Override
 	public ItemStack getStackInSlot(int index) 
@@ -101,7 +99,7 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 		ItemStack itemstack = (ItemStack)this.inventory.get(index);
 		boolean flag = !stack1.isEmpty() && stack1.isItemEqual(itemstack) && ItemStack.areItemsEqual(stack1, itemstack);
 		this.inventory.set(index, stack1);
-		
+
 		if(stack1.getCount() > this.getInventoryStackLimit())
 			stack1.setCount(this.getInventoryStackLimit());
 		if(index == 0 && index + 1 == 1 && !flag)
@@ -111,11 +109,11 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 			this.totalCookTime = this.getCookTime(stack1, stack2, stack3);
 			this.cookTime = 0;
 			this.markDirty();
-			
+
 		}
-		
+
 	}
-	
+
 	@Override
 	public void readFromNBT(NBTTagCompound compound) 
 	{
@@ -126,10 +124,10 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 		this.cookTime = compound.getInteger("CookTime");
 		this.totalCookTime = compound.getInteger("CookTimeTotal");
 		this.currentBurnTime = getItemBurnTime((ItemStack)this.inventory.get(2));
-		
+
 		if(compound.hasKey("CustomName", 8)) this.setCustomName(compound.getString("CustomName"));
 	}
-	
+
 	@Override
 	public NBTTagCompound writeToNBT(NBTTagCompound compound) 
 	{
@@ -138,7 +136,7 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 		compound.setInteger("CookTime", (short)this.cookTime);
 		compound.setInteger("CookTimeTotal", (short)this.totalCookTime);
 		ItemStackHelper.saveAllItems(compound, this.inventory);
-		
+
 		if(this.hasCustomName())
 			compound.setString("CustomName", this.customName);
 		return compound;
@@ -149,24 +147,24 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 	{	
 		return 1;
 	}
-	
+
 	public boolean isBurning()
 	{
 		return this.burnTime > 0;
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	public static boolean isBurning(IInventory inventory)
 	{
 		return inventory.getField(0) > 0;
 	}
-	
+
 	@Override
 	public void update()
 	{
 		boolean flag = this.isBurning();
 		boolean flag1 = false;
-		
+
 		if(this.isBurning())
 			--this.burnTime;
 		if(!this.world.isRemote)
@@ -178,15 +176,21 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 				{
 					this.burnTime = getItemBurnTime(stack);
 					this.currentBurnTime = this.burnTime;
-					
+
 					if(this.isBurning())
 					{
+						ItemStack input1 = (ItemStack)this.inventory.get(0);
+
+						if(!input1.isEmpty())
+							input1.shrink(1);
+
+
 						flag1 = true;
 						if(!stack.isEmpty())
 						{
 							Item item = stack.getItem();
 							stack.shrink(1);
-							
+
 							if(stack.isEmpty())
 							{
 								ItemStack item1 = item.getContainerItem(stack);
@@ -198,7 +202,7 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 				if(this.isBurning() && this.canSmelt())
 				{
 					++this.cookTime;
-					
+
 					if(this.cookTime == this.totalCookTime)
 					{
 						this.cookTime = 0;
@@ -223,17 +227,17 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 		if(flag1)
 			this.markDirty();
 	}
-	
+
 
 	public int getCookTime(ItemStack input1, ItemStack input2, ItemStack input3)
 	{
 		return 500;
 	}
-	
+
 	private boolean canSmelt()
 	{
 		ItemStack result = UraniumFurnaceRecipes.getInstance().getUraniumFurnaceResult((ItemStack)this.inventory.get(1), (ItemStack)this.inventory.get(2), (ItemStack)this.inventory.get(3));
-		if(((ItemStack)this.inventory.get(0)).isEmpty() || ((ItemStack)this.inventory.get(1)).isEmpty() || ((ItemStack)this.inventory.get(2)).isEmpty() || ((ItemStack)this.inventory.get(3)).isEmpty())
+		if(((ItemStack)this.inventory.get(1)).isEmpty() || ((ItemStack)this.inventory.get(2)).isEmpty() || ((ItemStack)this.inventory.get(3)).isEmpty())
 			return false;
 		else
 		{
@@ -243,11 +247,11 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 			if(!output.isItemEqual(result))
 				return false;
 			int res = output.getCount() + result.getCount();
-			
+
 			return res <= getInventoryStackLimit() && res <= output.getMaxStackSize();
 		}
 	}
-	
+
 	public void smeltItem()
 	{
 		if(this.canSmelt())
@@ -258,19 +262,19 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 			ItemStack input4 = (ItemStack)this.inventory.get(3);
 			ItemStack result = UraniumFurnaceRecipes.getInstance().getUraniumFurnaceResult(input2, input3, input4);
 			ItemStack output = (ItemStack)this.inventory.get(4);
-			
+
 			if(output.isEmpty())
 				this.inventory.set(4, result.copy());
 			else if(output.getItem() == result.getItem())
 				output.grow(result.getCount());
-			
+
 			input1.shrink(1);
 			input2.shrink(1);
 			input3.shrink(1);
 			input4.shrink(1);
 		}	
 	}
-	
+
 	public static int getItemBurnTime(ItemStack fuel)
 	{
 		if(fuel.isEmpty())
@@ -278,19 +282,19 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 		else
 		{
 			Item item = fuel.getItem();
-			
+
 			if(item == Items.WATER_BUCKET)
 				return 500;
 		}
-		
+
 		return GameRegistry.getFuelValue(fuel);
 	}
-	
+
 	public static boolean isItemFuel(ItemStack fuel)
 	{
 		return getItemBurnTime(fuel) > 0;
 	}
-	
+
 
 	@Override
 	public boolean isUsableByPlayer(EntityPlayer player) 
@@ -325,7 +329,7 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 	{
 		return "gravityfalls:uranium_furnace";
 	}
-	
+
 	@Override
 	public int getField(int id)
 	{
@@ -371,7 +375,5 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 	{
 		this.inventory.clear();
 	}
-	
 
-	
 }

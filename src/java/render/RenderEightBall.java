@@ -1,10 +1,7 @@
 package render;
 
-import entity.EntityBill;
 import entity.EntityEightBall;
-import entity.EntityGnome;
 import main.Reference;
-import models.ModelBill;
 import models.ModelEightBall;
 import net.minecraft.client.renderer.entity.RenderLiving;
 import net.minecraft.client.renderer.entity.RenderManager;

@@ -1,5 +1,5 @@
 {
-    "parent": "gravityfalls:block/hyperdrive",
+    "parent": "gravityfalls:block/hyperdrive_on",
     "display":
     {
         "firstperson_righthand":

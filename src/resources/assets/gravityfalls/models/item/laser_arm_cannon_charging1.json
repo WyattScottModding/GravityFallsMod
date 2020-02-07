@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "gravityfalls:items/laser_arm_cannon_charging1"
+        "layer0": "gravityfalls:items/laser_arm_cannon"
     }
 }

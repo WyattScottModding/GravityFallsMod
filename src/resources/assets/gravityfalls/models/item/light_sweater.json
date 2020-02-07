@@ -1,14 +1,14 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "gravityfalls:items/magicflashlight"
+        "layer0": "gravityfalls:items/light_sweater"
     },
     "overrides": [
         {
             "predicate": {
                 "on": 1
             },
-            "model": "gravityfalls:item/magicflashlight_on"
+            "model": "gravityfalls:item/light_sweater_on"
         }
     ]
 }

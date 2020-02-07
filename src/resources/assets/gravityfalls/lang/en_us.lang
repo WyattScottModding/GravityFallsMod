@@ -36,6 +36,7 @@ item.returndevice.name=Return Device
 item.eyebat.name=EyeBat
 item.net.name=Net
 item.return_device.name=Return Device
+item.cursed_door_item.name=Cursed Door
 
 item.themesong.name=Music Disc
 item.themesong2.name=Music Disc
@@ -67,6 +68,9 @@ item.goldknuckles.name=Gold Knuckles
 item.mysticamulet.name=Mystic Amulet
 item.tie.name=Tie of Possession
 item.tie2.name=Tie of Possession 2
+item.light_sweater.name=Light Sweater
+item.cryogenictube_item.name=Cryogenic Tube
+item.crystalflake.name=Crystal Flake
 
 item.record.themesong.desc=Theme Song
 item.record.themesong2.desc=Theme Song 2
@@ -128,6 +132,11 @@ tile.unicornhair.name=Unicorn Hair
 tile.cursed_door.name=Cursed Door
 tile.portallever.name=Portal Lever
 tile.powercord_on.name=PowerCord
+tile.cryogenictube.name=Cryogenic Tube
+tile.iron_ore_nightmare.name=Iron Ore
+tile.gold_ore_nightmare.name=Gold Ore
+tile.copper_ore_nightmare.name=Copper Ore
+tile.unlit_torch.name=Unlit Torch
 
 itemGroup.tabGravityFallsBlocks=Gravity Falls Blocks
 itemGroup.tabGravityFallsArmor=Gravity Falls Armor
@@ -151,7 +160,28 @@ entity.keyhole.name=Keyhole
 entity.unicorn.name=Unicorn
 entity.gideonbot.name=Gideon Bot
 entity.timebaby.name=Time Baby
+entity.shapeshifter.name=Shape Shifter
 
 container.uranium_furnace=Uranium Furnace
 
-item.potionfreeze.name=Potion Freeze
+key.categories.gravityfalls=Gravity Falls
+key.gravityfalls.item1=Item Key 1
+key.gravityfalls.item2=Item Key 2
+key.gravityfalls.battery=Battery Key
+key.gravityfalls.armor1=Armor Key 1
+key.gravityfalls.armor2=Armor Key 2
+key.gravityfalls.armor3=Armor Key 3
+
+
+effect.freeze_potion=Freeze
+effect.radiation_potion=Radiation
+effect.size_potion=Size-altering Crystal
+effect.normal_size_potion=Normal Size Effect
+
+potion.effect.freeze_potion=Freeze Potion
+splash_potion.effect.freeze_potion=Splash Freeze Potion
+lingering_potion.effect.freeze_potion=Lingering Freeze Potion
+tipped_arrow.effect.freeze_potion=Arrow of Freeze Potion
+
+attribute.name.gravityfalls.entityWidth=Entity Width
+attribute.name.gravityfalls.entityHeight=Entity Height

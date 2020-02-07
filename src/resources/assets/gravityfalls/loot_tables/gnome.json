@@ -26,12 +26,6 @@
                 {
                     "type": "item",
                     "weight": 5,
-                    "name": "gravityfalls:themesong",
-                    "quality": 20
-                },
-                {
-                    "type": "item",
-                    "weight": 5,
                     "name": "gravityfalls:straightblanchin",
                     "quality": 20
                 },

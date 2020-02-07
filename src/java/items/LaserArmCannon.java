@@ -4,40 +4,23 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.apache.http.impl.conn.Wire;
-import org.lwjgl.input.Keyboard;
-
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-import akka.japi.pf.FI.Apply;
-import animations.RenderLaser;
-import entity.EntityGideonBot;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
 import handlers.KeyBindings;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import net.minecraft.block.properties.IProperty;
-import net.minecraft.block.properties.PropertyBool;
-import net.minecraft.block.state.BlockStateContainer;
-import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemElytra;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
 import net.minecraft.potion.PotionEffect;
@@ -52,7 +35,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import tileEntities.TileEntityLaser;
 
 public class LaserArmCannon extends ItemSword implements IHasModel
 {
@@ -73,7 +55,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 			@SideOnly(Side.CLIENT)
 			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
 			{				
-				if(entityIn != null && entityIn.getActiveItemStack() == stack)
+				if(entityIn != null && (entityIn.getHeldItemMainhand() == stack || entityIn.getHeldItemOffhand() == stack))
 				{
 					if(charging)
 					{
@@ -179,9 +161,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 
 	public void getMouseOver(EntityLivingBase player, World world)
 	{
-		Vec3d lookVec = player.getLookVec();
-
-		BlockPos pos = player.getPosition();
+		BlockPos pos = player.getPosition().add(0, player.getEyeHeight(), 0);
 
 		float yaw = player.rotationYaw;
 		float pitch = player.rotationPitch;
@@ -209,8 +189,8 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 				if(entity instanceof EntityLivingBase)
 				{
 					EntityLivingBase mob = (EntityLivingBase) entity;
-
-					if(mob instanceof EntitySkeleton || mob instanceof EntityZombie || mob instanceof EntityZombieHorse)
+					
+					if(mob.isEntityUndead())
 						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 4, 1));
 					else
 						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 4, 1));
@@ -248,7 +228,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 
 	protected boolean isBattery(ItemStack stack)
 	{
-		return stack.getItem() instanceof Battery;
+		return stack.getItem() instanceof ItemBasic;
 	}
 
 }

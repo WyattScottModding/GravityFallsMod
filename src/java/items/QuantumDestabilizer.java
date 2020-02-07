@@ -1,63 +1,38 @@
 package items;
 
 import java.util.List;
-import java.util.Random;
 
 import javax.annotation.Nullable;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
-import entity.EntityForget;
-import gui.GuiScope;
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import main.Reference;
-import net.minecraft.client.multiplayer.PlayerControllerMP;
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityFireworkRocket;
-import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.monster.EntityShulker;
-import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityFireball;
-import net.minecraft.entity.projectile.EntityShulkerBullet;
 import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemFirework;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
-import net.minecraft.init.Items;
+import net.minecraftforge.client.event.FOVUpdateEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import network.MessageOpenScope;
+import network.Messages;
 
 public class QuantumDestabilizer extends ItemBow implements IHasModel
 {
@@ -83,7 +58,7 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 
 			boolean flag = player.capabilities.isCreativeMode || EnchantmentHelper.getEnchantmentLevel(Enchantments.INFINITY, stack) > 0;
 			boolean hasItemStack = player.inventory.hasItemStack(new ItemStack(BlockInit.HIDDEN_ELEMENT));
-			
+
 			int i = this.getMaxItemUseDuration(stack);
 			i = net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, player, i, hasItemStack || flag);
 			if (i < 0) 
@@ -102,9 +77,11 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 					if (!worldIn.isRemote)
 					{
 						getMouseOver(player, worldIn);
-						itemstack.shrink(1);
+
+						if(!flag1)
+							itemstack.shrink(1);
 					}
-					
+
 				}
 			}		
 			player.closeScreen();
@@ -117,11 +94,15 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
+	@Override
+	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft)
+	{
+
+	}
+
 	public void getMouseOver(EntityPlayer player, World world)
 	{
-		Vec3d lookVec = player.getLookVec();
-
-		BlockPos pos = player.getPosition();
+		BlockPos pos = player.getPosition().add(0, player.eyeHeight, 0);
 
 		float yaw = player.rotationYaw;
 		float pitch = player.rotationPitch;
@@ -132,7 +113,7 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 			double y = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
 			double z = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 
-			
+
 			AxisAlignedBB entityPos = new AxisAlignedBB(pos.getX() + x, pos.getY() + y, pos.getZ() + z, pos.getX() + x + 1, pos.getY() + y + 1, pos.getZ() + z + 1);
 
 			List<Entity> list = world.getEntitiesInAABBexcluding(player, entityPos, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
@@ -151,24 +132,28 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 		}
 	}
 
+	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
 		ItemStack itemstack = playerIn.getHeldItem(handIn);
-	//	boolean flag = playerIn.inventory.hasItemStack(new ItemStack(Items.DIAMOND));
+		//	boolean flag = playerIn.inventory.hasItemStack(new ItemStack(Items.DIAMOND));
 		boolean flag = true;
-		
-		if(!worldIn.isRemote && playerIn instanceof EntityPlayer)
+
+		if(!worldIn.isRemote)
 		{
-			EntityPlayer player = (EntityPlayer) playerIn;
 			counter = 60;
 			aiming = true;
-			player.openGui(GravityFalls.instance, Reference.SCOPE, worldIn, (int) player.posX, (int) player.posY, (int) player.posZ);
+			if(playerIn instanceof EntityPlayerMP) {
+				EntityPlayerMP serverPlayer = (EntityPlayerMP) playerIn;
+				Messages.INSTANCE.sendTo(new MessageOpenScope(),  serverPlayer);
+
+			}
 		}
 
 
-		ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, flag);
-		if (ret != null) 
-			return ret;
+		//	ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, flag);
+		//	if (ret != null) 
+		//		return ret;
 
 		if (!playerIn.capabilities.isCreativeMode && !flag)
 		{
@@ -179,8 +164,11 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 			playerIn.setActiveHand(handIn);
 			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
 		}
-
 	}
+
+	public float getZoom(EntityLivingBase entity) {
+		return 1-MathHelper.clamp(this.getMaxItemUseDuration(null) - entity.getItemInUseCount(), 0, 20)/60;//zooms from normal fov to 2/3 normal fov in one second
+	}//this is just an example zoom function
 
 	public static float getArrowVelocity(int charge)
 	{
@@ -194,7 +182,7 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 
 		return f;
 	}
-	
+
 	private ItemStack findAmmo(EntityPlayer player)
 	{
 		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(BlockInit.HIDDEN_ELEMENT)))
@@ -211,8 +199,7 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 			{
 				ItemStack itemstack = player.inventory.getStackInSlot(i);
 
-				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(BlockInit.HIDDEN_ELEMENT)))
-
+				if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(BlockInit.HIDDEN_ELEMENT)))
 				{
 					return itemstack;
 				}

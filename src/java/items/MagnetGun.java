@@ -111,34 +111,8 @@ public class MagnetGun extends ItemBow implements IHasModel
 			@SideOnly(Side.CLIENT)
 			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
 			{
-				if(entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack)
-					return !active ? 0.0F : 1.0F;
-				else
-					return 0.0F;
-			}
-		});
+                return entityIn != null && (entityIn.getHeldItemMainhand() == stack || entityIn.getHeldItemOffhand() == stack) && active ? 1.0F : 0.0F;
 
-		this.addPropertyOverride(new ResourceLocation("pull"), new IItemPropertyGetter()
-		{
-			@SideOnly(Side.CLIENT)
-			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
-			{
-				if (entityIn == null)
-				{
-					return 0.0F;
-				}
-				else
-				{
-					return entityIn.getActiveItemStack().getItem() != Items.BOW ? 0.0F : (float)(stack.getMaxItemUseDuration() - entityIn.getItemInUseCount()) / 20.0F;
-				}
-			}
-		});
-		this.addPropertyOverride(new ResourceLocation("pulling"), new IItemPropertyGetter()
-		{
-			@SideOnly(Side.CLIENT)
-			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
-			{
-				return entityIn != null && entityIn.isHandActive() && entityIn.getActiveItemStack() == stack ? 1.0F : 0.0F;
 			}
 		});
 	}
@@ -179,7 +153,7 @@ public class MagnetGun extends ItemBow implements IHasModel
 			{
 				//Sound Effect
 				if(soundCounter == 4)
-					world.playSound(player, player.posX, player.posY, player.posZ, SoundsHandler.ITEM_MAGNETGUN, SoundCategory.PLAYERS, 1.0F, 1.0F);
+					world.playSound(player, player.posX, player.posY, player.posZ, SoundsHandler.ITEM_MAGNETGUN, SoundCategory.PLAYERS, 0.4F, 1.0F);
 
 
 
@@ -196,8 +170,6 @@ public class MagnetGun extends ItemBow implements IHasModel
 					player.motionX = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 					player.motionY = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
 					player.motionZ = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
-
-					System.out.println("X: " + player.motionX + "Y: " + player.motionY + "Z: " + player.motionZ);
 
 					player.isAirBorne = true;
 
@@ -318,7 +290,7 @@ public class MagnetGun extends ItemBow implements IHasModel
 
 		Vec3d lookVec = player.getLookVec();
 
-		BlockPos pos = player.getPosition();
+		BlockPos pos = player.getPosition().add(0, player.eyeHeight, 0);
 
 		float yaw = player.rotationYaw;
 		float pitch = player.rotationPitch;

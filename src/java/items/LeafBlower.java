@@ -58,7 +58,7 @@ public class LeafBlower extends ItemSword implements IHasModel
 			@SideOnly(Side.CLIENT)
 			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
 			{
-				return !clicked ? 0.0F : 1.0F;
+                return entityIn != null && (entityIn.getHeldItemMainhand() == stack || entityIn.getHeldItemOffhand() == stack) && clicked ? 1.0F : 0.0F;
 			}
 		});
 
@@ -134,7 +134,7 @@ public class LeafBlower extends ItemSword implements IHasModel
 				{
 					ItemStack itemstack = findAmmo(player);
 
-					if(itemstack.getItem() instanceof Battery)
+					if(itemstack.getItem() instanceof ItemBasic)
 					{
 						stack.setItemDamage(stack.getItemDamage() - 25);
 
@@ -151,7 +151,7 @@ public class LeafBlower extends ItemSword implements IHasModel
 	{
 		Vec3d lookVec = player.getLookVec();
 
-		BlockPos pos = player.getPosition();
+		BlockPos pos = player.getPosition().add(0, player.eyeHeight, 0);
 
 		float yaw = player.rotationYaw;
 		float pitch = player.rotationPitch;

@@ -2,25 +2,17 @@ package items;
 
 import org.lwjgl.input.Keyboard;
 
-import blocks.Book_1;
-import gui.GuiBook1;
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import main.Reference;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Slot;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBook;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemWrittenBook;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,6 +30,8 @@ import net.minecraft.util.text.TextComponentUtils;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import network.MessageOpenBook1;
+import network.Messages;
 
 public class Book1 extends ItemWrittenBook implements IHasModel
 {
@@ -62,20 +56,15 @@ public class Book1 extends ItemWrittenBook implements IHasModel
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
-		IBlockState state = BlockInit.Book1.getDefaultState().withProperty(FACING, player.getHorizontalFacing());
-
-		BlockPos pos = player.getPosition();
-
-		IBlockState block1 = world.getBlockState(pos);
-		IBlockState block2 = world.getBlockState(pos.up());
-
 		if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
 		{
-			if(player != null && player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.BOOK1)))
-				player.openGui(GravityFalls.instance, Reference.GUI_JOURNAL1, world, (int) player.posX, (int) player.posY, (int) player.posZ);
+			if(player != null && player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.BOOK1))) {
+				if(!world.isRemote && player instanceof EntityPlayerMP) {
+					EntityPlayerMP serverPlayer = (EntityPlayerMP) player;
+					Messages.INSTANCE.sendTo(new MessageOpenBook1(),  serverPlayer);
+				}
+			}
 		}
-		
-
 		return super.onItemRightClick(world, player, hand);
 	}
 	

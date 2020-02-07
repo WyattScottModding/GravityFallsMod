@@ -13,6 +13,7 @@ public class LightBulb extends Item implements IHasModel
 		this.setMaxStackSize(64);
 		this.setRegistryName(name);
 		this.setUnlocalizedName(name);
+		this.setCreativeTab(GravityFalls.gravityfallsitems);
 		
 		ItemInit.ITEMS.add(this);
 	}

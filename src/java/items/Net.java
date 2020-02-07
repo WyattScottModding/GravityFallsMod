@@ -75,7 +75,7 @@ public class Net extends ItemSword implements IHasModel
 	{
 		Vec3d lookVec = player.getLookVec();
 
-		BlockPos pos = player.getPosition();
+		BlockPos pos = player.getPosition().add(0, player.eyeHeight, 0);
 
 		float yaw = player.rotationYaw;
 		float pitch = player.rotationPitch;

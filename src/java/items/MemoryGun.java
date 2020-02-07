@@ -1,51 +1,21 @@
 package items;
 
-import java.util.List;
-import java.util.Random;
-
-import javax.annotation.Nullable;
-
-import org.lwjgl.input.Keyboard;
-
 import entity.EntityForget;
 import handlers.KeyBindings;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import net.minecraft.client.util.ITooltipFlag;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.item.EntityFireworkRocket;
-import net.minecraft.entity.monster.EntityShulker;
-import net.minecraft.entity.passive.EntityCow;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.entity.projectile.EntityArrow;
-import net.minecraft.entity.projectile.EntityFireball;
-import net.minecraft.entity.projectile.EntityShulkerBullet;
-import net.minecraft.init.Enchantments;
-import net.minecraft.init.Items;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemArrow;
 import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemFirework;
 import net.minecraft.item.ItemStack;
-import net.minecraft.stats.StatList;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MemoryGun extends ItemBow implements IHasModel
 {
@@ -88,7 +58,7 @@ public class MemoryGun extends ItemBow implements IHasModel
 			{
 				ItemStack itemstack = findAmmo(player);
 
-				if(itemstack.getItem() instanceof Battery && player.getHeldItemMainhand().getItem() instanceof MemoryGun)
+				if(itemstack.getItem() instanceof ItemBasic && player.getHeldItemMainhand().getItem() instanceof MemoryGun)
 				{
 					stack.setItemDamage(stack.getItemDamage() - 1);
 
@@ -158,13 +128,10 @@ public class MemoryGun extends ItemBow implements IHasModel
 		}
 	}
 
-
 	protected boolean isBattery(ItemStack stack)
 	{
-		return stack.getItem() instanceof Battery;
+		return stack.getItem() instanceof ItemBasic;
 	}
-
-
 
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft)
@@ -177,15 +144,13 @@ public class MemoryGun extends ItemBow implements IHasModel
 		return EnumAction.NONE;
 	}
 
-
-
 	@Override
 	public int getItemEnchantability()
 	{
 		return 0;
 	}
 
-
+	@Override
 	public void registerModels()
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");

@@ -151,8 +151,6 @@ public class TimeTape extends Item implements IHasModel
 
 	public List<Entity> findEntities(EntityPlayer player, World world)
 	{
-		Vec3d lookVec = player.getLookVec();
-
 		BlockPos pos = player.getPosition();
 
 		AxisAlignedBB entityPos = new AxisAlignedBB(pos.getX() - 1, pos.getY() - 1, pos.getZ() - 1, pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1);

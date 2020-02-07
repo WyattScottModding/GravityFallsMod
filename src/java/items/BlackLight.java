@@ -1,11 +1,8 @@
 package items;
 
-import handlers.RegistryHandler;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import main.Reference;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

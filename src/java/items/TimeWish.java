@@ -14,7 +14,6 @@ public class TimeWish extends ItemFood implements IHasModel{
 
 	private PotionEffect[] effects;
 	public final int itemUseDuration;
-	private boolean alwaysEdible;
 	public boolean count = false;
 	public EntityLivingBase player;
 
@@ -62,7 +61,6 @@ public class TimeWish extends ItemFood implements IHasModel{
 	@Override
     public ItemFood setAlwaysEdible()
     {
-        this.alwaysEdible = true;
         return this;
     }
 	

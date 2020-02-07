@@ -171,6 +171,8 @@ public class ModelKeyhole extends ModelBase
 		Head11.render(f5);
 		RightEye.render(f5);
 		LeftEye.render(f5);
+		
+		
 	}
 
 	private void setRotation(ModelRenderer model, float x, float y, float z)
@@ -184,13 +186,13 @@ public class ModelKeyhole extends ModelBase
 	{
 		super.setRotationAngles(f, f1, f2, f3, f4, f5, entity);
 
-		this.LeftArm.rotateAngleZ = (MathHelper.cos(f * 0.6662F) * 0.6F * f1);
-		this.RightArm.rotateAngleZ = (MathHelper.cos(f * 0.6662F + 3.1415927F) * 0.6F * f1);
+		this.LeftArm.rotateAngleX = (MathHelper.cos(f * 0.6662F) * 0.6F * f1);
+		this.RightArm.rotateAngleX = (MathHelper.cos(f * 0.6662F + 3.1415927F) * 0.6F * f1);
 		this.LeftArm.rotationPointY = 11.0F;
 		this.RightArm.rotationPointY = 11.0F;
 
-		this.RightLeg.rotateAngleZ = (MathHelper.cos(f * 0.6662F) * 0.4F * f1);
-		this.LeftLeg.rotateAngleZ = (MathHelper.cos(f * 0.6662F + 3.1415927F) * 0.4F * f1);
+		this.RightLeg.rotateAngleX = (MathHelper.cos(f * 0.6662F) * 0.4F * f1);
+		this.LeftLeg.rotateAngleX = (MathHelper.cos(f * 0.6662F + 3.1415927F) * 0.4F * f1);
 		this.RightLeg.rotationPointY = 20.0F;
 		this.LeftLeg.rotationPointY = 20.0F;
 	}

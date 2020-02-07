@@ -1,6 +1,14 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "gravityfalls:items/mysticamulet"
-    }
+        "layer0": "gravityfalls:items/mysticamulet_on"
+    },
+    "overrides": [
+        {
+            "predicate": {
+                "on": 1
+            },
+            "model": "gravityfalls:item/mysticamulet_on"
+        }
+    ]
 }

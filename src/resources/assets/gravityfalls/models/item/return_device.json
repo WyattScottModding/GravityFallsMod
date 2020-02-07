@@ -1,6 +1,6 @@
 {
     "parent": "item/generated",
     "textures": {
-        "layer0": "gravityfalls:items/memorygun"
+        "layer0": "gravityfalls:items/return_device"
     }
 }

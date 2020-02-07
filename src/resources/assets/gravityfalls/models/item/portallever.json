@@ -1,0 +1,11 @@
+{
+    "parent": "gravityfalls:block/portallever",
+    "display":
+    {
+        "firstperson_righthand":
+        {
+            "translation": [0,2,0],
+            "scale": [0.6,0.6,0.6]
+        }
+    }
+}

@@ -1,0 +1,32 @@
+{
+	"credit": "Made with Blockbench",
+	"ambientocclusion": false,
+	"texture_size": [64, 64],
+	"textures": {
+		"1": "gravityfalls:blocks/cipher_wheel",
+		"particle": "gravityfalls:blocks/cipher_wheel"
+	},
+	"elements": [
+		{
+			"from": [0, 0, 0],
+			"to": [32, 0, 32],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 0, 0]},
+			"faces": {
+				"north": {"uv": [8, 8, 16, 8], "texture": "#1"},
+				"east": {"uv": [0, 8, 8, 8], "texture": "#1"},
+				"south": {"uv": [24, 8, 32, 8], "texture": "#1"},
+				"west": {"uv": [16, 8, 24, 8], "texture": "#1"},
+				"up": {"uv": [16, 8, 8, 0], "texture": "#1"},
+				"down": {"uv": [24, 0, 16, 8], "texture": "#1"}
+			}
+		}
+	],
+	"display": {},
+	"groups": [
+		{
+			"name": "bone",
+			"origin": [-8, 0, -8],
+			"children": [0]
+		}
+	]
+}

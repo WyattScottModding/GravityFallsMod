@@ -1,8 +1,8 @@
 {
     "parent": "block/block",
     "textures": {
-        "0": "gravityfalls:blocks/redwoodlogs_side",
-        "1": "gravityfalls:blocks/redwoodlogs_top",
+        "0": "gravityfalls:blocks/redwood_log_side",
+        "1": "gravityfalls:blocks/redwood_log_top",
         "particle": "blocks/stone"
     },
     "elements": [

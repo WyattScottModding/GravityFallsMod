@@ -1,9 +1,9 @@
 {
-    "parent": "block/stairs",
+    "parent": "block/upper_slab",
     "textures": {
         "bottom": "gravityfalls:blocks/redwood_planks",
         "top": "gravityfalls:blocks/redwood_planks",
         "side": "gravityfalls:blocks/redwood_planks",
-        "particle": "gravityfalls:blocks/redwood_planks"
+        "particle": "gravityfalls:blocks/redwood_planks"        
     }
 }

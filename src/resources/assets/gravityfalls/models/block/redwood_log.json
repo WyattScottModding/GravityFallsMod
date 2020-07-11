@@ -1,0 +1,9 @@
+
+{
+    "parent": "block/cube_column",
+    "textures":
+    {
+        "end": "gravityfalls:blocks/redwood_log_top",
+        "side": "gravityfalls:blocks/redwood_log_side"
+    }
+}

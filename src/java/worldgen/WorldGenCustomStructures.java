@@ -64,7 +64,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 				this.generateStructureUFO(new WorldGenStructure("ufo"), world, random, chunkX, chunkZ, 100, Blocks.GRASS, BiomeGravityFalls.class);
 
 			this.generateStructureCrystal(new WorldGenStructure("crystal"), world, random, chunkX, chunkZ, 120, Blocks.GRASS, BiomeGravityFalls.class);
-			this.generateStructureTrees(new WorldGenStructure("redwoodtrees"), world, random, chunkX, chunkZ, Blocks.GRASS, BiomeGravityFalls.class);
+			//this.generateStructureTrees(new WorldGenStructure("redwoodtrees"), world, random, chunkX, chunkZ, Blocks.GRASS, BiomeGravityFalls.class);
 			this.generateStructureCursedDoor(new WorldGenStructure("cursed_door1"), world, random, chunkX, chunkZ, 1000);
 
 			break;
@@ -172,7 +172,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 		}
 		if(world.provider.getDimension() == ConfigHandler.NIGHTMARE_REALM) {
 			this.generateChest(new WorldGenStructure("chest"), world, random, chunkX, chunkZ, 150, BlockInit.ASTEROID, BiomeNightmareRealm.class);
-			this.generateStructureCursedDoor(new WorldGenStructure("cursed_door2"), world, random, chunkX, chunkZ, 100);
+			this.generateStructureCursedDoor(new WorldGenStructure("cursed_door2"), world, random, chunkX, chunkZ, 150);
 		}
 	}
 
@@ -209,7 +209,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 
 		int x = (chunkX * 16) + random.nextInt(15) + 8;
 		int z = (chunkZ * 16) + random.nextInt(15) + 8;
-		int y = calculateGenerationHeight(world, x + 4, z + 4, topBlock) - 1;
+		int y = calculateGenerationHeight(world, x + 4, z + 4, topBlock) - 2;
 
 
 		BlockPos pos = new BlockPos(x, y, z);
@@ -319,7 +319,7 @@ public class WorldGenCustomStructures implements IWorldGenerator
 	{
 		int x = (chunkX * 16) + random.nextInt(15) + 8;
 		int z = (chunkZ * 16) + random.nextInt(15) + 8;
-		int y = calculateGenerationHeightDoor(world, x + 2, z + 2) + 1;
+		int y = calculateGenerationHeightDoor(world, x + 2, z + 2) - 1;
 
 
 		if(y != -1) {

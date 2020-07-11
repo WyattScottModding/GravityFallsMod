@@ -33,6 +33,8 @@ import net.minecraft.entity.passive.EntitySkeletonHorse;
 import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.World;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.biome.Biome.BiomeProperties;
 import net.minecraft.world.biome.Biome.SpawnListEntry;
@@ -41,19 +43,18 @@ import net.minecraft.world.gen.feature.WorldGenBigTree;
 
 public class BiomeNightmareRealm extends Biome
 {
-	
-	protected static final WorldGenAbstractTree TREE = new WorldGenBigTree(true);
+	protected static final WorldGenAbstractTree BIRCH_TREE_EYE_EVIL = new WorldGenBirchTreeEyeEvil(true, true);
 
 	public BiomeNightmareRealm()
 	{
-		super(new BiomeProperties("NightmareRealm").setBaseHeight(0.4F).setRainDisabled().setHeightVariation(0.005F).setTemperature(0.8F).setWaterColor(14684173));
+		super(new BiomeProperties("Nightmare Realm").setBaseHeight(0.4F).setRainDisabled().setHeightVariation(0.005F).setTemperature(0.8F).setWaterColor(14684173));
 	
 		topBlock = Blocks.STONE.getDefaultState();
 		fillerBlock = Blocks.STONE.getDefaultState();
 		
 			//adds a block in place of another block
 		//this.decorator.coalGen = new WorldGenMinable(BlockInit.EXAMPLE.getDefualtState(), 10);
-		this.decorator.treesPerChunk = 0;
+		this.decorator.treesPerChunk = 6;
 		
 			//Clears all mobs that noramlly spawn here
 		this.spawnableCaveCreatureList.clear();
@@ -65,16 +66,14 @@ public class BiomeNightmareRealm extends Biome
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityEightBall.class, 1, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityEyeBatHuge.class, 15, 3, 10));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityKeyhole.class, 1, 0, 1));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityMagmaCube.class, 3, 0, 1));
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityMagmaCube.class, 4, 0, 1));
 		this.spawnableMonsterList.add(new SpawnListEntry(EntityGhast.class, 4, 0, 1));
-		this.spawnableMonsterList.add(new SpawnListEntry(EntityGnome.class, 1, 0, 6));
-
+		this.spawnableMonsterList.add(new SpawnListEntry(EntityGnome.class, 2, 0, 6));
 	}
 	
 	@Override
 	public WorldGenAbstractTree getRandomTreeFeature(Random rand)
 	{
-		return TREE;
+		return BIRCH_TREE_EYE_EVIL;
 	}
-
 }

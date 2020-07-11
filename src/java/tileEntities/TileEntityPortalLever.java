@@ -24,8 +24,7 @@ import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
-import network.MessagePlayCountdown;
-import network.MessagePlayPortalSound;
+import network.MessagePlaySound;
 import network.Messages;
 
 public class TileEntityPortalLever extends TileEntity implements ITickable {
@@ -286,11 +285,11 @@ public class TileEntityPortalLever extends TileEntity implements ITickable {
 
 			if(list.get(j) instanceof EntityPlayerMP && nbt.getInteger("countdown") == 381) {
 				EntityPlayerMP serverPlayer = (EntityPlayerMP) list.get(j);
-				Messages.INSTANCE.sendTo(new MessagePlayCountdown(),  serverPlayer);
+				Messages.INSTANCE.sendTo(new MessagePlaySound((short) 0),  serverPlayer);
 			}
 			if(list.get(j) instanceof EntityPlayerMP && nbt.getInteger("countdown") == 1) {
 				EntityPlayerMP serverPlayer = (EntityPlayerMP) list.get(j);
-				Messages.INSTANCE.sendTo(new MessagePlayPortalSound(),  serverPlayer);
+				Messages.INSTANCE.sendTo(new MessagePlaySound((short) 1),  serverPlayer);
 			}
 		}
 
@@ -326,26 +325,24 @@ public class TileEntityPortalLever extends TileEntity implements ITickable {
 		{
 			int countdown = nbt.getInteger("countdown");
 
-			if(countdown == 35500)
-				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 20, 0));
-			else if(countdown == 27000)
+			if(countdown == 27000)
 				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 40, 0));
 			else if(countdown == 20000)
 				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 60, 0));
 			else if(countdown == 14000)
 				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 80, 0));
-			else if(countdown == 8000)
+			else if(countdown == 9000)
 				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 100, 0));
-			else if(countdown == 6000)
+			else if(countdown == 6800)
 				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 120, 0));
-			else if(countdown == 4000)
+			else if(countdown == 4800)
 				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 140, 0));
-			else if(countdown == 3000)
-				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 180, 0));
-			else if(countdown == 2000)
-				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 250, 0));
-			else if(countdown == 1500)
-				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 400, 0));
+			else if(countdown == 3800)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 160, 0));
+			else if(countdown == 2800)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 200, 0));
+			else if(countdown == 1800)
+				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 300, 0));
 			else if(countdown == 1000)
 				entity.addPotionEffect(new PotionEffect(MobEffects.LEVITATION, 1000, 0));
 		}
@@ -394,6 +391,20 @@ public class TileEntityPortalLever extends TileEntity implements ITickable {
 			}
 
 			setBlocks = true;
+
+			AxisAlignedBB entityPos = new AxisAlignedBB(pos.getX() - 200, pos.getY() -80, pos.getZ() - 200, pos.getX() + 120, pos.getY() + 150, pos.getZ() + 200);
+
+			List<EntityLivingBase> list = world.getEntitiesWithinAABB(EntityLivingBase.class, entityPos);
+
+			for(int j = 0; j < list.size(); ++j)
+			{
+				if(list.get(j) instanceof EntityPlayerMP)
+				{
+					EntityPlayerMP serverPlayer = (EntityPlayerMP) list.get(j);
+					Messages.INSTANCE.sendTo(new MessagePlaySound((short) 2),  serverPlayer);
+					System.out.println("Player message");
+				}
+			}
 		}
 	}
 

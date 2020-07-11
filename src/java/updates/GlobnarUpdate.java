@@ -1,8 +1,11 @@
 package updates;
 
+import dimensions.DimensionTheFuture;
 import entity.EntityTimeBaby;
 import init.ItemInit;
 import items.TimeTape;
+import main.ConfigHandler;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -19,19 +22,30 @@ public class GlobnarUpdate
 	public static boolean recievedTimeWish = false;
 
 	public static EntityTimeBaby timebaby = null;
-	
+
 	public static void init(World world, EntityPlayer player)
 	{
 		globnarRender(player, world);
-
 	}
-	
 
 	public static void globnarRender(EntityPlayer player, World world)
 	{
-		if(player.dimension == 2)
+		if(player.dimension == ConfigHandler.THE_FUTURE && world.provider.getDimension() == ConfigHandler.THE_FUTURE)
 		{
-			if(!messageSent && timebaby != null)
+			if(!DimensionTheFuture.babySpawned) {
+
+				for(Entity element : world.loadedEntityList) {
+					if(element instanceof EntityTimeBaby) {
+						element.setDead();
+					}
+				}
+
+				timebaby = new EntityTimeBaby(world, -50, 61, -18.5);
+				timebaby.setLocationAndAngles(-50, 61, -18.5, 0, 0);				
+				DimensionTheFuture.babySpawned = world.spawnEntity(timebaby);
+			}
+
+			if(!messageSent && DimensionTheFuture.babySpawned)
 			{
 				ITextComponent msg = new TextComponentString("Welcome to Globnar!");
 				player.sendMessage(msg);
@@ -52,24 +66,25 @@ public class GlobnarUpdate
 
 				msg = new TextComponentString("All Time Tapes have been confiscated.");
 				player.sendMessage(msg);
-			}
-			//Spawn Time Baby
-			if(timebaby != null)
-			{
-				world.spawnEntity(timebaby);
-				timebaby.setTarget(player);
-			}
 
-			if(timebaby != null && timebaby.posY <= 0)
-				timebaby.setPosition(-50, 61, -18.5);
+				recievedTimeWish = false;
+			}
 
 			//Give the player a Time Wish and a Time Tape
-			if(timebaby != null && timebaby.isDead && !recievedTimeWish)
+			if(DimensionTheFuture.babySpawned && timebaby.isDead && !recievedTimeWish)
 			{
-				EntityItem entityTape = new EntityItem(world);
-				entityTape.setItem(new ItemStack(ItemInit.TIME_TAPE));
-				entityTape.setPosition(-18.5, 61, -18.5);
-				world.spawnEntity(entityTape);
+				if(world.provider.getDimension() == ConfigHandler.THE_FUTURE) {
+					for(EntityPlayer element : world.playerEntities) {
+						EntityItem entityTape = new EntityItem(world);
+						entityTape.setItem(new ItemStack(ItemInit.TIME_TAPE));
+
+						double randX = (Math.random() * 20) - 28.5;
+						double randZ = (Math.random() * 20) - 28.5;
+
+						entityTape.setPosition(randX, 61, randZ);
+						world.spawnEntity(entityTape);
+					}
+				}
 
 				EntityItem entityWish = new EntityItem(world);
 				entityWish.setItem(new ItemStack(ItemInit.TIME_WISH));
@@ -79,17 +94,7 @@ public class GlobnarUpdate
 
 				ITextComponent msg = new TextComponentString("Time Baby has been defeated!");
 				player.sendMessage(msg);
-
-				timebaby = null;
 			}
 		}
-		else
-		{
-			messageSent = false;
-			recievedTimeWish = false;
-
-			timebaby = new EntityTimeBaby(world, -50, 61, -18.5);
-		}
 	}
-
 }

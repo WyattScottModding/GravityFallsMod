@@ -1,7 +1,10 @@
 package updates;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
 import javax.annotation.Nullable;
 
@@ -9,60 +12,73 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import blocks.LightSource;
+import handlers.ArmorDetector;
+import handlers.SoundsHandler;
+import init.BiomeInit;
 import init.BlockInit;
 import init.ItemInit;
 import init.PotionInit;
 import main.ConfigHandler;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.PositionedSound;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.audio.SoundHandler;
+import net.minecraft.client.audio.SoundManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
-import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EntitySelectors;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import network.MessagePlaySound;
+import network.Messages;
 
 public class PlayerUpdate 
 {
-
 	public static boolean clicked = false;
 	public static boolean magicClicked = false;
+	public static ISound currentSound = null;
 
 	public static void init(World world, EntityPlayer player)
 	{
 		armorRender(player);
 		uraniumUpdate(player, world);
 		nightmareRealm(player, world);
+		playMusic(player, world);
 	}
 
 	public static void initEntityLiving(World world, EntityLivingBase entity)
 	{
-		if(!world.isRemote)
+		if(!world.isRemote) {
 			uraniumUpdate(entity, world);
+			//gravityAlteration(entity);
+		}
 
 		if(entity.isPotionActive(PotionInit.FREEZE_EFFECT))
 			freezePotion(entity, world);
+		if(entity.isPotionActive(PotionInit.RADIATION_EFFECT))
+			DiseaseUpdater.radiationEffect(entity, world);
 	}
 
 	public static void armorRender(EntityPlayer player)
-	{		
-		Item head = player.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem();
-		Item chest = player.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem();
-		Item legs = player.getItemStackFromSlot(EntityEquipmentSlot.LEGS).getItem();
-		Item feet = player.getItemStackFromSlot(EntityEquipmentSlot.FEET).getItem();
-
-
+	{
 		//Amulet
-		if(chest == ItemInit.MYSTIC_AMULET)
+		if(ArmorDetector.isMysticAmulet(player))
 		{
 			player.capabilities.allowFlying = true;
 			player.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 10, 1));
@@ -73,73 +89,26 @@ public class PlayerUpdate
 		}
 
 		//Mabel
-		boolean mabelArmor = false;
-
-		if(feet == ItemInit.MABEL_SHOES)
-		{
-			if(legs == ItemInit.MABEL_PANTS)
-			{
-				if(chest == ItemInit.MABEL_SWEATER || chest == ItemInit.LIGHT_SWEATER)
-				{
-					if(head == ItemInit.MABEL_BANDANA)
-					{
-						mabelArmor = true;
-					}
-				}
-			}
-		}
+		boolean mabelArmor = ArmorDetector.isMabel(player);
 
 		if(mabelArmor)
 		{
-			player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 10, 1));
+			player.addPotionEffect(new PotionEffect(MobEffects.SPEED, 10, 0));
+			player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 10, 0));
 		}
-
 
 		//Dipper
-		boolean dipperArmor = false;
-
-		if(feet == ItemInit.PINE_SHOES)
-		{
-			if(legs == ItemInit.PINE_PANTS)
-			{
-				if(chest == ItemInit.PINE_SHIRT)
-				{
-					if(head == ItemInit.PINE_HAT)
-					{
-						dipperArmor = true;
-					}
-				}
-			}
-		}
+		boolean dipperArmor = ArmorDetector.isDipper(player);
 
 		if(dipperArmor)
 		{
-			player.addPotionEffect(new PotionEffect(MobEffects.LUCK, 10, 1));
+			player.addPotionEffect(new PotionEffect(MobEffects.LUCK, 10, 0));
 		}
 	}
 
 	public static void uraniumUpdate(EntityLivingBase entity, World world)
 	{
-		Item head = entity.getItemStackFromSlot(EntityEquipmentSlot.HEAD).getItem();
-		Item chest = entity.getItemStackFromSlot(EntityEquipmentSlot.CHEST).getItem();
-		Item legs = entity.getItemStackFromSlot(EntityEquipmentSlot.LEGS).getItem();
-		Item feet = entity.getItemStackFromSlot(EntityEquipmentSlot.FEET).getItem();
-
-		boolean hasArmor = false;
-
-		if(head == ItemInit.RUBBER_HAT)
-		{
-			if(chest == ItemInit.RUBBER_CHESTPLATE)
-			{
-				if(legs == ItemInit.RUBBER_LEGGINGS)
-				{
-					if(feet == ItemInit.RUBBER_BOOTS)
-					{
-						hasArmor = true;
-					}
-				}
-			}
-		}
+		boolean hasArmor = ArmorDetector.isRubberSuit(entity);
 
 		boolean playerIsCreative = false;
 
@@ -149,7 +118,7 @@ public class PlayerUpdate
 			playerIsCreative = player.capabilities.isCreativeMode;
 		}
 
-		if(!playerIsCreative && !hasArmor)
+		if(world.getWorldTime() % 40 == 0 && !playerIsCreative && !hasArmor)
 		{
 			Block block1 = world.getBlockState(entity.getPosition()).getBlock();
 			Block block2 = world.getBlockState(entity.getPosition().down()).getBlock();
@@ -238,7 +207,6 @@ public class PlayerUpdate
 
 						player.world.setBlockState(blockLocation.add(player.getLookVec().x, player.getLookVec().y, 
 								player.getLookVec().z), BlockInit.LIGHT_SOURCE.getDefaultState());
-
 					}
 				}
 			}
@@ -307,12 +275,69 @@ public class PlayerUpdate
 			if(block == Blocks.WATER || block == Blocks.FLOWING_WATER) {
 				player.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 600, 0));
 			}
+			player.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 100, 3));
+		}
+	}
+
+	public static void playMusic(EntityPlayer player, World world) {
+		if(world.getBiome(player.getPosition()) == BiomeInit.GRAVITYFALLS && player instanceof EntityPlayerMP)
+		{
+			Random rand = new Random();
+
+			if(rand.nextInt(100) == 0)
+			{
+				//If there currently isn't a song playing, a new one can be played
+				if(currentSound == null || !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(currentSound))
+				{
+					//Stops the current sound
+					Minecraft.getMinecraft().getSoundHandler().stopSounds();
+
+					int num = rand.nextInt(7) + 1;
+
+					//Plays a song
+					if(num == 1)
+					{
+						currentSound = new PositionedSoundRecord(SoundsHandler.SONG_1.getSoundName(), SoundCategory.MUSIC, 0.75F, 1.0F, false, 0, ISound.AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
+						Minecraft.getMinecraft().getSoundHandler().playSound(currentSound);
+					}
+					else if(num == 2)
+					{
+						currentSound = new PositionedSoundRecord(SoundsHandler.SONG_2.getSoundName(), SoundCategory.MUSIC, 0.75F, 1.0F, false, 0, ISound.AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
+						Minecraft.getMinecraft().getSoundHandler().playSound(currentSound);
+					}
+					else if(num == 3)
+					{
+						currentSound = new PositionedSoundRecord(SoundsHandler.SONG_3.getSoundName(), SoundCategory.MUSIC, 0.75F, 1.0F, false, 0, ISound.AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
+						Minecraft.getMinecraft().getSoundHandler().playSound(currentSound);
+					}
+					else if(num == 4)
+					{
+						currentSound = new PositionedSoundRecord(SoundsHandler.SONG_4.getSoundName(), SoundCategory.MUSIC, 0.75F, 1.0F, false, 0, ISound.AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
+						Minecraft.getMinecraft().getSoundHandler().playSound(currentSound);
+					}
+					else if(num == 5)
+					{
+						currentSound = new PositionedSoundRecord(SoundsHandler.SONG_5.getSoundName(), SoundCategory.MUSIC, 0.75F, 1.0F, false, 0, ISound.AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
+						Minecraft.getMinecraft().getSoundHandler().playSound(currentSound);
+					}
+					else if(num == 6)
+					{
+						currentSound = new PositionedSoundRecord(SoundsHandler.SONG_6.getSoundName(), SoundCategory.MUSIC, 0.75F, 1.0F, false, 0, ISound.AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
+						Minecraft.getMinecraft().getSoundHandler().playSound(currentSound);
+					}
+					else if(num == 7)
+					{
+						currentSound = new PositionedSoundRecord(SoundsHandler.SONG_7.getSoundName(), SoundCategory.MUSIC, 0.75F, 1.0F, false, 0, ISound.AttenuationType.NONE, 0.0F, 0.0F, 0.0F);
+						Minecraft.getMinecraft().getSoundHandler().playSound(currentSound);
+					}
+				}
+			}
 		}
 	}
 
 	public static void sizePotion(EntityLivingBase entity, World world) {
-		System.out.println("Potion Active");
 		entity.removePotionEffect(PotionInit.GROWTH_EFFECT);
 		entity.removePotionEffect(PotionInit.NORMAL_EFFECT);
 	}
+
 }

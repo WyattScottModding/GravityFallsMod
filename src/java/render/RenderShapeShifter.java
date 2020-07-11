@@ -28,6 +28,7 @@ import net.minecraft.client.model.ModelGhast;
 import net.minecraft.client.model.ModelHorse;
 import net.minecraft.client.model.ModelIllager;
 import net.minecraft.client.model.ModelLlama;
+import net.minecraft.client.model.ModelMagmaCube;
 import net.minecraft.client.model.ModelOcelot;
 import net.minecraft.client.model.ModelParrot;
 import net.minecraft.client.model.ModelPig;
@@ -115,10 +116,6 @@ public class RenderShapeShifter extends RenderLiving<EntityShapeShifter>
 		else if(model instanceof ModelUnicorn) {
 			return Reference.MODID + ":textures/entity/unicorn.png";
 		}
-		
-		else if(model instanceof ModelBat) {
-			return "minecraft:textures/entity/bat.png";
-		}
 		else if(model instanceof ModelBlaze) {
 			return "minecraft:textures/entity/blaze.png";
 		}
@@ -152,11 +149,14 @@ public class RenderShapeShifter extends RenderLiving<EntityShapeShifter>
 		else if(model instanceof ModelOcelot) {
 			return "minecraft:textures/entity/cat/ocelot.png";
 		}
+		else if(model instanceof ModelMagmaCube) {
+			return "minecraft:textures/entity/slime/magmacube.png";
+		}
 		else if(model instanceof ModelLlama) {
 			return "minecraft:textures/entity/llama/llama.png";
 		}
 		else if(model instanceof ModelParrot) {
-			return "minecraft:textures/entity/parrot/parrot_red.png";
+			return "minecraft:textures/entity/parrot/parrot_red_blue.png";
 		}
 		else if(model instanceof ModelPig) {
 			return "minecraft:textures/entity/pig/pig.png";
@@ -164,11 +164,8 @@ public class RenderShapeShifter extends RenderLiving<EntityShapeShifter>
 		else if(model instanceof ModelRabbit) {
 			return "minecraft:textures/entity/rabbit/brown.png";
 		}
-		else if(model instanceof ModelSheep1) {
-			return "minecraft:textures/entity/sheep/sheep.png";
-		}
 		else if(model instanceof ModelShulker) {
-			return "minecraft:textures/entity/shulker/shulker_magenta.png";
+			return "minecraft:textures/entity/shulker/shulker_purple.png";
 		}
 		else if(model instanceof ModelSkeleton) {
 			return "minecraft:textures/entity/skeleton/skeleton.png";
@@ -187,9 +184,6 @@ public class RenderShapeShifter extends RenderLiving<EntityShapeShifter>
 		}
 		else if(model instanceof ModelWither) {
 			return "minecraft:textures/entity/wither/wither.png";
-		}
-		else if(model instanceof ModelWolf) {
-			return "minecraft:textures/entity/wolf/wolf.png";
 		}
 		else if(model instanceof ModelZombie) {
 			return entity.texture;

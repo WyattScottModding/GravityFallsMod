@@ -29,10 +29,10 @@ public class TileEntityCrystal extends TileEntity implements ITickable{
 				if(grow)
 					growth = (int)(Math.random() * 400);
 				else
-					growth = (int)(Math.random() * -80);
+					growth = (int)(Math.random() * -60);
 
 				element.removePotionEffect(PotionInit.GROWTH_EFFECT);
-				PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, growth);
+				PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, growth, true, false);
 				effect.setPotionDurationMax(true);
 				element.addPotionEffect(effect);
 			}

@@ -1,5 +1,5 @@
 {
-    "parent": "gravityfalls:block/redwoodplanks",
+    "parent": "gravityfalls:block/redwood_planks",
     "display": {
         "thirdperson": {
             "rotation": [ 10, -45, 170 ],

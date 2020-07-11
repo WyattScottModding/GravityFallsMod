@@ -106,7 +106,6 @@ public class ModelTimeCopLolph extends ModelBase {
 		this.rightArm.renderWithRotation(f5);
 		this.head.renderWithRotation(f5);
 		this.metalEye.renderWithRotation(f5);
-
 	}
 
 	private void setRotation(ModelRenderer model, float x, float y, float z)
@@ -132,8 +131,6 @@ public class ModelTimeCopLolph extends ModelBase {
 		this.rightFoot.rotateAngleX = (MathHelper.cos(f * 0.6662F) * 1.4F * f1);
 		this.leftFoot.rotateAngleX = (MathHelper.cos(f * 0.6662F + 3.1415927F) * 1.4F * f1);
 		this.rightFoot.rotationPointY = 8.0F;
-		this.leftFoot.rotationPointY = 8.0F;
-		
+		this.leftFoot.rotationPointY = 8.0F;	
 	}
-
 }

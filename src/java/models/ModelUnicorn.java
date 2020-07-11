@@ -1,13 +1,13 @@
 package models;
 
+import entity.EntityUnicorn;
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelBox;
 import net.minecraft.client.model.ModelRenderer;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.util.math.MathHelper;
 
-public class ModelUnicorn extends ModelBase
-{
+public class ModelUnicorn extends ModelBase {
 	private final ModelRenderer Body;
 	private final ModelRenderer TailA;
 	private final ModelRenderer TailB;
@@ -49,226 +49,187 @@ public class ModelUnicorn extends ModelBase
 	private final ModelRenderer HeadSaddle;
 	private final ModelRenderer Horn;
 	
-	
-	public ModelUnicorn()
-	{
+	public ModelUnicorn() {
 		textureWidth = 128;
 		textureHeight = 128;
 
 		Body = new ModelRenderer(this);
 		Body.setRotationPoint(0.0F, 11.0F, 9.0F);
-		Body.cubeList.add(new ModelBox(Body, 60, 95, -5.0F, -8.0F, -19.0F, 10, 9, 24, 0.0F, false));
+		Body.setTextureOffset(60, 95).addBox(-5.0F, -8.0F, -19.0F, 10, 9, 24, false);
 
 		TailA = new ModelRenderer(this);
 		TailA.setRotationPoint(0.0F, 3.0F, 14.0F);
-		setRotation(TailA, -1.1345F, 0.0F, 0.0F);
-		TailA.cubeList.add(new ModelBox(TailA, 220, 0, -1.0F, -1.5F, 0.0F, 2, 2, 3, 0.0F, false));
+		setRotationAngle(TailA, -1.1345F, 0.0F, 0.0F);
+		TailA.setTextureOffset(220, 0).addBox(-1.0F, -1.0F, 0.0F, 2, 2, 3, false);
 
 		TailB = new ModelRenderer(this);
 		TailB.setRotationPoint(0.0F, 3.0F, 14.0F);
-		setRotation(TailB, -1.1345F, 0.0F, 0.0F);
-		TailB.cubeList.add(new ModelBox(TailB, 190, 35, -1.5F, -2.0F, 3.0F, 3, 3, 7, 0.0F, false));
+		setRotationAngle(TailB, -1.1345F, 0.0F, 0.0F);
+		TailB.setTextureOffset(190, 35).addBox(-1.5F, -2.0F, 3.0F, 3, 3, 7, false);
 
 		TailC = new ModelRenderer(this);
 		TailC.setRotationPoint(0.0F, 3.0F, 14.0F);
-		setRotation(TailC, -1.4022F, 0.0F, 0.0F);
-		TailC.cubeList.add(new ModelBox(TailC, 39, 40, -1.5F, -4.5F, 9.0F, 3, 3, 7, 0.0F, false));
+		setRotationAngle(TailC, -1.4022F, 0.0F, 0.0F);
+		TailC.setTextureOffset(39, 40).addBox(-1.5F, -4.5F, 9.0F, 3, 3, 7, false);
 
 		Leg1A = new ModelRenderer(this);
 		Leg1A.setRotationPoint(4.0F, 9.0F, 11.0F);
-		Leg1A.cubeList.add(new ModelBox(Leg1A, 390, 145, -2.5F, 0.0F, -2.0F, 4, 9, 3, 0.0F, false));
+		Leg1A.setTextureOffset(390, 145).addBox(-2.5F, -2.0F, -2.0F, 4, 9, 3, false);
 
 		Leg1B = new ModelRenderer(this);
-		Leg1B.setRotationPoint(4.0F, 16.0F, 11.0F);
-		Leg1B.cubeList.add(new ModelBox(Leg1B, 390, 215, -2.0F, 8.0F, -1.5F, 3, 5, 2, 0.0F, false));
+		Leg1B.setRotationPoint(4.0F, 9.0F, 11.0F);
+		Leg1B.setTextureOffset(390, 215).addBox(-2.0F, 7.0F, -1.5F, 3, 5, 2, false);
 
 		Leg1C = new ModelRenderer(this);
-		Leg1C.setRotationPoint(4.0F, 16.0F, 11.0F);
-		Leg1C.cubeList.add(new ModelBox(Leg1C, 390, 215, -2.5F, 13.1F, -2.5F, 4, 3, 4, 0.0F, false));
+		Leg1C.setRotationPoint(4.0F, 9.0F, 11.0F);
+		Leg1C.setTextureOffset(0, 0).addBox(-2.5F, 12.0F, -2.5F, 4, 3, 4, false);
 
 		Leg2A = new ModelRenderer(this);
 		Leg2A.setRotationPoint(-4.0F, 9.0F, 11.0F);
-		Leg2A.cubeList.add(new ModelBox(Leg2A, 390, 215, -1.5F, 0.0F, -2.0F, 4, 9, 3, 0.0F, false));
+		Leg2A.setTextureOffset(480, 145).addBox(-1.5F, -2.0F, -2.0F, 4, 9, 3, false);
 
 		Leg2B = new ModelRenderer(this);
-		Leg2B.setRotationPoint(-4.0F, 16.0F, 11.0F);
-		Leg2B.cubeList.add(new ModelBox(Leg2B, 390, 215, -1.0F, 8.0F, -1.5F, 3, 5, 2, 0.0F, false));
+		Leg2B.setRotationPoint(-4.0F, 9.0F, 11.0F);
+		Leg2B.setTextureOffset(480, 215).addBox(-1.0F, 7.0F, -1.5F, 3, 5, 2, false);
 
 		Leg2C = new ModelRenderer(this);
-		Leg2C.setRotationPoint(-4.0F, 16.0F, 11.0F);
-		Leg2C.cubeList.add(new ModelBox(Leg2C, 390, 215, -1.5F, 13.1F, -2.0F, 4, 3, 3, 0.0F, false));
+		Leg2C.setRotationPoint(-4.0F, 9.0F, 11.0F);
+		Leg2C.setTextureOffset(0, 0).addBox(-1.5F, 12.0F, -2.0F, 4, 3, 3, false);
 
 		Leg3A = new ModelRenderer(this);
 		Leg3A.setRotationPoint(4.0F, 9.0F, -8.0F);
-		Leg3A.cubeList.add(new ModelBox(Leg3A, 390, 215, -1.9F, 0.0F, -1.1F, 3, 8, 3, 0.0F, false));
+		Leg3A.setTextureOffset(220, 145).addBox(-1.5F, -1.0F, -1.1F, 3, 8, 3, false);
 
 		Leg3B = new ModelRenderer(this);
-		Leg3B.setRotationPoint(4.0F, 16.0F, -8.0F);
-		Leg3B.cubeList.add(new ModelBox(Leg3B, 390, 215, -1.9F, 8.0F, -0.6F, 3, 5, 2, 0.0F, false));
+		Leg3B.setRotationPoint(4.0F, 9.0F, -8.0F);
+		Leg3B.setTextureOffset(220, 205).addBox(-1.5F, 7.0F, -0.6F, 3, 5, 2, false);
 
 		Leg3C = new ModelRenderer(this);
-		Leg3C.setRotationPoint(4.0F, 16.0F, -8.0F);
-		Leg3C.cubeList.add(new ModelBox(Leg3C, 390, 215, -2.4F, 13.1F, -1.1F, 4, 3, 3, 0.0F, false));
+		Leg3C.setRotationPoint(4.0F, 9.0F, -8.0F);
+		Leg3C.setTextureOffset(0, 0).addBox(-2.0F, 12.0F, -1.1F, 4, 3, 3, false);
 
 		Leg4A = new ModelRenderer(this);
 		Leg4A.setRotationPoint(-4.0F, 9.0F, -8.0F);
-		Leg4A.cubeList.add(new ModelBox(Leg4A, 390, 215, -1.1F, 0.0F, -1.0F, 3, 8, 3, 0.0F, false));
+		Leg4A.setTextureOffset(300, 145).addBox(-1.5F, -1.0F, -1.0F, 3, 8, 3, false);
 
 		Leg4B = new ModelRenderer(this);
-		Leg4B.setRotationPoint(-4.0F, 16.0F, -8.0F);
-		Leg4B.cubeList.add(new ModelBox(Leg4B, 390, 215, -1.1F, 8.0F, -0.6F, 3, 5, 2, 0.0F, false));
+		Leg4B.setRotationPoint(-4.0F, 9.0F, -8.0F);
+		Leg4B.setTextureOffset(300, 205).addBox(-1.5F, 7.0F, -0.6F, 3, 5, 2, false);
 
 		Leg4C = new ModelRenderer(this);
-		Leg4C.setRotationPoint(-4.0F, 16.0F, -8.0F);
-		Leg4C.cubeList.add(new ModelBox(Leg4C, 390, 215, -1.6F, 13.1F, -1.1F, 4, 3, 3, 0.0F, false));
+		Leg4C.setRotationPoint(-4.0F, 9.0F, -8.0F);
+		Leg4C.setTextureOffset(0, 0).addBox(-2F, 12.0F, -1.1F, 4, 3, 3, false);
 
 		Head = new ModelRenderer(this);
-		Head.setRotationPoint(0.0F, 4.0F, -10.0F);
-		setRotation(Head, 0.5236F, 0.0F, 0.0F);
-		Head.cubeList.add(new ModelBox(Head, 17, 94, -2.5F, -10.0F, -1.5F, 5, 5, 7, 0.0F, false));
+		Head.setRotationPoint(0.0F, 8.0F, -9.0F);
+		setRotationAngle(Head, 0.5236F, 0.0F, 0.0F);
+		Head.setTextureOffset(17, 94).addBox(-2.5F, -14.866F, -2.0F, 5, 5, 7, false);
 
 		UMouth = new ModelRenderer(this);
-		UMouth.setRotationPoint(0.0F, 3.95F, -10.0F);
-		setRotation(UMouth, 0.5236F, 0.0F, 0.0F);
-		UMouth.cubeList.add(new ModelBox(UMouth, 18, 102, -2.0F, -10.0F, -7.0F, 4, 2, 6, 0.0F, false));
+		UMouth.setRotationPoint(0.0F, 8.0F, -9.0F);
+		setRotationAngle(UMouth, 0.5236F, 0.0F, 0.0F);
+		UMouth.setTextureOffset(18, 102).addBox(-2.0F, -14F, -7.134F, 4, 2, 6, false);
 
 		LMouth = new ModelRenderer(this);
-		LMouth.setRotationPoint(0.0F, 4.0F, -10.0F);
-		setRotation(LMouth, 0.5236F, 0.0F, 0.0F);
-		LMouth.cubeList.add(new ModelBox(LMouth, 120, 135, -2.0F, -8.0F, -6.5F, 4, 1, 5, 0.0F, false));
+		LMouth.setRotationPoint(0.0F, 8.0F, -9.0F);
+		setRotationAngle(LMouth, 0.5236F, 0.0F, 0.0F);
+		LMouth.setTextureOffset(120, 135).addBox(-2.0F, -12F, -6.5F, 4, 1, 5, false);
 
 		Ear1 = new ModelRenderer(this);
 		Ear1.setRotationPoint(0.0F, 4.0F, -10.0F);
-		setRotation(Ear1, 0.5236F, 0.0F, 0.0F);
+		setRotationAngle(Ear1, 0.5236F, 0.0F, 0.0F);
+		
 
 		Ear2 = new ModelRenderer(this);
 		Ear2.setRotationPoint(0.0F, 4.0F, -10.0F);
-		setRotation(Ear2, 0.5236F, 0.0F, 0.0F);
+		setRotationAngle(Ear2, 0.5236F, 0.0F, 0.0F);
+		
 
 		MuleEarL = new ModelRenderer(this);
-		MuleEarL.setRotationPoint(0.0F, 4.0F, -10.0F);
-		setRotation(MuleEarL, 0.5236F, 0.0F, 0.2618F);
-		MuleEarL.cubeList.add(new ModelBox(MuleEarL, 70, 1, -2.0F, -14.0F, 4.0F, 2, 5, 1, 0.0F, false));
+		MuleEarL.setRotationPoint(-1.0F, 7.0F, -7.0F);
+		setRotationAngle(MuleEarL, 0.5236F, 0.0F, 0.2618F);
+		MuleEarL.setTextureOffset(70, 1).addBox(-2.0F, -18.0F, 3.0F, 2, 5, 1, false);
 
 		MuleEarR = new ModelRenderer(this);
-		MuleEarR.setRotationPoint(0.0F, 4.0F, -10.0F);
-		setRotation(MuleEarR, 0.5236F, 0.0F, -0.2618F);
-		MuleEarR.cubeList.add(new ModelBox(MuleEarR, 70, 1, 0.0F, -14.0F, 4.0F, 2, 5, 1, 0.0F, false));
+		MuleEarR.setRotationPoint(1.0F, 7.0F, -7.0F);
+		setRotationAngle(MuleEarR, 0.5236F, 0.0F, -0.2618F);
+		MuleEarR.setTextureOffset(70, 1).addBox(0.0F, -18.0F, 3.0F, 2, 5, 1, false);
 
 		Neck = new ModelRenderer(this);
-		Neck.setRotationPoint(0.0F, 4.0F, -10.0F);
-		setRotation(Neck, 0.5236F, 0.0F, 0.0F);
-		Neck.cubeList.add(new ModelBox(Neck, 0, 60, -2.05F, -9.8F, -2.0F, 4, 14, 8, 0.0F, false));
+		Neck.setRotationPoint(0.0F, 8.0F, -9.0F);
+		setRotationAngle(Neck, 0.5236F, 0.0F, 0.0F);
+		Neck.setTextureOffset(0, 60).addBox(-2.05F, -13.3F, -0.134F, 4, 14, 6, false);
 
 		Bag1 = new ModelRenderer(this);
 		Bag1.setRotationPoint(-7.5F, 3.0F, 10.0F);
-		setRotation(Bag1, 0.0F, 1.5708F, 0.0F);
+		setRotationAngle(Bag1, 0.0F, 1.5708F, 0.0F);
+		
 
 		Bag2 = new ModelRenderer(this);
 		Bag2.setRotationPoint(4.5F, 3.0F, 10.0F);
-		setRotation(Bag2, 0.0F, 1.5708F, 0.0F);
+		setRotationAngle(Bag2, 0.0F, 1.5708F, 0.0F);
+		
 
 		Saddle = new ModelRenderer(this);
 		Saddle.setRotationPoint(0.0F, 2.0F, 2.0F);
+		
 
 		SaddleB = new ModelRenderer(this);
 		SaddleB.setRotationPoint(0.0F, 2.0F, 2.0F);
+		
 
 		SaddleC = new ModelRenderer(this);
 		SaddleC.setRotationPoint(0.0F, 2.0F, 2.0F);
+		
 
 		SaddleL2 = new ModelRenderer(this);
 		SaddleL2.setRotationPoint(5.0F, 3.0F, 2.0F);
+		
 
 		SaddleL = new ModelRenderer(this);
 		SaddleL.setRotationPoint(5.0F, 3.0F, 2.0F);
+		
 
 		SaddleR2 = new ModelRenderer(this);
 		SaddleR2.setRotationPoint(-5.0F, 3.0F, 2.0F);
+		
 
 		SaddleR = new ModelRenderer(this);
 		SaddleR.setRotationPoint(-5.0F, 3.0F, 2.0F);
+		
 
 		SaddleMouthL = new ModelRenderer(this);
 		SaddleMouthL.setRotationPoint(0.0F, 4.0F, -10.0F);
-		setRotation(SaddleMouthL, 0.5236F, 0.0F, 0.0F);
+		setRotationAngle(SaddleMouthL, 0.5236F, 0.0F, 0.0F);
+		
 
 		SaddleMouthR = new ModelRenderer(this);
 		SaddleMouthR.setRotationPoint(0.0F, 4.0F, -10.0F);
-		setRotation(SaddleMouthR, 0.5236F, 0.0F, 0.0F);
+		setRotationAngle(SaddleMouthR, 0.5236F, 0.0F, 0.0F);
+		
 
 		SaddleMouthLine = new ModelRenderer(this);
 		SaddleMouthLine.setRotationPoint(0.0F, 4.0F, -10.0F);
+		
 
 		SaddleMouthLineR = new ModelRenderer(this);
 		SaddleMouthLineR.setRotationPoint(0.0F, 4.0F, -10.0F);
+		
 
 		Mane = new ModelRenderer(this);
-		Mane.setRotationPoint(0.0F, 4.0F, -10.0F);
-		setRotation(Mane, 0.5236F, 0.0F, 0.0F);
-		Mane.cubeList.add(new ModelBox(Mane, 5, 44, -3.0F, -10.5F, 5.0F, 6, 15, 2, 0.0F, true));
+		Mane.setRotationPoint(0.0F, 8.0F, -9.0F);
+		setRotationAngle(Mane, 0.5236F, 0.0F, 0.0F);
+		Mane.setTextureOffset(5, 44).addBox(-3.0F, -15.5F, 5.0F, 6, 16, 2, true);
 
 		HeadSaddle = new ModelRenderer(this);
 		HeadSaddle.setRotationPoint(0.0F, 4.0F, -10.0F);
-		setRotation(HeadSaddle, 0.5236F, 0.0F, 0.0F);
+		setRotationAngle(HeadSaddle, 0.5236F, 0.0F, 0.0F);
+		
 
 		Horn = new ModelRenderer(this);
-		Horn.setRotationPoint(0.0F, 24.0F, 0.0F);
-		setRotation(Horn, 0.6981F, 0.0F, 0.0F);
-		Horn.cubeList.add(new ModelBox(Horn, 105, 1, -0.5F, -38.0F, 9.5F, 1, 7, 1, 0.0F, false));
-	}
-
-	@Override
-	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) {
-		
-		setRotationAngles(f, f1, f2, f3, f4, f5, entity);
-		Body.render(f5);
-		TailA.render(f5);
-		TailB.render(f5);
-		TailC.render(f5);
-		Leg1A.render(f5);
-		Leg1B.render(f5);
-		Leg1C.render(f5);
-		Leg2A.render(f5);
-		Leg2B.render(f5);
-		Leg2C.render(f5);
-		Leg3A.render(f5);
-		Leg3B.render(f5);
-		Leg3C.render(f5);
-		Leg4A.render(f5);
-		Leg4B.render(f5);
-		Leg4C.render(f5);
-		Head.render(f5);
-		UMouth.render(f5);
-		LMouth.render(f5);
-		Ear1.render(f5);
-		Ear2.render(f5);
-		MuleEarL.render(f5);
-		MuleEarR.render(f5);
-		Neck.render(f5);
-		Bag1.render(f5);
-		Bag2.render(f5);
-		Saddle.render(f5);
-		SaddleB.render(f5);
-		SaddleC.render(f5);
-		SaddleL2.render(f5);
-		SaddleL.render(f5);
-		SaddleR2.render(f5);
-		SaddleR.render(f5);
-		SaddleMouthL.render(f5);
-		SaddleMouthR.render(f5);
-		SaddleMouthLine.render(f5);
-		SaddleMouthLineR.render(f5);
-		Mane.render(f5);
-		HeadSaddle.render(f5);
-		Horn.render(f5);
-	}
-
-	private void setRotation(ModelRenderer model, float x, float y, float z)
-	{
-		model.rotateAngleX = x;
-		model.rotateAngleY = y;
-		model.rotateAngleZ = z;
+		Horn.setRotationPoint(0.0F, 8.0F, -9.0F);
+		setRotationAngle(Horn, 0.6981F, 0.0F, 0.0F);
+		Horn.setTextureOffset(105, 1).addBox(-0.5F, -20.1246F, 5.1777F, 1, 7, 1, false);
 	}
 
 	public void setRotationAngles(float f, float f1, float f2, float f3, float f4, float f5, Entity entity)
@@ -283,14 +244,6 @@ public class ModelUnicorn extends ModelBase
 		this.Leg4B.rotateAngleX = (MathHelper.cos(f * 0.6662F + 3.1415927F) * 1.4F * f1);
 		this.Leg4C.rotateAngleX = (MathHelper.cos(f * 0.6662F + 3.1415927F) * 1.4F * f1);
 
-		this.Leg1A.rotationPointY = 8.0F;
-		this.Leg1B.rotationPointY = 8.0F;
-		this.Leg1C.rotationPointY = 8.0F;
-
-		this.Leg4A.rotationPointY = 8.0F;
-		this.Leg4B.rotationPointY = 8.0F;
-		this.Leg4C.rotationPointY = 8.0F;
-
 		this.Leg3A.rotateAngleX = (MathHelper.cos(f * 0.6662F) * 1.4F * f1);
 		this.Leg3B.rotateAngleX = (MathHelper.cos(f * 0.6662F) * 1.4F * f1);
 		this.Leg3C.rotateAngleX = (MathHelper.cos(f * 0.6662F) * 1.4F * f1);
@@ -299,23 +252,95 @@ public class ModelUnicorn extends ModelBase
 		this.Leg2B.rotateAngleX = (MathHelper.cos(f * 0.6662F + 3.1415927F) * 1.4F * f1);
 		this.Leg2C.rotateAngleX = (MathHelper.cos(f * 0.6662F + 3.1415927F) * 1.4F * f1);
 
-		this.Leg3A.rotationPointY = 8.0F;
-		this.Leg3B.rotationPointY = 8.0F;
-		this.Leg3C.rotationPointY = 8.0F;
-
-		this.Leg2A.rotationPointY = 8.0F;
-		this.Leg2B.rotationPointY = 8.0F;
-		this.Leg2C.rotationPointY = 8.0F;
-
-
 		this.TailA.rotateAngleZ = (MathHelper.cos(f * 0.6662F) * 0.8F * f1);
 		this.TailB.rotateAngleZ = (MathHelper.cos(f * 0.6662F) * 0.8F * f1);
 		this.TailC.rotateAngleZ = (MathHelper.cos(f * 0.6662F) * 0.8F * f1);
+	}
 
-		this.TailA.rotationPointY = 3.0F;
-		this.TailB.rotationPointY = 3.0F;
-		this.TailC.rotationPointY = 3.0F;
+	@Override
+	public void setLivingAnimations(EntityLivingBase entitylivingbaseIn, float limbSwing, float limbSwingAmount,
+			float partialTickTime) {
+		
+		super.setLivingAnimations(entitylivingbaseIn, limbSwing, limbSwingAmount, partialTickTime);
+		this.Head.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+		this.Neck.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+		this.Horn.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+		this.SaddleMouthL.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+		this.SaddleMouthR.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+		this.SaddleMouthLine.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+		this.SaddleMouthLineR.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+		this.LMouth.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+		this.UMouth.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+		this.MuleEarL.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+		this.MuleEarR.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+		this.Mane.rotationPointY = 8 + ((EntityUnicorn)entitylivingbaseIn).getHeadRotationPointY(partialTickTime) * 7.0F;
+
+        float headRotationAngleX = ((EntityUnicorn)entitylivingbaseIn).getHeadRotationAngleX(partialTickTime) + 0.5236F;
+        
+        this.Head.rotateAngleX = headRotationAngleX;
+		this.Neck.rotateAngleX = headRotationAngleX;
+		this.Horn.rotateAngleX = headRotationAngleX;
+		this.SaddleMouthL.rotateAngleX = headRotationAngleX;
+		this.SaddleMouthR.rotateAngleX = headRotationAngleX;
+		this.SaddleMouthLine.rotateAngleX = headRotationAngleX;
+		this.SaddleMouthLineR.rotateAngleX = headRotationAngleX;
+		this.LMouth.rotateAngleX = headRotationAngleX;
+		this.UMouth.rotateAngleX = headRotationAngleX;
+		this.MuleEarL.rotateAngleX = headRotationAngleX;
+		this.MuleEarR.rotateAngleX = headRotationAngleX;
+		this.Mane.rotateAngleX = headRotationAngleX;
 
 	}
 
+	@Override
+	public void render(Entity entity, float f, float f1, float f2, float f3, float f4, float f5) 
+	{
+		super.render(entity, f, f1, f2, f3, f4, f5);
+		Body.renderWithRotation(f5);
+		TailA.renderWithRotation(f5);
+		TailB.renderWithRotation(f5);
+		TailC.renderWithRotation(f5);
+		Leg1A.renderWithRotation(f5);
+		Leg1B.renderWithRotation(f5);
+		Leg1C.renderWithRotation(f5);
+		Leg2A.renderWithRotation(f5);
+		Leg2B.renderWithRotation(f5);
+		Leg2C.renderWithRotation(f5);
+		Leg3A.renderWithRotation(f5);
+		Leg3B.renderWithRotation(f5);
+		Leg3C.renderWithRotation(f5);
+		Leg4A.renderWithRotation(f5);
+		Leg4B.renderWithRotation(f5);
+		Leg4C.renderWithRotation(f5);
+		Head.renderWithRotation(f5);
+		UMouth.renderWithRotation(f5);
+		LMouth.renderWithRotation(f5);
+		Ear1.renderWithRotation(f5);
+		Ear2.renderWithRotation(f5);
+		MuleEarL.renderWithRotation(f5);
+		MuleEarR.renderWithRotation(f5);
+		Neck.renderWithRotation(f5);
+		Bag1.renderWithRotation(f5);
+		Bag2.renderWithRotation(f5);
+		Saddle.renderWithRotation(f5);
+		SaddleB.renderWithRotation(f5);
+		SaddleC.renderWithRotation(f5);
+		SaddleL2.renderWithRotation(f5);
+		SaddleL.renderWithRotation(f5);
+		SaddleR2.renderWithRotation(f5);
+		SaddleR.renderWithRotation(f5);
+		SaddleMouthL.renderWithRotation(f5);
+		SaddleMouthR.renderWithRotation(f5);
+		SaddleMouthLine.renderWithRotation(f5);
+		SaddleMouthLineR.renderWithRotation(f5);
+		Mane.renderWithRotation(f5);
+		HeadSaddle.renderWithRotation(f5);
+		Horn.renderWithRotation(f5);
+	}
+
+	public void setRotationAngle(ModelRenderer modelRenderer, float x, float y, float z) {
+		modelRenderer.rotateAngleX = x;
+		modelRenderer.rotateAngleY = y;
+		modelRenderer.rotateAngleZ = z;
+	}
 }

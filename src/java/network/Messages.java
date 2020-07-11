@@ -24,8 +24,10 @@ public class Messages {
     	INSTANCE.registerMessage(MessageOpenComputer.Handler.class, MessageOpenComputer.class, nextID(), Side.CLIENT);
     	INSTANCE.registerMessage(MessageOpenReturnDevice.Handler.class, MessageOpenReturnDevice.class, nextID(), Side.CLIENT);
     	INSTANCE.registerMessage(MessageTeleportPlayer.Handler.class, MessageTeleportPlayer.class, nextID(), Side.SERVER);
-    	INSTANCE.registerMessage(MessagePlayCountdown.Handler.class, MessagePlayCountdown.class, nextID(), Side.CLIENT);
-    	INSTANCE.registerMessage(MessagePlayPortalSound.Handler.class, MessagePlayPortalSound.class, nextID(), Side.CLIENT);
+    	INSTANCE.registerMessage(MessageShapeShifterUpdate.Handler.class, MessageShapeShifterUpdate.class, nextID(), Side.CLIENT);
+    	INSTANCE.registerMessage(MessageShapeShifterModel.Handler.class, MessageShapeShifterModel.class, nextID(), Side.CLIENT);
+    	INSTANCE.registerMessage(MessageOpenFordWorkbench.Handler.class, MessageOpenFordWorkbench.class, nextID(), Side.CLIENT);
+    	INSTANCE.registerMessage(MessagePlaySound.Handler.class, MessagePlaySound.class, nextID(), Side.CLIENT);
 
     }
 }

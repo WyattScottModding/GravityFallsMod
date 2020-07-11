@@ -8,7 +8,7 @@ public class Reference {
 	public static final String ACCEPTED_VERSIONS = "1.12.2";
 	
 	public static final String CLIENTPROXY = "proxy.ClientProxy";
-	public static final String SERVERPROXY = "proxy.ServerProxy";
+	public static final String SERVERPROXY = "proxy.CommonProxy";
 	
 
 }

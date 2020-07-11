@@ -2,6 +2,7 @@ package items;
 
 import org.lwjgl.input.Keyboard;
 
+import handlers.ArmorDetector;
 import handlers.KeyBindings;
 import handlers.SoundsHandler;
 import init.BlockInit;
@@ -73,7 +74,6 @@ public class Book3 extends ItemWrittenBook implements IHasModel{
 				if(!world.isRemote && player instanceof EntityPlayerMP) {
 					EntityPlayerMP serverPlayer = (EntityPlayerMP) player;
 					Messages.INSTANCE.sendTo(new MessageOpenBook3(),  serverPlayer);
-
 				}
 			}
 		}

@@ -47,7 +47,6 @@ public class Book2 extends ItemWrittenBook implements IHasModel{
 	@Override
 	public boolean isEnchantable(ItemStack stack) 
 	{
-
 		return false;
 	}
 

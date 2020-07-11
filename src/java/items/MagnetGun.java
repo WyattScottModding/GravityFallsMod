@@ -1,19 +1,10 @@
 package items;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-
 import javax.annotation.Nullable;
-
-import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import com.google.common.collect.Lists;
-
-import entity.EntityForget;
 import entity.EntitySecurityDroid;
 import handlers.KeyBindings;
 import handlers.SoundsHandler;
@@ -21,82 +12,35 @@ import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import net.minecraft.advancements.CriteriaTriggers;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockStainedGlass;
-import net.minecraft.block.BlockStainedGlassPane;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.entity.RenderEntity;
-import net.minecraft.client.renderer.tileentity.TileEntityItemStackRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexBuffer;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.MoverType;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
-import net.minecraft.init.SoundEvents;
 import net.minecraft.item.EnumAction;
-import net.minecraft.item.EnumDyeColor;
 import net.minecraft.item.IItemPropertyGetter;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.tileentity.TileEntityBeacon;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumActionResult;
 import net.minecraft.util.EnumHand;
-import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.RayTraceResult;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MagnetGun extends ItemBow implements IHasModel
 {
-
-	public boolean active = false;
-	public double prevY1 = -5;
-	public double prevY2 = -5;
-	public double prevY3 = -5;
-	public double prevY4 = -5;
-
-	public double prevX1 = -5;
-	public double prevX2 = -5;
-	public double prevX3 = -5;
-	public double prevX4 = -5;
-
-	public double prevZ1 = -5;
-	public double prevZ2 = -5;
-	public double prevZ3 = -5;
-	public double prevZ4 = -5;
-
-	private final List<TileEntityBeacon.BeamSegment> beamSegments = Lists.<TileEntityBeacon.BeamSegment>newArrayList();
-
-	int soundCounter = 0;
-
-	int attackCooldown = 0;
-
 	public MagnetGun(String name)
 	{
 		this.setMaxStackSize(1);
@@ -111,16 +55,86 @@ public class MagnetGun extends ItemBow implements IHasModel
 			@SideOnly(Side.CLIENT)
 			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
 			{
-                return entityIn != null && (entityIn.getHeldItemMainhand() == stack || entityIn.getHeldItemOffhand() == stack) && active ? 1.0F : 0.0F;
+				//Set the NBT to a new NBT if it is null
+				NBTTagCompound nbt = new NBTTagCompound();
 
+				if(stack.getTagCompound() != null)
+					nbt = stack.getTagCompound();
+
+				boolean active = false;
+
+				if(nbt.hasKey("active"))
+					active = nbt.getBoolean("active");
+
+				return entityIn != null && (entityIn.getHeldItemMainhand() == stack || entityIn.getHeldItemOffhand() == stack) && active ? 1.0F : 0.0F;
 			}
 		});
 	}
 
-
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
+
+		boolean active = false;
+		int soundCounter = 0;
+		int attackCooldown = 0;
+
+		double prevY1 = -5;
+		double prevY2 = -5;
+		double prevY3 = -5;
+		double prevY4 = -5;
+
+		double prevX1 = -5;
+		double prevX2 = -5;
+		double prevX3 = -5;
+		double prevX4 = -5;
+
+		double prevZ1 = -5;
+		double prevZ2 = -5;
+		double prevZ3 = -5;
+		double prevZ4 = -5;
+
+		if(nbt.hasKey("active"))
+			active = nbt.getBoolean("active");
+		if(nbt.hasKey("soundCounter"))
+			soundCounter = nbt.getInteger("soundCounter");
+		if(nbt.hasKey("attackCooldown"))
+			attackCooldown = nbt.getInteger("attackCooldown");
+
+		if(nbt.hasKey("prevY1"))
+			prevY1 = nbt.getDouble("prevY1");
+		if(nbt.hasKey("prevY2"))
+			prevY2 = nbt.getDouble("prevY2");
+		if(nbt.hasKey("prevY3"))
+			prevY3 = nbt.getDouble("prevY3");
+		if(nbt.hasKey("prevY4"))
+			prevY4 = nbt.getDouble("prevY4");
+
+		if(nbt.hasKey("prevX1"))
+			prevX1 = nbt.getDouble("prevX1");
+		if(nbt.hasKey("prevX2"))
+			prevX2 = nbt.getDouble("prevX2");
+		if(nbt.hasKey("prevX3"))
+			prevX3 = nbt.getDouble("prevX3");
+		if(nbt.hasKey("prevX4"))
+			prevX4 = nbt.getDouble("prevX4");
+
+		if(nbt.hasKey("prevZ1"))
+			prevZ1 = nbt.getDouble("prevZ1");
+		if(nbt.hasKey("prevZ2"))
+			prevZ2 = nbt.getDouble("prevZ2");
+		if(nbt.hasKey("prevZ3"))
+			prevZ3 = nbt.getDouble("prevZ3");
+		if(nbt.hasKey("prevZ4"))
+			prevZ4 = nbt.getDouble("prevZ4");
+
+		System.out.println("Active = " + active);
+
 		if(soundCounter == 4)
 			soundCounter = 0;
 		else
@@ -135,19 +149,13 @@ public class MagnetGun extends ItemBow implements IHasModel
 
 			if(KeyBindings.ITEM1.isDown())
 			{
-				//	if(attackCooldown == 100)
-				//	{
 				getMouseOver(player, world);
 				attackCooldown = 0;
-				//	}
 			}
 
 			RayTraceResult blockPosition = player.rayTrace(500, 1.0F);
-
 			IBlockState block = world.getBlockState(blockPosition.getBlockPos());
-
 			Block blockType = block.getBlock();
-
 
 			if(active)
 			{
@@ -155,14 +163,11 @@ public class MagnetGun extends ItemBow implements IHasModel
 				if(soundCounter == 4)
 					world.playSound(player, player.posX, player.posY, player.posZ, SoundsHandler.ITEM_MAGNETGUN, SoundCategory.PLAYERS, 0.4F, 1.0F);
 
-
-
 				//The gun is only attracted to objects that contain iron
 				if(blockType == Blocks.IRON_BLOCK || blockType == Blocks.IRON_BARS || blockType == Blocks.IRON_ORE || blockType == Blocks.IRON_DOOR || blockType == Blocks.DETECTOR_RAIL || blockType == Blocks.RAIL || blockType == Blocks.ACTIVATOR_RAIL || blockType == Blocks.ANVIL || blockType == Blocks.HEAVY_WEIGHTED_PRESSURE_PLATE || blockType == Blocks.PISTON || blockType == Blocks.STICKY_PISTON  || blockType == BlockInit.URANIUM_TANK || blockType == BlockInit.URANIUM_TANK_FILLED || blockType == BlockInit.URANIUM_TANK_HALFFILLED || blockType == Blocks.HOPPER || blockType == BlockInit.METAL_TREE)
 				{
 					float yaw = player.rotationYaw;
 					float pitch = player.rotationPitch;
-
 
 					//Amount of movement
 					float f = 1.2F;
@@ -173,17 +178,17 @@ public class MagnetGun extends ItemBow implements IHasModel
 
 					player.isAirBorne = true;
 
-					if(player.posY == this.prevY1 && player.posY == this.prevY2 && player.posY == this.prevY3 && player.posY == this.prevY4 && !player.onGround)
+					if(player.posY == prevY1 && player.posY == prevY2 && player.posY == prevY3 && player.posY == prevY4 && !player.onGround)
 					{
 						f = .1F;
 						player.motionX = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 						player.motionZ = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 					}
 
-					this.prevY4 = this.prevY3;
-					this.prevY3 = this.prevY2;
-					this.prevY2 = this.prevY1;
-					this.prevY1 = player.posY;
+					prevY4 = prevY3;
+					prevY3 = prevY2;
+					prevY2 = prevY1;
+					prevY1 = player.posY;
 
 
 					BlockPos pos1 = new BlockPos(player.posX, player.posY, player.posZ + 1);
@@ -194,32 +199,32 @@ public class MagnetGun extends ItemBow implements IHasModel
 					boolean xMovement = world.getBlockState(pos3).getBlock() != Blocks.AIR || world.getBlockState(pos4).getBlock() != Blocks.AIR;
 
 
-					if(xMovement && player.posX == this.prevX1 && player.posX == this.prevX2 && player.posX == this.prevX3 && player.posX == this.prevX4 && !player.onGround)
+					if(xMovement && player.posX == prevX1 && player.posX == prevX2 && player.posX == prevX3 && player.posX == prevX4 && !player.onGround)
 					{
 						f = .2F;
 						player.motionZ = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 						player.motionY = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
 					}
 
-					this.prevX4 = this.prevX3;
-					this.prevX3 = this.prevX2;
-					this.prevX2 = this.prevX1;
-					this.prevX1 = player.posX;
+					prevX4 = prevX3;
+					prevX3 = prevX2;
+					prevX2 = prevX1;
+					prevX1 = player.posX;
 
 					boolean zMovement = world.getBlockState(pos1).getBlock() != Blocks.AIR || world.getBlockState(pos2).getBlock() != Blocks.AIR;
 
 
-					if(zMovement && player.posZ == this.prevZ1 && player.posZ == this.prevZ2 && player.posZ == this.prevZ3 && player.posZ == this.prevZ4 && !player.onGround)
+					if(zMovement && player.posZ == prevZ1 && player.posZ == prevZ2 && player.posZ == prevZ3 && player.posZ == prevZ4 && !player.onGround)
 					{
 						f = .2F;
 						player.motionX = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 						player.motionY = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
 					}
 
-					this.prevZ4 = this.prevZ3;
-					this.prevZ3 = this.prevZ2;
-					this.prevZ2 = this.prevZ1;
-					this.prevZ1 = player.posZ;
+					prevZ4 = prevZ3;
+					prevZ3 = prevZ2;
+					prevZ2 = prevZ1;
+					prevZ1 = player.posZ;
 
 				}
 
@@ -231,65 +236,58 @@ public class MagnetGun extends ItemBow implements IHasModel
 					world.destroyBlock(blockPosition.getBlockPos(), true);
 					player.addItemStackToInventory(new ItemStack(Blocks.IRON_TRAPDOOR));
 				}
-
 			}
 		}
-		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
-	}
 
-	private void drawLine(double xPos, double yPos, double zPos) 
-	{
-	//	GlStateManager.depthFunc(519);
-	//	GlStateManager.enableBlend();
-	//	GlStateManager.tryBlendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ZERO);
-	//	GlStateManager.disableTexture2D();
-	//	GlStateManager.depthMask(false);
-		// some functions to set up the vertices
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder bufferbuilder = tessellator.getBuffer();
-		bufferbuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
-		bufferbuilder.pos(xPos, yPos, zPos).color(1, 1, 1, 0.0F).endVertex();
-		bufferbuilder.pos(xPos + 2, yPos, zPos + 2).color(1, 1, 1, 0.0F).endVertex();
-		tessellator.draw();
-		// a long chain of vertices
-	//	GlStateManager.depthMask(true);
-	//	GlStateManager.enableTexture2D();
-	//	GlStateManager.disableBlend();
-		//GlStateManager.depthFunc(515);
+		nbt.setBoolean("active", active);
+		nbt.setInteger("soundCounter", soundCounter);
+		nbt.setInteger("attackCooldown", attackCooldown);
+
+		nbt.setDouble("prevY1", prevY1);
+		nbt.setDouble("prevY2", prevY2);
+		nbt.setDouble("prevY3", prevY3);
+		nbt.setDouble("prevY4", prevY4);
+
+		nbt.setDouble("prevX1", prevX1);
+		nbt.setDouble("prevX2", prevX2);
+		nbt.setDouble("prevX3", prevX3);
+		nbt.setDouble("prevX4", prevX4);
+
+		nbt.setDouble("prevZ1", prevZ1);
+		nbt.setDouble("prevZ2", prevZ2);
+		nbt.setDouble("prevZ3", prevZ3);
+		nbt.setDouble("prevZ4", prevZ4);
+
+		stack.setTagCompound(nbt);
+
+		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer entityLiving, EnumHand handIn)
 	{
-		ItemStack itemstack = entityLiving.getHeldItem(handIn);
+		ItemStack stack = entityLiving.getHeldItem(handIn);
+
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
 
 		entityLiving.setActiveHand(handIn);
 
 		if (entityLiving instanceof EntityPlayer)
 		{
-			EntityPlayer player = (EntityPlayer) entityLiving;
-			if (!world.isRemote)
-			{
-				ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, world, entityLiving, handIn, false);
-				if (ret != null) return ret;
-
-				active = true;
-
-			}
-
-			//     worldIn.playSound((EntityPlayer)null, entityplayer.posX, entityplayer.posY, entityplayer.posZ, SoundEvents.ENTITY_ARROW_SHOOT, SoundCategory.PLAYERS, 1.0F, 1.0F / (itemRand.nextFloat() * 0.4F + 1.2F) + f * 0.5F);
+			nbt.setBoolean("active", true);
 		}
 
-		return (ActionResult<ItemStack>) new ActionResult(EnumActionResult.FAIL, itemstack);
+		stack.setTagCompound(nbt);
 
-		//return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(ItemInit.MAGNET_GUN));
+		return (ActionResult<ItemStack>) new ActionResult(EnumActionResult.SUCCESS, stack);
 	}
 
 	public void getMouseOver(EntityPlayer player, World world)
 	{
-
-		Vec3d lookVec = player.getLookVec();
-
 		BlockPos pos = player.getPosition().add(0, player.eyeHeight, 0);
 
 		float yaw = player.rotationYaw;
@@ -302,7 +300,7 @@ public class MagnetGun extends ItemBow implements IHasModel
 			double z = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 
 
-			AxisAlignedBB entityPos = new AxisAlignedBB(pos.getX() + x, pos.getY() + y, pos.getZ() + z, pos.getX() + x + 1, pos.getY() + y + 1, pos.getZ() + z + 1);
+			AxisAlignedBB entityPos = new AxisAlignedBB(pos.getX() + x - .5, pos.getY() + y - .5, pos.getZ() + z - .5, pos.getX() + x + .5, pos.getY() + y + .5, pos.getZ() + z + .5);
 
 			List<Entity> list = world.getEntitiesInAABBexcluding(player, entityPos, Predicates.and(EntitySelectors.NOT_SPECTATING, new Predicate<Entity>()
 			{
@@ -324,20 +322,24 @@ public class MagnetGun extends ItemBow implements IHasModel
 				}
 			}
 		}
-
 	}
-
-
 
 	@Override
 	public void onPlayerStoppedUsing(ItemStack stack, World worldIn, EntityLivingBase entityLiving, int timeLeft)
 	{
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
+
 		if (entityLiving instanceof EntityPlayer)
 		{
 			EntityPlayer entityplayer = (EntityPlayer) entityLiving;
-			net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, entityplayer, 1, true);
+			nbt.setBoolean("active", false);
+			//net.minecraftforge.event.ForgeEventFactory.onArrowLoose(stack, worldIn, entityplayer, 1, true);
 		}
-		active = false;
+		stack.setTagCompound(nbt);
 	}
 
 	@Override
@@ -346,17 +348,15 @@ public class MagnetGun extends ItemBow implements IHasModel
 		return EnumAction.BOW;
 	}
 
-
-
 	@Override
 	public int getItemEnchantability()
 	{
 		return 0;
 	}
 
+	@Override
 	public void registerModels()
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
-
 }

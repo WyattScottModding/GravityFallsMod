@@ -6,7 +6,6 @@ import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
-import net.minecraft.block.BlockDoor;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,7 +36,6 @@ public class CryogenicTubeItem extends Item implements IHasModel {
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
-	
 	
     /**
      * Called when a Block is right-clicked with this Item
@@ -101,7 +99,6 @@ public class CryogenicTubeItem extends Item implements IHasModel {
         }
 
         BlockPos blockpos2 = pos.up();
-        boolean flag2 = worldIn.isBlockPowered(pos) || worldIn.isBlockPowered(blockpos2);
         IBlockState iblockstate = door.getDefaultState().withProperty(CryogenicTube.FACING, facing);
         worldIn.setBlockState(pos, iblockstate.withProperty(CryogenicTube.HALF, CryogenicTube.EnumHalf.LOWER), 2);
         worldIn.setBlockState(blockpos2, iblockstate.withProperty(CryogenicTube.HALF, CryogenicTube.EnumHalf.UPPER), 2);

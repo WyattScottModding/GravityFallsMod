@@ -5,6 +5,7 @@ import java.util.Random;
 
 import org.lwjgl.opengl.GL11;
 
+import entity.EntityEvilTree;
 import init.ItemInit;
 import main.ConfigHandler;
 import main.GravityFalls;
@@ -21,6 +22,7 @@ import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumActionResult;
@@ -33,11 +35,6 @@ import net.minecraft.util.text.TextComponentString;
 import net.minecraft.world.World;
 
 public class InfinitySidedDie extends Item implements IHasModel{
-
-	public int timeSkyLight = 0;
-	public boolean countSkyLight = false;
-	public World world = null;
-	public int cooldown = 20;
 
 	public InfinitySidedDie(String name)
 	{
@@ -58,43 +55,74 @@ public class InfinitySidedDie extends Item implements IHasModel{
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
+		ItemStack stack = playerIn.getHeldItemMainhand();
+
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
+		
+		int cooldown = 20;
+
+		if(nbt.hasKey("cooldown"))
+			cooldown = nbt.getInteger("cooldown");
+		
 		if(cooldown == 0 && !worldIn.isRemote)
 		{
 			ItemStack itemstack = playerIn.getHeldItem(handIn);
 
-			boolean success = useDice(itemstack, worldIn, playerIn);
+			boolean success = useDice(itemstack, worldIn, playerIn, cooldown);
 
 			if(success)
 				return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, new ItemStack(ItemInit.INFINITY_SIDED_DIE));
 			else
 				return new ActionResult<ItemStack>(EnumActionResult.FAIL, new ItemStack(ItemInit.INFINITY_SIDED_DIE));
-
-
 		}
 
 		return new ActionResult<ItemStack>(EnumActionResult.FAIL, new ItemStack(ItemInit.INFINITY_SIDED_DIE));
-
 	}
 
 
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
 	{
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
+		
+		int cooldown = 20;
+		
+		if(nbt.hasKey("cooldown"))
+			cooldown = nbt.getInteger("cooldown");
+		
 		if(cooldown > 0)
 			cooldown--;
+		
+		nbt.setInteger("cooldown", cooldown);
+		stack.setTagCompound(nbt);
 
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
 	
-	public boolean useDice(ItemStack stack, World worldIn, EntityLivingBase entityLiving)
+	public boolean useDice(ItemStack stack, World world, EntityLivingBase entityLiving, int cooldown)
 	{
-		world = worldIn;
 		if(entityLiving instanceof EntityPlayer && cooldown == 0)
 		{
 			EntityPlayer playerIn = (EntityPlayer) entityLiving;
 
-			int diceRoll = (int) (Math.random() * 54) + 1;
+			int diceRoll; 
+			
+			if(ConfigHandler.INFINITY_SIDED_DICE)
+				diceRoll = (int) (Math.random() * 54) + 1;
+			else
+				diceRoll = (int) (Math.random() * 48) + 1;
+			
+			ITextComponent rollMessage = new TextComponentString("Dice Rolled");
+			playerIn.sendMessage(rollMessage);
 
 			Random rand = new Random();
 			for(int countparticles = 1; countparticles <= 6; countparticles++)
@@ -102,13 +130,13 @@ public class InfinitySidedDie extends Item implements IHasModel{
 				world.spawnParticle(EnumParticleTypes.SPELL, playerIn.posX + (rand.nextDouble() - 0.5D) * (double)playerIn.width, playerIn.posY + rand.nextDouble() * (double)playerIn.height - (double)playerIn.getYOffset(), playerIn.posZ + (rand.nextDouble() - 0.5D) * (double)playerIn.width, 0.0D, 0.0D, 0.0D);
 			}
 			
-			if(diceRoll == 1 && ConfigHandler.INFINITY_SIDED_DICE)
+			if(diceRoll == 1)
 			{
-				worldIn.setSeaLevel(80);
+				world.spawnEntity(new EntityEvilTree(world, (int)playerIn.posX, (int)playerIn.posY, (int)playerIn.posZ));
 			}
 			else if(diceRoll == 2)
 			{
-				playerIn.changeDimension(-1);
+				playerIn.stepHeight = 2;
 			}
 			else if(diceRoll == 3)
 			{
@@ -148,7 +176,7 @@ public class InfinitySidedDie extends Item implements IHasModel{
 			}
 			else if(diceRoll == 11)
 			{
-				worldIn.setWorldTime(0);
+				world.setWorldTime(0);
 			}
 			else if(diceRoll == 12)
 			{
@@ -181,19 +209,19 @@ public class InfinitySidedDie extends Item implements IHasModel{
 			}
 			else if(diceRoll == 17)
 			{
-				playerIn.world.spawnEntity(new EntityHorse(worldIn));
+				playerIn.world.spawnEntity(new EntityHorse(world));
 			}
 			else if(diceRoll == 18)
 			{
-				playerIn.world.spawnEntity(new EntityCreeper(worldIn));
+				playerIn.world.spawnEntity(new EntityCreeper(world));
 			}
 			else if(diceRoll == 19)
 			{
-				playerIn.world.spawnEntity(new EntityWitch(worldIn));
+				playerIn.world.spawnEntity(new EntityWitch(world));
 			}
 			else if(diceRoll == 20)
 			{
-				playerIn.world.spawnEntity(new EntityZombie(worldIn));
+				playerIn.world.spawnEntity(new EntityZombie(world));
 			}
 			else if(diceRoll == 21)
 			{
@@ -252,8 +280,6 @@ public class InfinitySidedDie extends Item implements IHasModel{
 			}
 			else if(diceRoll == 33)
 			{
-				BlockPos posFeet = playerIn.getPosition();
-				BlockPos posHead = playerIn.getPosition().add(0, 1, 0);
 				BlockPos posFront = playerIn.getPosition().add(0, 1, -1);
 				BlockPos posBehind = playerIn.getPosition().add(-1, 1, 0);
 				BlockPos posLeft = playerIn.getPosition().add(0, 1, 1);
@@ -265,8 +291,6 @@ public class InfinitySidedDie extends Item implements IHasModel{
 				BlockPos posCorner3 = playerIn.getPosition().add(1, 1, -1);
 				BlockPos posCorner4 = playerIn.getPosition().add(-1, 1, -1);
 
-				playerIn.world.setBlockState(posFeet, Blocks.OBSIDIAN.getDefaultState());
-				playerIn.world.setBlockState(posHead, Blocks.OBSIDIAN.getDefaultState());
 				playerIn.world.setBlockState(posFront, Blocks.OBSIDIAN.getDefaultState());
 				playerIn.world.setBlockState(posBehind, Blocks.OBSIDIAN.getDefaultState());
 				playerIn.world.setBlockState(posLeft, Blocks.OBSIDIAN.getDefaultState());
@@ -291,111 +315,81 @@ public class InfinitySidedDie extends Item implements IHasModel{
 				BlockPos posBelow9 = playerIn.getPosition().add(0, -9, 0);
 				BlockPos posBelow10 = playerIn.getPosition().add(0, -10, 0);
 
-				worldIn.setBlockToAir(posBelow1);
-				worldIn.setBlockToAir(posBelow2);
-				worldIn.setBlockToAir(posBelow3);
-				worldIn.setBlockToAir(posBelow4);
-				worldIn.setBlockToAir(posBelow5);
-				worldIn.setBlockToAir(posBelow6);
-				worldIn.setBlockToAir(posBelow7);
-				worldIn.setBlockToAir(posBelow8);
-				worldIn.setBlockToAir(posBelow9);
-				worldIn.setBlockToAir(posBelow10);
+				world.setBlockToAir(posBelow1);
+				world.setBlockToAir(posBelow2);
+				world.setBlockToAir(posBelow3);
+				world.setBlockToAir(posBelow4);
+				world.setBlockToAir(posBelow5);
+				world.setBlockToAir(posBelow6);
+				world.setBlockToAir(posBelow7);
+				world.setBlockToAir(posBelow8);
+				world.setBlockToAir(posBelow9);
+				world.setBlockToAir(posBelow10);
 			}
-			else if(diceRoll == 35 && ConfigHandler.INFINITY_SIDED_DICE)
+			else if(diceRoll == 35)
 			{
-				worldIn.setRainStrength(10.0F);
+				EntityZombie zombie = new EntityZombie(world);
+				world.spawnEntity(zombie);
+				world.spawnEntity(zombie);
+				world.spawnEntity(zombie);
+				world.spawnEntity(zombie);
+				world.spawnEntity(zombie);
 			}
-			else if(diceRoll == 36 && ConfigHandler.INFINITY_SIDED_DICE)
+			else if(diceRoll == 36)
 			{
-				worldIn.setSkylightSubtracted(100);
-				countSkyLight = true;
-
+				EntityWitch witch = new EntityWitch(world);
+				world.spawnEntity(witch);
+				world.spawnEntity(witch);
+				world.spawnEntity(witch);
 			}
-			else if(diceRoll == 37 && ConfigHandler.INFINITY_SIDED_DICE)
-			{
-				worldIn.setThunderStrength(10.0F);
-			}
-			else if(diceRoll == 38)
-			{
-				EntityZombie zombie = new EntityZombie(worldIn);
-				worldIn.spawnEntity(zombie);
-				worldIn.spawnEntity(zombie);
-				worldIn.spawnEntity(zombie);
-				worldIn.spawnEntity(zombie);
-				worldIn.spawnEntity(zombie);
-			}
-			else if(diceRoll == 39)
-			{
-				EntityWitch witch = new EntityWitch(worldIn);
-				worldIn.spawnEntity(witch);
-				worldIn.spawnEntity(witch);
-				worldIn.spawnEntity(witch);
-			}
-			else if(diceRoll == 40 && ConfigHandler.INFINITY_SIDED_DICE)
-			{
-				GL11.glScalef(10, 10, 10);
-			}
-			else if(diceRoll == 41 && ConfigHandler.INFINITY_SIDED_DICE)
-			{
-				GL11.glScalef(0.1F, 0.1F, 0.1F);
-			}
-			else if(diceRoll == 42 && ConfigHandler.INFINITY_SIDED_DICE)
-			{
-				world.setSkylightSubtracted(5);
-			}
-			else if(diceRoll == 43)
+			else if(diceRoll == 37)
 			{
 				playerIn.addExperienceLevel(100);
 			}
-			else if(diceRoll == 44 && ConfigHandler.INFINITY_SIDED_DICE)
-			{
-				GL11.glViewport(5, 5, 10, 10);
-			}
-			else if(diceRoll == 45)
+			else if(diceRoll == 38)
 			{
 				int yPos = (int)(Math.random() * 200);
 				playerIn.setPosition(playerIn.posX, yPos, playerIn.posZ);
 			}
-			else if(diceRoll == 46)
+			else if(diceRoll == 39)
 			{
 				playerIn.performHurtAnimation();
 			}
-			else if(diceRoll == 47)
+			else if(diceRoll == 40)
 			{
 				playerIn.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 6000, 0));
 			}
-			else if(diceRoll == 48)
+			else if(diceRoll == 41)
 			{
 				playerIn.addPotionEffect(new PotionEffect(MobEffects.SPEED, 6000, 5));
 			}
-			else if(diceRoll == 49)
+			else if(diceRoll == 42)
 			{
 				playerIn.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 6000, 5));
 			}
-			else if(diceRoll == 50)
+			else if(diceRoll == 43)
 			{
 				playerIn.addPotionEffect(new PotionEffect(MobEffects.HASTE, 6000, 5));
 			}
-			else if(diceRoll == 51)
+			else if(diceRoll == 44)
 			{
 				playerIn.addPotionEffect(new PotionEffect(MobEffects.RESISTANCE, 6000, 5));
 			}
-			else if(diceRoll == 52)
+			else if(diceRoll == 45)
 			{
 				ITextComponent msg = new TextComponentString("Ok Boomer.");
 				playerIn.sendMessage(msg);
 			}
-			else if(diceRoll == 53)
+			else if(diceRoll == 46)
 			{
 				ITextComponent msg = new TextComponentString("You now have ligma.");
 				playerIn.sendMessage(msg);
 			}
-			else if(diceRoll == 54)
+			else if(diceRoll == 47)
 			{
 				playerIn.addPotionEffect(new PotionEffect(MobEffects.POISON, 500, 1));
 			}
-			else if(diceRoll == 55)
+			else if(diceRoll == 48)
 			{
 				int x = (int) playerIn.posX;
 				int y = (int) playerIn.posY;
@@ -413,6 +407,34 @@ public class InfinitySidedDie extends Item implements IHasModel{
 				}
 				
 				list.get(random).onKillCommand();
+			}
+			else if(diceRoll == 49 && ConfigHandler.INFINITY_SIDED_DICE)
+			{
+				world.setRainStrength(10.0F);
+			}
+			else if(diceRoll == 50 && ConfigHandler.INFINITY_SIDED_DICE)
+			{
+				world.setSkylightSubtracted(100);
+			}
+			else if(diceRoll == 51 && ConfigHandler.INFINITY_SIDED_DICE)
+			{
+				world.setThunderStrength(10.0F);
+			}
+			else if(diceRoll == 52 && ConfigHandler.INFINITY_SIDED_DICE)
+			{
+				GL11.glScalef(10, 10, 10);
+			}
+			else if(diceRoll == 53 && ConfigHandler.INFINITY_SIDED_DICE)
+			{
+				GL11.glScalef(0.1F, 0.1F, 0.1F);
+			}
+			else if(diceRoll == 54 && ConfigHandler.INFINITY_SIDED_DICE)
+			{
+				world.setSkylightSubtracted(5);
+			}
+			else if(diceRoll == 55 && ConfigHandler.INFINITY_SIDED_DICE)
+			{
+				GL11.glViewport(5, 5, 10, 10);
 			}
 
 			cooldown = 20;

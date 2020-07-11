@@ -7,6 +7,9 @@ import javax.annotation.Nullable;
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
+import entity.EntityBill;
+import entity.EntityBillStatue;
+import entity.EntityGolfCart;
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
@@ -20,6 +23,7 @@ import net.minecraft.init.Enchantments;
 import net.minecraft.item.EnumAction;
 import net.minecraft.item.ItemBow;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumActionResult;
@@ -27,18 +31,12 @@ import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.FOVUpdateEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import network.MessageOpenScope;
 import network.Messages;
 
 public class QuantumDestabilizer extends ItemBow implements IHasModel
 {
-	public int counter = 0;
-	public boolean aiming = false;
-
 	public QuantumDestabilizer(String name)
 	{
 		this.setMaxStackSize(1);
@@ -52,7 +50,21 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
-		if(!worldIn.isRemote && entityIn instanceof EntityPlayer && counter == 0 && aiming)
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
+
+		int counter = 0;
+		boolean aiming = false;
+
+		if(nbt.hasKey("counter"))
+			counter = nbt.getInteger("counter");
+		if(nbt.hasKey("aiming"))
+			aiming = nbt.getBoolean("aiming");
+
+		if(entityIn instanceof EntityPlayer && counter == 0 && aiming)
 		{
 			EntityPlayer player = (EntityPlayer) entityIn;
 
@@ -74,14 +86,10 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 				{
 					boolean flag1 = player.capabilities.isCreativeMode;
 
-					if (!worldIn.isRemote)
-					{
-						getMouseOver(player, worldIn);
+					getMouseOver(player, worldIn);
 
-						if(!flag1)
-							itemstack.shrink(1);
-					}
-
+					if(!flag1)
+						itemstack.shrink(1);
 				}
 			}		
 			player.closeScreen();
@@ -90,6 +98,10 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 		}
 		if(counter != 0)
 			counter--;
+
+		nbt.setInteger("counter", counter);
+		nbt.setBoolean("aiming", aiming);
+		stack.setTagCompound(nbt);
 
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
@@ -127,7 +139,17 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 			for(int j = 0; j < list.size(); ++j)
 			{
 				Entity entity = list.get(j);
-				entity.onKillCommand();
+
+				if(entity instanceof EntityLivingBase)
+				{
+					if(entity instanceof EntityBill)
+					{
+						EntityBill bill = (EntityBill) entity;
+						bill.setHealth(1);
+					}
+					else if(!(entity instanceof EntityBillStatue || entity instanceof EntityGolfCart))
+						entity.onKillCommand();
+				}
 			}
 		}
 	}
@@ -136,8 +158,20 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
 		ItemStack itemstack = playerIn.getHeldItem(handIn);
-		//	boolean flag = playerIn.inventory.hasItemStack(new ItemStack(Items.DIAMOND));
-		boolean flag = true;
+
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(itemstack.getTagCompound() != null)
+			nbt = itemstack.getTagCompound();
+
+		int counter = 0;
+		boolean aiming = false;
+
+		if(nbt.hasKey("counter"))
+			counter = nbt.getInteger("counter");
+		if(nbt.hasKey("aiming"))
+			aiming = nbt.getBoolean("aiming");
 
 		if(!worldIn.isRemote)
 		{
@@ -150,20 +184,11 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 			}
 		}
 
+		nbt.setInteger("counter", counter);
+		nbt.setBoolean("aiming", aiming);
+		itemstack.setTagCompound(nbt);
 
-		//	ActionResult<ItemStack> ret = net.minecraftforge.event.ForgeEventFactory.onArrowNock(itemstack, worldIn, playerIn, handIn, flag);
-		//	if (ret != null) 
-		//		return ret;
-
-		if (!playerIn.capabilities.isCreativeMode && !flag)
-		{
-			return flag ? new ActionResult(EnumActionResult.PASS, itemstack) : new ActionResult(EnumActionResult.FAIL, itemstack);
-		}
-		else
-		{
-			playerIn.setActiveHand(handIn);
-			return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
-		}
+		return new ActionResult<ItemStack>(EnumActionResult.SUCCESS, itemstack);
 	}
 
 	public float getZoom(EntityLivingBase entity) {
@@ -209,7 +234,6 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 		}
 	}
 
-
 	@Override
 	public EnumAction getItemUseAction(ItemStack stack)
 	{
@@ -222,14 +246,13 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 		return 100;
 	}
 
-
 	@Override
 	public int getItemEnchantability()
 	{
 		return 0;
 	}
 
-
+	@Override
 	public void registerModels()
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");

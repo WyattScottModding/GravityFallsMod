@@ -35,7 +35,6 @@ import network.Messages;
 
 public class Book1 extends ItemWrittenBook implements IHasModel
 {
-
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
 	public Book1(String name)
@@ -155,7 +154,6 @@ public class Book1 extends ItemWrittenBook implements IHasModel
 			}
 		}
 	}
-
 
 	@Override
 	@SideOnly(Side.CLIENT)

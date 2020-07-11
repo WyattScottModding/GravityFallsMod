@@ -1,12 +1,9 @@
 package items;
 
 import entity.EntityGideonBot;
-import entity.EntityGolfCart;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import main.Reference;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -16,7 +13,9 @@ import net.minecraft.world.World;
 
 public class GideonBot extends Item implements IHasModel
 {
-
+	/**
+		This item was never implemented into the mod
+	*/
 	public GideonBot(String name)
 	{
 		this.setMaxStackSize(1);

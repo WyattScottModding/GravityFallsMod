@@ -4,7 +4,10 @@ import entity.EntityShapeShifter;
 import net.minecraft.client.model.ModelBase;
 import net.minecraft.client.model.ModelBiped;
 import net.minecraft.client.model.ModelBox;
+import net.minecraft.client.model.ModelGhast;
 import net.minecraft.client.model.ModelRenderer;
+import net.minecraft.client.model.ModelVex;
+import net.minecraft.client.model.ModelWither;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.MathHelper;
 
@@ -138,13 +141,21 @@ public class ModelShapeShifter extends ModelBiped
 		if(entity instanceof EntityShapeShifter) {
 			EntityShapeShifter shapeShifter = (EntityShapeShifter) entity;
 			ModelBase model = shapeShifter.currentModel;
+			model.isChild = this.isChild;
 
 			if(!(model instanceof ModelShapeShifter)) {
 
-				model.render(entity, f, f1, f2, f3, f4, f5);
+				if(model instanceof ModelGhast)
+					model.render(shapeShifter.currentEntity, f, f1, f2, f3, f4, f5 * 4);
+				else if(model instanceof ModelVex)
+					model.render(shapeShifter.currentEntity, f, f1, f2, f3, f4, f5 / 3);
+				else if(model instanceof ModelWither)
+					model.render(shapeShifter.currentEntity, f, f1, f2, f3, f4, f5 * 2);
+				else
+					model.render(shapeShifter.currentEntity, f, f1, f2, f3, f4, f5);
 			}
 			else {
-				if(isChild) {
+				if(this.isChild) {
 					model = new ModelShapeShifterBaby();
 
 					model.render(entity, f, f1, f2, f3, f4, f5);

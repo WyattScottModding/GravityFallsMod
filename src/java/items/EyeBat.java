@@ -1,13 +1,9 @@
 package items;
 
 import entity.EntityEyeBat;
-import entity.EntityGnome;
-import entity.EntityGolfCart;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import main.Reference;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;

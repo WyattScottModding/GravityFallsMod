@@ -7,9 +7,8 @@ import net.minecraft.item.EnumAction;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class UraniumBucket extends Item implements IHasModel{
-
-
+public class UraniumBucket extends Item implements IHasModel
+{
 	public UraniumBucket(String name)
 	{
 		this.setMaxStackSize(1);;
@@ -31,6 +30,4 @@ public class UraniumBucket extends Item implements IHasModel{
 	{
 		return EnumAction.NONE;
 	}
-	
-	
 }

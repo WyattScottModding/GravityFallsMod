@@ -10,38 +10,33 @@ import com.google.common.base.Predicates;
 import entity.EntityTimeCopDundgren;
 import entity.EntityTimeCopLolph;
 import handlers.KeyBindings;
+import handlers.SoundsHandler;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class LaserArmCannon extends ItemSword implements IHasModel
 {
-	public boolean charging = false;
-	public int cooldown = 30;
-
-
 	public LaserArmCannon(String name, ToolMaterial material)
 	{
 		super(material);
@@ -57,6 +52,20 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 			{				
 				if(entityIn != null && (entityIn.getHeldItemMainhand() == stack || entityIn.getHeldItemOffhand() == stack))
 				{
+					//Set the NBT to a new NBT if it is null
+					NBTTagCompound nbt = new NBTTagCompound();
+
+					if(stack.getTagCompound() != null)
+						nbt = stack.getTagCompound();
+					
+					int cooldown = 30;
+					boolean charging = false;
+					
+					if(nbt.hasKey("cooldown"))
+						cooldown = nbt.getInteger("cooldown");
+					if(nbt.hasKey("charging"))
+						charging = nbt.getBoolean("charging");
+					
 					if(charging)
 					{
 						if(cooldown >= 0 && cooldown < 5)
@@ -80,53 +89,78 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 		ItemInit.ITEMS.add(this);
 	}
 
+	@Override
 	public void registerModels()
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
 
-	public boolean fireGun(World world)
-	{
-		if (!world.isRemote)
-		{
-			charging = false;
-			return true;
-		}
-		
-		return false;
-	}
-
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn) 
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) 
 	{
-		if (!worldIn.isRemote && cooldown == 0)
-		{
+		ItemStack stack = player.getHeldItem(handIn);
+
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
+		
+		int cooldown = 30;
+		boolean charging = false;
+		
+		if(nbt.hasKey("cooldown"))
+			cooldown = nbt.getInteger("cooldown");
+		
+		
+		if(cooldown == 0) {
+
 			charging = false;
+			worldIn.playSound(player, player.getPosition(), SoundsHandler.ITEM_LASER_ARM_CANNON, SoundCategory.PLAYERS, 1, 1);
 		}
 
-		return super.onItemRightClick(worldIn, playerIn, handIn);
+		nbt.setInteger("cooldown", cooldown);
+		nbt.setBoolean("charging", charging);
+		stack.setTagCompound(nbt);
+		
+		return super.onItemRightClick(worldIn, player, handIn);
 	}
 
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
 	{
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
+		
+		int cooldown = 30;
+		boolean charging = false;
+		
+		if(nbt.hasKey("cooldown"))
+			cooldown = nbt.getInteger("cooldown");
+		if(nbt.hasKey("charging"))
+			charging = nbt.getBoolean("charging");
+		
 		if(cooldown > 0)
 			cooldown--;
 
-
-		if(!worldIn.isRemote && entityIn instanceof EntityPlayer)
+		if(entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) entityIn;
 			boolean flag = player.capabilities.isCreativeMode;
 
 			if(!charging && (stack.getItemDamage() < 20 || flag) && player.getHeldItemMainhand().getItem() instanceof LaserArmCannon)
 			{
-				if(!flag)
-					stack.damageItem(1, player);
+				if(!worldIn.isRemote) {
+					if(!flag)
+						stack.damageItem(1, player);
 
-				getMouseOver(player, worldIn);
-				charging = true;
-				cooldown = 30;
+					getMouseOver(player, worldIn);
+					charging = true;
+					cooldown = 30;
+				}
 			}
 
 			if(stack.getItemDamage() >= 10 &&  KeyBindings.BATTERY.isDown())
@@ -144,7 +178,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 				}
 			}
 		}
-		else if(!worldIn.isRemote && (entityIn instanceof EntityTimeCopDundgren || entityIn instanceof EntityTimeCopLolph))
+		else if(entityIn instanceof EntityTimeCopDundgren || entityIn instanceof EntityTimeCopLolph)
 		{
 			EntityLivingBase entityLiving = (EntityPlayer) entityIn;
 
@@ -156,6 +190,10 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 			}
 		}
 
+		nbt.setInteger("cooldown", cooldown);
+		nbt.setBoolean("charging", charging);
+		stack.setTagCompound(nbt);
+		
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
@@ -189,7 +227,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 				if(entity instanceof EntityLivingBase)
 				{
 					EntityLivingBase mob = (EntityLivingBase) entity;
-					
+
 					if(mob.isEntityUndead())
 						mob.addPotionEffect(new PotionEffect(MobEffects.INSTANT_HEALTH, 4, 1));
 					else
@@ -198,7 +236,6 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 			}
 		}
 	}
-
 
 	private ItemStack findAmmo(EntityPlayer player)
 	{
@@ -230,5 +267,4 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 	{
 		return stack.getItem() instanceof ItemBasic;
 	}
-
 }

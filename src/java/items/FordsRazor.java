@@ -13,24 +13,23 @@ import main.IHasModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class FordsRazor extends ItemSword implements IHasModel
 {
 	public boolean fired = false;
 
+	/**
+		This item was never implemented into the mod
+	*/
 	public FordsRazor(String name, ToolMaterial material)
 	{
 		super(material);
@@ -57,8 +56,7 @@ public class FordsRazor extends ItemSword implements IHasModel
 
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected)
-	{
-		
+	{	
 		if(!worldIn.isRemote && entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer) entityIn;
@@ -74,9 +72,6 @@ public class FordsRazor extends ItemSword implements IHasModel
 
 	public void getMouseOver(EntityPlayer player, World world)
 	{
-
-		Vec3d lookVec = player.getLookVec();
-
 		BlockPos pos = player.getPosition();
 
 		float yaw = player.rotationYaw;
@@ -111,7 +106,5 @@ public class FordsRazor extends ItemSword implements IHasModel
 				}
 			}
 		}
-
 	}
 }
-

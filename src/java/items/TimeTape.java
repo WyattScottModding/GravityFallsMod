@@ -4,41 +4,29 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import org.lwjgl.input.Keyboard;
-
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import commands.Teleport;
 import handlers.KeyBindings;
 import init.ItemInit;
+import main.ConfigHandler;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.client.Minecraft;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.monster.EntitySkeleton;
-import net.minecraft.entity.monster.EntityZombie;
-import net.minecraft.entity.passive.EntityZombieHorse;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EntitySelectors;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public class TimeTape extends Item implements IHasModel
 {
-	public BlockPos pos;
-
 	public TimeTape(String name)
 	{
 		this.setMaxStackSize(1);
@@ -49,6 +37,7 @@ public class TimeTape extends Item implements IHasModel
 		ItemInit.ITEMS.add(this);
 	}
 
+	@Override
 	public void registerModels()
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
@@ -57,14 +46,13 @@ public class TimeTape extends Item implements IHasModel
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
-		if(!world.isRemote)
-		{
+		if(!world.isRemote) {
+			BlockPos pos = player.getPosition();
+
 			if(player.dimension == 0)
 			{
-				pos = player.getPosition();
+				Teleport.teleportToDimension(player, ConfigHandler.THE_FUTURE, -18.5, 61, -18.5);
 
-				Teleport.teleportToDimension(player, 2, -18.5, 61, -18.5);
-				
 				for(Entity element : findEntities(player, world))
 				{
 					if(element instanceof EntityPlayer)
@@ -74,7 +62,7 @@ public class TimeTape extends Item implements IHasModel
 					}
 				}
 			}
-			else if(player.dimension == 2)
+			else if(player.dimension == ConfigHandler.THE_FUTURE)
 			{
 				if(pos != null)
 				{
@@ -118,7 +106,6 @@ public class TimeTape extends Item implements IHasModel
 				}
 			}
 		}
-
 		return super.onItemRightClick(world, player, hand);
 	}
 
@@ -162,8 +149,6 @@ public class TimeTape extends Item implements IHasModel
 				return p_apply_1_ != null && p_apply_1_.canBeCollidedWith();
 			}
 		}));
-
 		return list;
-
 	}
 }

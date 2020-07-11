@@ -4,11 +4,8 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import compatibilities.ISizeCap;
-import compatibilities.SizeCapPro;
 import entity.EntityGideonBot;
 import handlers.KeyBindings;
-import init.AttributeInit;
 import init.ItemInit;
 import init.PotionInit;
 import main.ConfigHandler;
@@ -21,33 +18,20 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.DamageSource;
 import net.minecraft.util.EnumHand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MagicFlashLight extends ItemSword implements IHasModel
 {
-	public int height = 0;
-
-	public double playerX;
-	public double playerY;
-	public double playerZ;
-
-	public boolean clicked = false;
-
-	private int entityHeight = 0;
-	private ItemStack thisStack = null;
-
-
 	public MagicFlashLight(String name)
 	{
 		super(ToolMaterial.WOOD);
@@ -62,6 +46,17 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 			@SideOnly(Side.CLIENT)
 			public float apply(ItemStack stack, @Nullable World worldIn, @Nullable EntityLivingBase entityIn)
 			{
+				//Set the NBT to a new NBT if it is null
+				NBTTagCompound nbt = new NBTTagCompound();
+
+				if(stack.getTagCompound() != null)
+					nbt = stack.getTagCompound();
+				
+				boolean clicked = false;
+
+				if(nbt.hasKey("clicked"))
+					clicked = nbt.getBoolean("clicked");
+				
 				return entityIn != null && (entityIn.getHeldItemMainhand() == stack || entityIn.getHeldItemOffhand() == stack) && clicked ? 1.0F : 0.0F;
 			}
 		});
@@ -79,17 +74,23 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
-		if(this.thisStack == null)
-			thisStack = stack;
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
+		
+		int height = 0;
+		boolean clicked = false;
+
+		if(nbt.hasKey("height"))
+			height = nbt.getInteger("height");
+		if(nbt.hasKey("clicked"))
+			clicked = nbt.getBoolean("clicked");
 
 		if(entityIn instanceof EntityPlayer && !worldIn.isRemote)
 		{
 			EntityPlayer player = (EntityPlayer) entityIn;
-
-			//	if(worldIn.getWorldTime() % 20 == 0) {
-			//		height = (int) (((player.height / 1.8F) - 1) * 100);
-			//	}
-			
 
 			if(isSelected && !Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown())
 			{
@@ -97,16 +98,7 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 
 					if(KeyBindings.ITEM1.isDown() && KeyBindings.ITEM2.isDown())
 					{
-						//int newHeight = (int) (((player.height / 1.8F) - 1) * -100);
-						
-						//System.out.println("Current Height: " + player.height);
-						//System.out.println("New Height: " + newHeight);
-
 						player.removePotionEffect(PotionInit.GROWTH_EFFECT);
-						//player.addPotionEffect(new PotionEffect(PotionInit.GROWTH_EFFECT, 5, newHeight));	
-						//player.removePotionEffect(PotionInit.GROWTH_EFFECT);
-
-						//System.out.println("New Player Height: " + player.height);
 
 						clicked = true;
 						stack.damageItem(1, player);
@@ -120,7 +112,7 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 
 							player.removePotionEffect(PotionInit.GROWTH_EFFECT);
 
-							PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, height);
+							PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, height, true, false);
 							effect.setPotionDurationMax(true);
 							player.addPotionEffect(effect);
 
@@ -138,7 +130,7 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 
 							player.removePotionEffect(PotionInit.GROWTH_EFFECT);
 
-							PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, height);
+							PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, height, true, false);
 							effect.setPotionDurationMax(true);
 							player.addPotionEffect(effect);
 
@@ -165,6 +157,11 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 				}
 			}
 		}
+		
+		nbt.setInteger("height", height);
+		nbt.setBoolean("clicked", clicked);
+		stack.setTagCompound(nbt);
+		
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
@@ -172,33 +169,38 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand handIn)
 	{
-		if (!world.isRemote && thisStack != null && thisStack.getItemDamage() <= 1999)
+		ItemStack stack = player.getHeldItem(handIn);
+
+		if (!world.isRemote && stack.getItemDamage() <= 1999)
 		{
 			EntityLivingBase entityLiving = getMouseOver(player, world);
 
+			//Set the NBT to a new NBT if it is null
+			NBTTagCompound nbt = new NBTTagCompound();
+
+			if(stack.getTagCompound() != null)
+				nbt = stack.getTagCompound();
+			
+			boolean clicked = false;
+			int entityHeight = 0;
+
+			if(nbt.hasKey("clicked"))
+				clicked = nbt.getBoolean("clicked");
+			if(nbt.hasKey("entityHeight"))
+				entityHeight = nbt.getInteger("entityHeight");
+			
 			if(entityLiving != null && entityLiving != player && !(entityLiving instanceof EntityGideonBot)) {
-
-				/*
-				if(KeyBindings.ITEM1.isDown() && KeyBindings.ITEM2.isDown()) {
-					entityLiving.removePotionEffect(PotionInit.GROWTH_EFFECT);
-
-					clicked = true;
-					thisStack.damageItem(1, player);
-
-					entityHeight = 1;
-				}
-				*/
 				if(KeyBindings.ITEM1.isDown()) {
 					if(entityLiving.height <= ConfigHandler.SIZE_MAX) {
 						entityLiving.removePotionEffect(PotionInit.GROWTH_EFFECT);
 						entityHeight += 10;
 
-						PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, entityHeight);
+						PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, entityHeight, true, false);
 						effect.setPotionDurationMax(true);
 						entityLiving.addPotionEffect(effect);
 
 						clicked = true;
-						thisStack.damageItem(1, player);		
+						stack.damageItem(1, player);		
 					}
 					else
 						clicked = false;
@@ -208,12 +210,12 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 						entityLiving.removePotionEffect(PotionInit.GROWTH_EFFECT);
 						entityHeight -= 10;
 
-						PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, entityHeight);
+						PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, entityHeight, true, false);
 						effect.setPotionDurationMax(true);
 						entityLiving.addPotionEffect(effect);
 
 						clicked = true;
-						thisStack.damageItem(1, player);
+						stack.damageItem(1, player);
 					}
 					else
 						clicked = false;
@@ -223,6 +225,10 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 			}	
 			else
 				clicked = false;
+			
+			nbt.setInteger("entityHeight", entityHeight);
+			nbt.setBoolean("clicked", clicked);
+			stack.setTagCompound(nbt);
 		}
 		return super.onItemRightClick(world, player, handIn);
 	}

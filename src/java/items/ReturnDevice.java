@@ -15,7 +15,6 @@ import network.Messages;
 
 public class ReturnDevice extends Item implements IHasModel
 {
-
 	public ReturnDevice(String name)
 	{
 		this.setMaxStackSize(1);

@@ -3,19 +3,15 @@ package items;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import net.minecraft.entity.Entity;
 import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
-public class BlackLight extends Item implements IHasModel{
+public class AlexShirt extends Item implements IHasModel{
 
-	public BlackLight(String name)
+	public AlexShirt(String name)
 	{
 		this.setMaxStackSize(1);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsitems);
 		
 		ItemInit.ITEMS.add(this);
 	}

@@ -14,6 +14,7 @@ import potions.Freeze;
 import potions.Size;
 import potions.SizeNormal;
 import potions.Radiation;
+import potions.ShapeshifterSize;
 
 public class PotionInit 
 {	
@@ -25,7 +26,8 @@ public class PotionInit
 	
 	public static final Potion GROWTH_EFFECT = new Size("size_potion", false, 13893628, 0, 2);
 	public static final Potion NORMAL_EFFECT = new SizeNormal("normal_size_potion", false, 16574717, 0, 2);
-	
+	public static final Potion SHAPESHIFTER_EFFECT = new ShapeshifterSize("shapeshifter_potion", false, 13893628, 0, 2);
+
 	
 	public static void registerPotions()
 	{		
@@ -40,7 +42,7 @@ public class PotionInit
 		ForgeRegistries.POTIONS.register(RADIATION_EFFECT);
 		ForgeRegistries.POTIONS.register(NORMAL_EFFECT);
 		ForgeRegistries.POTIONS.register(GROWTH_EFFECT);
-
+		ForgeRegistries.POTIONS.register(SHAPESHIFTER_EFFECT);
 	}
 	
 	public static void registerPotion(PotionType defaultPotion, PotionType longPotion, Potion  effect)

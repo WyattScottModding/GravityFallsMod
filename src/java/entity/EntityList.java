@@ -6,7 +6,8 @@ import net.minecraft.entity.EntityLivingBase;
 
 public class EntityList extends ArrayList<EntityLivingBase>{
 
-	
+	private static final long serialVersionUID = -4318051319546075020L;
+
 	public boolean containsEntity(EntityLivingBase entity) {
 
 		for(int i = 0; i < this.size(); i++) {

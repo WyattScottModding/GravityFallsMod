@@ -4,10 +4,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import blocks.Asteroid;
+import blocks.BirchEyeEvilLogs;
+import blocks.BirchEyeEvilSapling;
+import blocks.BirchEyeLogs;
+import blocks.BirchEyeSapling;
 import blocks.BlockTeleporter;
 import blocks.Book_1;
 import blocks.Book_2;
 import blocks.Book_3;
+import blocks.CipherWheel;
 import blocks.ColoredLights;
 import blocks.ComputerClosed;
 import blocks.ComputerOpen;
@@ -16,30 +21,35 @@ import blocks.CopperBlock;
 import blocks.CryogenicTube;
 import blocks.Crystal;
 import blocks.CursedDoor;
+import blocks.FordWorkbench;
+import blocks.GravityFallsLeaves;
 import blocks.HiddenElement;
 import blocks.HyperDrive;
 import blocks.LightSource;
 import blocks.MetalTree;
 import blocks.Ore;
+import blocks.PortalControl;
+import blocks.PortalLever;
 import blocks.PowerCord;
-import blocks.RedWoodLeaves;
-import blocks.RedWoodLogs;
-import blocks.RedWoodPlanks;
-import blocks.RedWoodSapling;
-import blocks.RedWoodStairs;
+import blocks.RedwoodButton;
+import blocks.RedwoodFence;
+import blocks.RedwoodFenceGate;
+import blocks.RedwoodLogs;
+import blocks.RedwoodPlanks;
+import blocks.RedwoodSapling;
+import blocks.RedwoodStairs;
+import blocks.UnicornHair;
+import blocks.UnlitTorch;
 import blocks.Uranium;
 import blocks.UraniumFurnace;
 import blocks.UraniumTank;
 import blocks.UraniumTankFilled;
 import blocks.UraniumTankHalfFilled;
-import blocks.PortalControl;
-import blocks.PortalLever;
-import blocks.slabs.RedWoodDoubleSlab;
-import blocks.slabs.RedWoodHalfSlab;
-import blocks.UnicornHair;
-import blocks.UnlitTorch;
+import blocks.slabs.DoubleSlab;
+import blocks.slabs.HalfSlab;
 import main.GravityFalls;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockSlab;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.block.model.ModelResourceLocation;
 import net.minecraft.item.Item;
@@ -98,11 +108,11 @@ public class BlockInit
 	
 	public static final Block CURSED_DOOR = new CursedDoor("cursed_door", Material.WOOD);
 	
-	public static final Block Book1 = new Book_1("book_1", Material.CLOTH);
+	public static final Block Book1 = new Book_1("book_1");
 	
-	public static final Block Book2 = new Book_2("book_2", Material.CLOTH);
+	public static final Block Book2 = new Book_2("book_2");
 	
-	public static final Block Book3 = new Book_3("book_3", Material.CLOTH);
+	public static final Block Book3 = new Book_3("book_3");
 	
 	public static final Block COPPER_BLOCK = new CopperBlock("copper_block");
 	
@@ -113,6 +123,16 @@ public class BlockInit
 	public static final Block PORTAL_LEVER = new PortalLever("portallever", Material.IRON);
 
 	public static final Block UNLIT_TORCH = new UnlitTorch("unlit_torch");
+
+	public static final Block FORD_WORKBENCH = new FordWorkbench("ford_workbench");
+
+	public static final Block BIRCH_LOG_EYE = new BirchEyeLogs("birch_log_eye");
+	
+	public static final Block BIRCH_LOG_EYE_EVIL = new BirchEyeEvilLogs("birch_log_eye_evil");
+
+	public static final Block BIRCH_LOG_EYE_NORMAL_EVIL = new BirchEyeLogs("birch_log_eye_normal_evil");
+
+	public static final Block CIPHER_WHEEL = new CipherWheel("cipher_wheel");
 
 	
 	//Lights
@@ -135,21 +155,31 @@ public class BlockInit
 	
 
 	//Trees
-	public static final Block REDWOODPLANKS = new RedWoodPlanks("redwoodplanks", Material.WOOD);
-	public static final Block REDWOODLOGS = new RedWoodLogs("redwoodlogs", Material.WOOD);
-	public static final Block REDWOODLEAVES = new RedWoodLeaves("redwoodleaves", Material.PLANTS);
-	public static final Block REDWOODSAPLING = new RedWoodSapling("redwoodsapling");
+	public static final Block REDWOOD_PLANKS = new RedwoodPlanks("redwood_planks");
+	public static final Block REDWOOD_LOGS = new RedwoodLogs("redwood_log");
+	public static final Block REDWOOD_SAPLING = new RedwoodSapling("redwood_sapling");
+	public static final Block REDWOOD_LEAVES = new GravityFallsLeaves("redwood_leaves", BlockInit.REDWOOD_SAPLING);
+	public static final Block REDWOOD_BUTTON = new RedwoodButton("redwood_button");
+	public static final Block REDWOOD_FENCE = new RedwoodFence("redwood_fence");
+	public static final Block REDWOOD_GATE = new RedwoodFenceGate("redwood_fence_gate");
 
-	public static final Block REDWOOD_STAIRS = new RedWoodStairs("redwood_stairs", REDWOODPLANKS.getDefaultState());
-	public static final RedWoodHalfSlab REDWOOD_SLAB_HALF = new RedWoodHalfSlab("redwood_slab_half", Material.WOOD);
-	public static final RedWoodDoubleSlab REDWOOD_SLAB_DOUBLE = new RedWoodDoubleSlab("redwood_slab_double", Material.WOOD);
+	public static final Block BIRCH_EYE_SAPLING = new BirchEyeSapling("birch_eye_sapling");
+	public static final Block BIRCH_EYE_EVIL_SAPLING = new BirchEyeEvilSapling("birch_eye_evil_sapling");
+	public static final Block BIRCH_EYE_LEAVES = new GravityFallsLeaves("birch_eye_leaves", BlockInit.BIRCH_EYE_SAPLING);
+	public static final Block BIRCH_EYE_EVIL_LEAVES = new GravityFallsLeaves("birch_eye_evil_leaves", BlockInit.BIRCH_EYE_EVIL_SAPLING);
+
+
+	public static final Block REDWOOD_STAIRS = new RedwoodStairs("redwood_stairs", REDWOOD_PLANKS.getDefaultState());
+	public static final BlockSlab REDWOOD_SLAB_DOUBLE = new DoubleSlab("redwood_slab_double", Material.WOOD);
+	public static final BlockSlab REDWOOD_SLAB_HALF = new HalfSlab("redwood_slab_half", Material.WOOD, BlockInit.REDWOOD_SLAB_DOUBLE);
 	
+	/*
 	public static void register()
 	{
 		registerBlock(REDWOOD_SLAB_HALF, new ItemSlab(REDWOODPLANKS, REDWOOD_SLAB_HALF, REDWOOD_SLAB_DOUBLE));
 		ForgeRegistries.BLOCKS.register(REDWOOD_SLAB_DOUBLE);
-
 	}
+	*/
 
 	public static void registerBlock(Block block, ItemSlab itemBlock)
 	{

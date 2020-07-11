@@ -3,10 +3,12 @@ package handlers;
 import net.minecraftforge.fml.common.registry.GameRegistry;
 import tileEntities.TileEntityBlockTeleporter;
 import tileEntities.TileEntityBook2;
+import tileEntities.TileEntityCipherWheel;
 import tileEntities.TileEntityComputer;
 import tileEntities.TileEntityCryogenicTube;
 import tileEntities.TileEntityCrystal;
 import tileEntities.TileEntityCursedDoor;
+import tileEntities.TileEntityFordWorkbench;
 import tileEntities.TileEntityLightSource;
 import tileEntities.TileEntityPortalLever;
 import tileEntities.TileEntityUraniumFurnace;
@@ -24,5 +26,8 @@ public class TileEntityHandler
 		GameRegistry.registerTileEntity(TileEntityCryogenicTube.class, "cryogenic_tube");
 		GameRegistry.registerTileEntity(TileEntityCrystal.class, "crystal");
 		GameRegistry.registerTileEntity(TileEntityBook2.class, "book2");
+		GameRegistry.registerTileEntity(TileEntityFordWorkbench.class, "ford_workbench");
+		GameRegistry.registerTileEntity(TileEntityCipherWheel.class, "cipher_wheel");
+
 	}
 }

@@ -1,27 +1,33 @@
 package handlers;
 
 import commands.CommandDimensionTeleport;
-import compatibilities.CapabilitiesHandler;
+import dimensions.DimensionTheFuture;
 import entity.EntityRegistry;
-import init.AttachAttributes;
 import init.BiomeInit;
 import init.BlockInit;
 import init.DimensionInit;
 import init.ItemInit;
 import init.PotionInit;
 import items.QuantumDestabilizer;
+import main.ConfigHandler;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.SoundEventAccessor;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.MobEffects;
 import net.minecraft.item.Item;
+import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.FOVUpdateEvent;
 import net.minecraftforge.client.event.ModelRegistryEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.Mod.EventBusSubscriber;
 import net.minecraftforge.fml.common.event.FMLServerStartingEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -30,17 +36,13 @@ import net.minecraftforge.fml.common.registry.GameRegistry;
 import proxy.ClientProxy;
 import updates.GlobnarUpdate;
 import updates.PlayerUpdate;
-import updates.RaiseDeadUpdate;
 import updates.WeirdmageddonEvent;
 import worldgen.WorldGenCustomStructures;
 import worldgen.WorldGenOres;
 
-
 @EventBusSubscriber
 public class RegistryHandler 
 {
-	public static WorldGenCustomStructures structures = null;
-	public static WorldGenOres ores = null;
 	public static boolean weirdmageddon = false;
 	private static boolean endEvent = false;
 
@@ -78,44 +80,6 @@ public class RegistryHandler
 		}
 	}
 
-
-	public static void preInitRegistries()
-	{
-		PotionInit.registerPotions();
-
-		DimensionInit.registerDimensions();
-		BiomeInit.registerBiomes();
-
-		EntityRegistry.registerEntities();
-		RenderHandler.registerEntityRenders();
-
-		ClientProxy.registerKeyBinds();
-	}
-
-	public static void initRegistries()
-	{
-		SoundsHandler.registerSounds();
-		NetworkRegistry.INSTANCE.registerGuiHandler(GravityFalls.instance, new GuiHandler());
-	}
-
-
-	public static void generationRegistries()
-	{
-		//GameRegistry.registerWorldGenerator(new WorldGenTrees(), 0);
-
-		structures = new WorldGenCustomStructures();
-		ores = new WorldGenOres();
-
-		GameRegistry.registerWorldGenerator(ores, 0);
-		GameRegistry.registerWorldGenerator(structures, 1);
-	}
-
-	public static void serverRegistries(FMLServerStartingEvent event)
-	{
-		event.registerServerCommand(new CommandDimensionTeleport());
-		//event.registerServerCommand(new CommandLocate2());
-	}
-
 	@SubscribeEvent
 	public static void onLivingUpdateEvent(LivingEvent.LivingUpdateEvent event)
 	{		
@@ -147,6 +111,28 @@ public class RegistryHandler
 		if(endEvent) {
 			WeirdmageddonEvent.endEvent(event.getEntity().world);
 			endEvent = false;
+		}
+	}
+
+	@SubscribeEvent
+	public static void onFutureLoadEvent(WorldEvent.Load event)
+	{		
+		World world = event.getWorld();
+		if(world.provider.getDimension() == ConfigHandler.THE_FUTURE) {		
+			DimensionTheFuture.babySpawned = false;
+			GlobnarUpdate.messageSent = false;
+			GlobnarUpdate.recievedTimeWish = false;
+		}
+	}
+
+	@SubscribeEvent
+	public static void onFutureUnLoadEvent(WorldEvent.Unload event)
+	{	
+		World world = event.getWorld();
+		if(world.provider.getDimension() == ConfigHandler.THE_FUTURE) {		
+			DimensionTheFuture.babySpawned = false;
+			GlobnarUpdate.messageSent = false;
+			GlobnarUpdate.recievedTimeWish = false;
 		}
 	}
 

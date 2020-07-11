@@ -6,6 +6,7 @@ import java.util.UUID;
 import javax.annotation.Nullable;
 
 import init.PotionInit;
+import io.netty.buffer.ByteBuf;
 import main.Reference;
 import models.ModelBill;
 import models.ModelEightBall;
@@ -21,22 +22,19 @@ import models.ModelTimeCopLolph;
 import models.ModelUnicorn;
 import net.minecraft.block.Block;
 import net.minecraft.client.model.ModelBase;
-import net.minecraft.client.model.ModelBat;
 import net.minecraft.client.model.ModelBlaze;
 import net.minecraft.client.model.ModelChicken;
 import net.minecraft.client.model.ModelCow;
 import net.minecraft.client.model.ModelCreeper;
 import net.minecraft.client.model.ModelEnderman;
-import net.minecraft.client.model.ModelEvokerFangs;
 import net.minecraft.client.model.ModelGhast;
-import net.minecraft.client.model.ModelHorse;
 import net.minecraft.client.model.ModelLlama;
+import net.minecraft.client.model.ModelMagmaCube;
 import net.minecraft.client.model.ModelOcelot;
 import net.minecraft.client.model.ModelParrot;
 import net.minecraft.client.model.ModelPig;
 import net.minecraft.client.model.ModelPlayer;
 import net.minecraft.client.model.ModelRabbit;
-import net.minecraft.client.model.ModelSheep1;
 import net.minecraft.client.model.ModelShulker;
 import net.minecraft.client.model.ModelSkeleton;
 import net.minecraft.client.model.ModelSlime;
@@ -45,7 +43,6 @@ import net.minecraft.client.model.ModelSquid;
 import net.minecraft.client.model.ModelVex;
 import net.minecraft.client.model.ModelVillager;
 import net.minecraft.client.model.ModelWither;
-import net.minecraft.client.model.ModelWolf;
 import net.minecraft.client.model.ModelZombie;
 import net.minecraft.client.model.ModelZombieVillager;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -69,45 +66,48 @@ import net.minecraft.entity.boss.EntityWither;
 import net.minecraft.entity.monster.EntityBlaze;
 import net.minecraft.entity.monster.EntityCreeper;
 import net.minecraft.entity.monster.EntityEnderman;
-import net.minecraft.entity.monster.EntityEvoker;
 import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityMagmaCube;
 import net.minecraft.entity.monster.EntityPigZombie;
 import net.minecraft.entity.monster.EntityShulker;
+import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.entity.monster.EntitySlime;
 import net.minecraft.entity.monster.EntitySpider;
 import net.minecraft.entity.monster.EntityVex;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.monster.EntityZombieVillager;
-import net.minecraft.entity.monster.IMob;
 import net.minecraft.entity.passive.EntityAnimal;
-import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.entity.passive.EntityChicken;
 import net.minecraft.entity.passive.EntityCow;
-import net.minecraft.entity.passive.EntityHorse;
 import net.minecraft.entity.passive.EntityLlama;
 import net.minecraft.entity.passive.EntityOcelot;
 import net.minecraft.entity.passive.EntityParrot;
 import net.minecraft.entity.passive.EntityPig;
 import net.minecraft.entity.passive.EntityRabbit;
-import net.minecraft.entity.passive.EntitySheep;
 import net.minecraft.entity.passive.EntitySquid;
 import net.minecraft.entity.passive.EntityVillager;
-import net.minecraft.entity.passive.EntityWolf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.DamageSource;
+import net.minecraft.util.EnumParticleTypes;
 import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
+import network.MessageShapeShifterModel;
+import network.MessageShapeShifterUpdate;
+import network.Messages;
 
-public class EntityShapeShifter extends EntityAnimal
+public class EntityShapeShifter extends EntityAnimal implements IEntityAdditionalSpawnData
 {	
 	public ModelBase currentModel = new ModelShapeShifter();
 	public String texture = Reference.MODID + ":textures/entity/shapeshifter.png";
@@ -115,26 +115,29 @@ public class EntityShapeShifter extends EntityAnimal
 	public EntityLivingBase currentEntity = this;
 
 	public EntityList entityList = new EntityList();
-	public boolean hasPlayer = false;
 
 	private int angerLevel;
 	private UUID angerTargetUUID;
 
+	//Flying creature stuff
+	private BlockPos spawnPosition;
+
+
 	public EntityShapeShifter(World par1World)
 	{
 		super(par1World);
-		this.setSize(0.8F, 1.8F);
+		this.setSize(1.8F, 2.8F);
 		this.experienceValue = 40;
-		this.stepHeight = 2;
+		this.stepHeight = 1;
 		entityList.add(this);
 	}
-	
+
 	public EntityShapeShifter(World par1World, double x, double y, double z)
 	{
 		super(par1World);
-		this.setSize(0.8F, 1.8F);
+		this.setSize(1.8F, 2.8F);
 		this.experienceValue = 40;
-		this.stepHeight = 2;
+		this.stepHeight = 1;
 		this.setPosition(x, y, z);
 	}
 
@@ -143,14 +146,14 @@ public class EntityShapeShifter extends EntityAnimal
 	{
 		this.tasks.addTask(1, new EntityAISwimming(this));
 		this.tasks.addTask(2, new EntityAIAttackMelee(this, 1.0D, true));
-		this.tasks.addTask(3, new EntityAITempt(this, 1.25D, Items.POTATO, false));
-		this.tasks.addTask(4, new EntityAIFollowParent(this, 1.25D));
-		this.tasks.addTask(6, new EntityAIMate(this, 1.0D));
+		this.tasks.addTask(3, new EntityAIMate(this, 1.0D));
+		this.tasks.addTask(4, new EntityAITempt(this, 1.25D, Items.POTATO, false));
+		this.tasks.addTask(5, new EntityAIFollowParent(this, 1.25D));
 		this.tasks.addTask(7, new EntityAIMoveTowardsRestriction(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWanderAvoidWater(this, 1.0D));
 		this.tasks.addTask(8, new EntityAIWatchClosest(this, EntityPlayer.class, 8.0F));
 		this.tasks.addTask(8, new EntityAILookIdle(this));
-		 
+
 		this.applyEntityAI();
 	}
 
@@ -189,7 +192,6 @@ public class EntityShapeShifter extends EntityAnimal
 	/**
 	 * Called when the entity is attacked.
 	 */
-
 	@Override
 	public boolean attackEntityFrom(DamageSource source, float amount)
 	{
@@ -198,77 +200,105 @@ public class EntityShapeShifter extends EntityAnimal
 
 	@Override
 	public boolean attackEntityAsMob(Entity entityIn)
-    {
-        float f = (float)this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
-        int i = 0;
+	{
+		float f = (float)this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).getAttributeValue();
+		int i = 0;
 
-        if (entityIn instanceof EntityLivingBase)
-        {
-            f += EnchantmentHelper.getModifierForCreature(this.getHeldItemMainhand(), ((EntityLivingBase)entityIn).getCreatureAttribute());
-            i += EnchantmentHelper.getKnockbackModifier(this);
-        }
+		if (entityIn instanceof EntityLivingBase)
+		{
+			f += EnchantmentHelper.getModifierForCreature(this.getHeldItemMainhand(), ((EntityLivingBase)entityIn).getCreatureAttribute());
+			i += EnchantmentHelper.getKnockbackModifier(this);
+		}
 
-        boolean flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), f);
+		boolean flag = entityIn.attackEntityFrom(DamageSource.causeMobDamage(this), f);
 
-        if (flag)
-        {
-            if (i > 0 && entityIn instanceof EntityLivingBase)
-            {
-                ((EntityLivingBase)entityIn).knockBack(this, (float)i * 0.5F, (double)MathHelper.sin(this.rotationYaw * 0.017453292F), (double)(-MathHelper.cos(this.rotationYaw * 0.017453292F)));
-                this.motionX *= 0.6D;
-                this.motionZ *= 0.6D;
-            }
+		if (flag)
+		{
+			if (i > 0 && entityIn instanceof EntityLivingBase)
+			{
+				((EntityLivingBase)entityIn).knockBack(this, (float)i * 0.5F, (double)MathHelper.sin(this.rotationYaw * 0.017453292F), (double)(-MathHelper.cos(this.rotationYaw * 0.017453292F)));
+				this.motionX *= 0.6D;
+				this.motionZ *= 0.6D;
+			}
 
-            int j = EnchantmentHelper.getFireAspectModifier(this);
+			int j = EnchantmentHelper.getFireAspectModifier(this);
 
-            if (j > 0)
-            {
-                entityIn.setFire(j * 4);
-            }
+			if (j > 0)
+			{
+				entityIn.setFire(j * 4);
+			}
 
-            if (entityIn instanceof EntityPlayer)
-            {
-                EntityPlayer entityplayer = (EntityPlayer)entityIn;
-                ItemStack itemstack = this.getHeldItemMainhand();
-                ItemStack itemstack1 = entityplayer.isHandActive() ? entityplayer.getActiveItemStack() : ItemStack.EMPTY;
+			if (entityIn instanceof EntityPlayer)
+			{
+				EntityPlayer entityplayer = (EntityPlayer)entityIn;
+				ItemStack itemstack = this.getHeldItemMainhand();
+				ItemStack itemstack1 = entityplayer.isHandActive() ? entityplayer.getActiveItemStack() : ItemStack.EMPTY;
 
-                if (!itemstack.isEmpty() && !itemstack1.isEmpty() && itemstack.getItem().canDisableShield(itemstack, itemstack1, entityplayer, this) && itemstack1.getItem().isShield(itemstack1, entityplayer))
-                {
-                    float f1 = 0.25F + (float)EnchantmentHelper.getEfficiencyModifier(this) * 0.05F;
+				if (!itemstack.isEmpty() && !itemstack1.isEmpty() && itemstack.getItem().canDisableShield(itemstack, itemstack1, entityplayer, this) && itemstack1.getItem().isShield(itemstack1, entityplayer))
+				{
+					float f1 = 0.25F + (float)EnchantmentHelper.getEfficiencyModifier(this) * 0.05F;
 
-                    if (this.rand.nextFloat() < f1)
-                    {
-                        entityplayer.getCooldownTracker().setCooldown(itemstack1.getItem(), 100);
-                        this.world.setEntityState(entityplayer, (byte)30);
-                    }
-                }
-            }
+					if (this.rand.nextFloat() < f1)
+					{
+						entityplayer.getCooldownTracker().setCooldown(itemstack1.getItem(), 100);
+						this.world.setEntityState(entityplayer, (byte)30);
+					}
+				}
+			}
 
-            this.applyEnchantments(this, entityIn);
-        }
+			this.applyEnchantments(this, entityIn);
+		}
 
-        return flag;
-    }
-	@Override
-	public boolean canBreatheUnderwater() {
-		return currentEntity instanceof EntitySquid;
+		return flag;
 	}
 
-	private void setEntity(EntityLivingBase entity) {
-
-		if(!(entity instanceof EntityPigZombie))
-			this.setSize(entity.width, entity.height);
+	public void setEntity(EntityLivingBase entity) {
 
 		if(this.isPotionActive(PotionInit.GROWTH_EFFECT))
 			this.removePotionEffect(PotionInit.GROWTH_EFFECT);
+		if(this.isPotionActive(PotionInit.SHAPESHIFTER_EFFECT))
+			this.removePotionEffect(PotionInit.SHAPESHIFTER_EFFECT);
+
+		if(entity instanceof EntitySilverfish || entity instanceof EntityPigZombie) {
+			this.setSize(0.8F, 1.8F);
+			this.height = 1.8F;
+			this.width = 0.8F;
+		}
+		else if(entity instanceof EntitySlime) {
+			this.setSize(0.51F, 0.51F);
+			this.height = 0.51F;
+			this.width = 0.51F;
+		}
+		else {
+			this.setSize(entity.width, entity.height);
+			this.height = entity.height;
+			this.width = entity.width;
+		}
+
+		if(entity instanceof EntityPigZombie)
+			texture = "minecraft:textures/entity/zombie_pigman.png";
+		else if(entity instanceof EntityZombie)
+			texture = "minecraft:textures/entity/zombie/zombie.png";
+
+		this.addPotionEffect(new PotionEffect(PotionInit.SHAPESHIFTER_EFFECT, 999999, (int)(this.height - 2.8F) * 100, true, false));
 
 		currentEntity = entity;
 
-		currentModel.isChild = this.isChild();
+		if(!world.isRemote) {
+
+			Messages.INSTANCE.sendToAllTracking(new MessageShapeShifterUpdate(entityToInt(currentEntity), this.posX, this.posY, this.posZ), new TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 100));
+			Messages.INSTANCE.sendToAllTracking(new MessageShapeShifterModel(modelToInt(currentModel), this.posX, this.posY, this.posZ), new TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 100));
+		}
 	}
 
 	@Override
 	public void onUpdate() {
+		if(currentEntity instanceof EntityVex)
+			this.noClip = true;
+
+		super.onUpdate();
+
+		this.noClip = false;
 
 		this.updateArmSwingProgress();
 		float f = this.getBrightness();
@@ -296,61 +326,272 @@ public class EntityShapeShifter extends EntityAnimal
 					this.setHealth(this.getHealth() + 1);
 			}
 		}
+
 		if(world.getWorldTime() % 5 == 0) {
 			addEntity();
-			defence();
+			defence();	
+
+			if(world.getWorldTime() % 4 == 0)
+				findEntity();
+
+			if(!world.isRemote) {
+
+				Messages.INSTANCE.sendToAllTracking(new MessageShapeShifterUpdate(entityToInt(currentEntity), this.posX, this.posY, this.posZ), new TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 100));
+				Messages.INSTANCE.sendToAllTracking(new MessageShapeShifterModel(modelToInt(currentModel), this.posX, this.posY, this.posZ), new TargetPoint(this.dimension, this.posX, this.posY, this.posZ, 100));
+			}
 		}
 
-		if(currentEntity instanceof EntityEyeBat || currentEntity instanceof EntityEyeBatHuge || currentEntity instanceof EntityBat)
+		if(currentEntity instanceof EntityEyeBat || currentEntity instanceof EntityEyeBatHuge || currentEntity instanceof EntityVex || currentEntity instanceof EntityGhast || currentEntity instanceof EntityWither || currentEntity instanceof EntityBlaze || currentEntity instanceof EntityParrot)
 			this.motionY *= 0.6000000238418579D;
+		else if(currentEntity instanceof EntityEnderman) {
+			if(this.world.isRemote)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					this.world.spawnParticle(EnumParticleTypes.PORTAL, this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width, this.posY + this.rand.nextDouble() * (double)this.height - 0.25D, this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, (this.rand.nextDouble() - 0.5D) * 2.0D, -this.rand.nextDouble(), (this.rand.nextDouble() - 0.5D) * 2.0D);
+				}
+			}
+			if (this.isWet())
+			{
+				this.attackEntityFrom(DamageSource.DROWN, 1.0F);
 
+				if(world.getWorldTime() % 2 == 0)
+					this.changeModel();
+				else
+					teleportRandomly();
+			}
+			if(world.getWorldTime() % 300 == 0)
+				teleportRandomly();
+		}
+		else if(currentEntity instanceof EntityBlaze) {
+			if (this.isWet())
+			{
+				this.attackEntityFrom(DamageSource.DROWN, 1.0F);
+				this.changeModel();
+			}
 
-		super.onUpdate();
+			if (this.world.isRemote)
+			{
+				for (int i = 0; i < 2; ++i)
+				{
+					this.world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, this.posX + (this.rand.nextDouble() - 0.5D) * (double)this.width, this.posY + this.rand.nextDouble() * (double)this.height, this.posZ + (this.rand.nextDouble() - 0.5D) * (double)this.width, 0.0D, 0.0D, 0.0D);
+					this.world.spawnParticle(EnumParticleTypes.SMOKE_LARGE, this.posX, this.posY, this.posZ, 0.0D, 0.0D, 0.0D);
+				}
+			}
+		}
+		else if(currentEntity instanceof EntityWither) {
+			for (int l = 0; l < 3; ++l)
+			{
+				double d10 = this.getHeadX(l);
+				double d2 = this.getHeadY(l);
+				double d4 = this.getHeadZ(l);
+				this.world.spawnParticle(EnumParticleTypes.SMOKE_NORMAL, d10 + this.rand.nextGaussian() * 0.30000001192092896D, d2 + this.rand.nextGaussian() * 0.30000001192092896D, d4 + this.rand.nextGaussian() * 0.30000001192092896D, 0.0D, 0.0D, 0.0D);
+
+				if (this.world.rand.nextInt(4) == 0)
+				{
+					this.world.spawnParticle(EnumParticleTypes.SPELL_MOB, d10 + this.rand.nextGaussian() * 0.30000001192092896D, d2 + this.rand.nextGaussian() * 0.30000001192092896D, d4 + this.rand.nextGaussian() * 0.30000001192092896D, 0.699999988079071D, 0.699999988079071D, 0.5D);
+				}
+			}
+		}
+		if(currentEntity instanceof EntityPigZombie || currentEntity instanceof EntityGhast || currentEntity instanceof EntityMagmaCube || currentEntity instanceof EntityWither || currentEntity instanceof EntityBlaze)
+			this.isImmuneToFire = true;
+		else
+			this.isImmuneToFire = false;
+
+		//Changes to another entity if suffocating
+		if(this.isEntityInsideOpaqueBlock()) {
+			if(entityList.containsEntity(new EntityVex(world))) {
+				currentModel = new ModelVex();
+				setEntity(new EntityVex(world));
+			}
+			else if(entityList.containsEntity(new EntityEnderman(world))) {
+				currentModel = new ModelEnderman(0);
+				setEntity(new EntityEnderman(world));
+				teleportRandomly();
+			}
+			else if(entityList.containsEntity(new EntitySlime(world))) {
+				currentModel = new ModelSlime(0);
+				setEntity(new EntitySlime(world));
+			}
+			else if(entityList.containsEntity(new EntityGnome(world))) {
+				currentModel = new ModelGnome();
+				setEntity(new EntityGnome(world));
+			}
+			else if(entityList.containsEntity(new EntityPig(world))) {
+				currentModel = new ModelPig();
+				setEntity(new EntityPig(world));
+			}
+			else if(entityList.containsEntity(new EntityRabbit(world))) {
+				currentModel = new ModelRabbit();
+				setEntity(new EntityRabbit(world));
+			}
+			else if(entityList.containsEntity(new EntityParrot(world))) {
+				currentModel = new ModelParrot();
+				setEntity(new EntityParrot(world));
+			}
+			else if(entityList.containsEntity(new EntityOcelot(world))) {
+				currentModel = new ModelOcelot();
+				setEntity(new EntityOcelot(world));
+			}
+			else if(entityList.containsEntity(new EntityKeyhole(world))) {
+				currentModel = new ModelKeyhole();
+				setEntity(new EntityKeyhole(world));
+			}
+			else if(entityList.containsEntity(new EntityMagmaCube(world))) {
+				currentModel = new ModelMagmaCube();
+				setEntity(new EntityMagmaCube(world));
+			}
+			else if(entityList.containsEntity(new EntityEyeBat(world))) {
+				currentModel = new ModelEyeBat();
+				setEntity(new EntityEyeBat(world));
+			}
+		}
 	}
 
-	private void findPlayer() {
+	private double getHeadX(int p_82214_1_)
+	{
+		if (p_82214_1_ <= 0)
+		{
+			return this.posX;
+		}
+		else
+		{
+			float f = (this.renderYawOffset + (float)(180 * (p_82214_1_ - 1))) * 0.017453292F;
+			float f1 = MathHelper.cos(f);
+			return this.posX + (double)f1 * 1.3D;
+		}
+	}
+
+	private double getHeadY(int p_82208_1_)
+	{
+		return p_82208_1_ <= 0 ? this.posY + 3.0D : this.posY + 2.2D;
+	}
+
+	private double getHeadZ(int p_82213_1_)
+	{
+		if (p_82213_1_ <= 0)
+		{
+			return this.posZ;
+		}
+		else
+		{
+			float f = (this.renderYawOffset + (float)(180 * (p_82213_1_ - 1))) * 0.017453292F;
+			float f1 = MathHelper.sin(f);
+			return this.posZ + (double)f1 * 1.3D;
+		}
+	}
+
+	@Override
+	protected void updateAITasks() {
+		super.updateAITasks();
+
+		if(currentEntity instanceof EntityEyeBat || currentEntity instanceof EntityEyeBatHuge || currentEntity instanceof EntityVex || currentEntity instanceof EntityGhast || currentEntity instanceof EntityWither || currentEntity instanceof EntityBlaze || currentEntity instanceof EntityParrot)
+		{
+			if (this.spawnPosition != null && (!this.world.isAirBlock(this.spawnPosition) || this.spawnPosition.getY() < 1))
+			{
+				this.spawnPosition = null;
+			}
+
+			if (this.spawnPosition == null || this.rand.nextInt(30) == 0 || this.spawnPosition.distanceSq((double)((int)this.posX), (double)((int)this.posY), (double)((int)this.posZ)) < 4.0D)
+			{
+				this.spawnPosition = new BlockPos((int)this.posX + this.rand.nextInt(7) - this.rand.nextInt(7), (int)this.posY + this.rand.nextInt(6) - 2, (int)this.posZ + this.rand.nextInt(7) - this.rand.nextInt(7));
+			}
+
+			double d0 = (double)this.spawnPosition.getX() + 0.5D - this.posX;
+			double d1 = (double)this.spawnPosition.getY() + 0.1D - this.posY;
+			double d2 = (double)this.spawnPosition.getZ() + 0.5D - this.posZ;
+			this.motionX += (Math.signum(d0) * 0.5D - this.motionX) * 0.10000000149011612D;
+			this.motionY += (Math.signum(d1) * 0.699999988079071D - this.motionY) * 0.10000000149011612D;
+			this.motionZ += (Math.signum(d2) * 0.5D - this.motionZ) * 0.10000000149011612D;
+			float f = (float)(MathHelper.atan2(this.motionZ, this.motionX) * (180D / Math.PI)) - 90.0F;
+			float f1 = MathHelper.wrapDegrees(f - this.rotationYaw);
+			this.moveForward = 0.5F;
+			this.rotationYaw += f1;
+		}
+	}
+
+	protected boolean teleportRandomly()
+	{
+		double d0 = this.posX + (this.rand.nextDouble() - 0.5D) * 64.0D;
+		double d1 = this.posY + (double)(this.rand.nextInt(64) - 32);
+		double d2 = this.posZ + (this.rand.nextDouble() - 0.5D) * 64.0D;
+		return this.teleportTo(d0, d1, d2);
+	}
+
+	private boolean teleportTo(double x, double y, double z)
+	{
+		net.minecraftforge.event.entity.living.EnderTeleportEvent event = new net.minecraftforge.event.entity.living.EnderTeleportEvent(this, x, y, z, 0);
+		if (net.minecraftforge.common.MinecraftForge.EVENT_BUS.post(event)) return false;
+		boolean flag = this.attemptTeleport(event.getTargetX(), event.getTargetY(), event.getTargetZ());
+
+		if (flag)
+		{
+			this.world.playSound((EntityPlayer)null, this.prevPosX, this.prevPosY, this.prevPosZ, SoundEvents.ENTITY_ENDERMEN_TELEPORT, this.getSoundCategory(), 1.0F, 1.0F);
+			this.playSound(SoundEvents.ENTITY_ENDERMEN_TELEPORT, 1.0F, 1.0F);
+		}
+
+		return flag;
+	}
+
+	private void findEntity() {
 		int x = (int) this.posX;
 		int y = (int) this.posY;
 		int z = (int) this.posZ;
 
-		AxisAlignedBB bb = new AxisAlignedBB(x - 5, y - 5, z - 5, x + 5, y + 5, z + 5);
+		AxisAlignedBB bb = new AxisAlignedBB(x - 3, y - 3, z - 3, x + 3, y + 3, z + 3);
 
 		List<Entity> list = world.getEntitiesWithinAABBExcludingEntity(this, bb);
 
 		for(Entity entity : list) {
-			if(entity instanceof EntityPlayer) {
-				EntityPlayer player = (EntityPlayer) entity;
-				hasPlayer = true;
-				currentModel = new ModelPlayer(0, true);
+			if(entity instanceof EntityLivingBase) {
+				EntityLivingBase entityLiving = (EntityLivingBase) entity;
 
-				setEntity(player);
+				entityList.add(entityLiving);
 			}
 		}
 	}
 
+	public boolean isBurning()
+	{
+		boolean flag = this.world != null;
+		return !this.isImmuneToFire && (flag && this.getFlag(0));
+	}
+
 	private void defence() {
-		if(entityList.containsEntity(new EntityPigZombie(world))) {
-			if(this.isBurning()) {
-				currentModel = new ModelZombie(1, true);
+		if(this.isBurning()) {
+			if(entityList.containsEntity(new EntityPigZombie(world))) {
+				currentModel = new ModelZombie();
 				texture = "minecraft:textures/entity/zombie_pigman.png";
-				currentEntity = new EntityPigZombie(world);
-
-				currentModel.isChild = this.isChild();
-				this.isImmuneToFire = true;
-			}	
+				setEntity(new EntityPigZombie(world));
+			}
+			else if(entityList.containsEntity(new EntityMagmaCube(world))) {
+				currentModel = new ModelMagmaCube();
+				setEntity(new EntityMagmaCube(world));
+			}
+			else if(entityList.containsEntity(new EntityBlaze(world))) {
+				currentModel = new ModelBlaze();
+				setEntity(new EntityBlaze(world));
+			}
+			else if(entityList.containsEntity(new EntityGhast(world))) {
+				currentModel = new ModelGhast();
+				setEntity(new EntityGhast(world));
+			}
+			else if(entityList.containsEntity(new EntityWither(world))) {
+				currentModel = new ModelWither(0);
+				setEntity(new EntityWither(world));
+			}
 		}
-		else
-			this.isImmuneToFire = false;
-
-
 		if(inWater) {
 			if(entityList.containsEntity(new EntitySquid(world))) {
 				currentModel = new ModelSquid();
-				currentEntity = new EntitySquid(world);
-
-				currentModel.isChild = this.isChild();
+				setEntity(new EntitySquid(world));
 			}
 		}
+	}
+
+	@Override
+	public boolean canBreatheUnderwater() {
+		return currentEntity instanceof EntitySquid;
 	}
 
 	public EntityLivingBase addEntity()
@@ -363,7 +604,7 @@ public class EntityShapeShifter extends EntityAnimal
 		List<Entity> list = null;
 		EntityLivingBase closestEntity = null;
 
-		for(int f = 1; f <= 25; f++)
+		for(int f = 0; f <= 25; f++)
 		{
 			double x = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 			double y = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
@@ -384,10 +625,9 @@ public class EntityShapeShifter extends EntityAnimal
 			{
 				Entity entity = list.get(j);
 
-				if(entity instanceof EntityPlayer) {
-					hasPlayer = true;
-				}
-				if(entity instanceof EntityLivingBase)
+				if(entity instanceof EntityPlayer)
+					entityList.add(new EntitySilverfish(world));
+				else if(entity instanceof EntityLivingBase)
 				{
 					EntityLivingBase entityLiving = (EntityLivingBase) entity;
 
@@ -409,7 +649,9 @@ public class EntityShapeShifter extends EntityAnimal
 		if(!entityList.isEmpty()) {
 			EntityLivingBase entity = getEntity();
 
-			if(entity instanceof EntityBill)
+			if(entity instanceof EntitySilverfish)
+				currentModel = new ModelPlayer(0.0F, true);
+			else if(entity instanceof EntityBill)
 				currentModel = new ModelBill();
 			else if(entity instanceof EntityEightBall)
 				currentModel = new ModelEightBall();
@@ -425,18 +667,8 @@ public class EntityShapeShifter extends EntityAnimal
 				currentModel = new ModelKeyhole();
 			else if(entity instanceof EntityTimeBaby)
 				currentModel = new ModelTimeBaby();
-			else if(entity instanceof EntityTimeCopDundgren)
-				currentModel = new ModelTimeCopDundgren();
-			else if(entity instanceof EntityTimeCopLolph)
-				currentModel = new ModelTimeCopLolph();
 			else if(entity instanceof EntityUnicorn)
 				currentModel = new ModelUnicorn();
-
-			if(hasPlayer)
-				currentModel = new ModelPlayer(0.0F, true);
-
-			else if(entity instanceof EntityBat)
-				currentModel = new ModelBat();
 			else if(entity instanceof EntityBlaze)
 				currentModel = new ModelBlaze();
 			else if(entity instanceof EntityChicken)
@@ -449,10 +681,6 @@ public class EntityShapeShifter extends EntityAnimal
 				currentModel = new ModelEnderman(0);
 			else if(entity instanceof EntityGhast)
 				currentModel = new ModelGhast();
-			else if(entity instanceof EntityHorse)
-				currentModel = new ModelHorse();
-			else if(entity instanceof EntityEvoker)
-				currentModel = new ModelEvokerFangs();
 			else if(entity instanceof EntityVex)
 				currentModel = new ModelVex();
 			else if(entity instanceof EntityOcelot)
@@ -465,8 +693,6 @@ public class EntityShapeShifter extends EntityAnimal
 				currentModel = new ModelPig();
 			else if(entity instanceof EntityRabbit)
 				currentModel = new ModelRabbit();
-			else if(entity instanceof EntitySheep)
-				currentModel = new ModelSheep1();
 			else if(entity instanceof EntityShulker)
 				currentModel = new ModelShulker();
 			else if(entity instanceof EntitySkeleton)
@@ -481,8 +707,6 @@ public class EntityShapeShifter extends EntityAnimal
 				currentModel = new ModelVillager(0);
 			else if(entity instanceof EntityWither)
 				currentModel = new ModelWither(0);
-			else if(entity instanceof EntityWolf)
-				currentModel = new ModelWolf();
 			else if(entity instanceof EntityPigZombie) {
 				currentModel = new ModelZombie();
 				texture = "minecraft:textures/entity/zombie_pigman.png";
@@ -494,30 +718,29 @@ public class EntityShapeShifter extends EntityAnimal
 				currentModel = new ModelZombie();
 				texture = "minecraft:textures/entity/zombie/zombie.png";
 			}
+			else if(entity instanceof EntityMagmaCube)
+				currentModel = new ModelMagmaCube();
 			else {
 				entityList.remove(entity);
+				changeModel();
 				return;
 			}
-			//System.out.println("Model Changed");
-
-
 			setEntity(entity);
 
-			//this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(currentEntity.getAIMoveSpeed() * 1.2);
 		}
 		else {
 			currentModel = new ModelShapeShifter();
 			currentEntity = this;
-
-			if(this.isChild())
-				currentModel.isChild = true;
+			entityList.add(this);
 		}
 	}
 
 	private EntityLivingBase getEntity() {
 		int random = (int) (Math.random() * entityList.size());
-		if(entityList.get(random) != null)
+
+		if(entityList.get(random) != null) {
 			return entityList.get(random);
+		}
 		else {
 			entityList.remove(random);
 			return getEntity();
@@ -527,7 +750,8 @@ public class EntityShapeShifter extends EntityAnimal
 	@Override
 	public boolean hitByEntity(Entity entityIn) {
 
-		changeModel();
+		if((int)(Math.random() * 2) == 0)
+			changeModel();
 
 		return super.hitByEntity(entityIn);
 	}
@@ -537,7 +761,6 @@ public class EntityShapeShifter extends EntityAnimal
 	{
 		return true;
 	}
-
 
 	/**
 	 * (abstract) Protected helper method to write subclass entity data to NBT.
@@ -550,52 +773,43 @@ public class EntityShapeShifter extends EntityAnimal
 		compound.setShort("Anger", (short)this.angerLevel);
 
 		if (this.angerTargetUUID != null)
-		{
 			compound.setString("HurtBy", this.angerTargetUUID.toString());
-		}
 		else
-		{
 			compound.setString("HurtBy", "");
-		}
 
-		compound.setBoolean("bill", entityList.contains(new EntityCreeper(world)));
-		compound.setBoolean("eightball", entityList.contains(new EntityEightBall(world)));
-		compound.setBoolean("eyebat", entityList.contains(new EntityEyeBat(world)));
-		compound.setBoolean("eyebathuge", entityList.contains(new EntityEyeBatHuge(world)));
-		compound.setBoolean("gnome", entityList.contains(new EntityGnome(world)));
-		compound.setBoolean("hidebehind", entityList.contains(new EntityHideBehind(world)));
-		compound.setBoolean("keyhole", entityList.contains(new EntityKeyhole(world)));
-		compound.setBoolean("timebaby", entityList.contains(new EntityTimeBaby(world)));
-		compound.setBoolean("timecopdundgren", entityList.contains(new EntityTimeCopDundgren(world)));
-		compound.setBoolean("timecoplolph", entityList.contains(new EntityTimeCopLolph(world)));
-		compound.setBoolean("unicorn", entityList.contains(new EntityUnicorn(world)));
+		compound.setBoolean("bill", entityList.containsEntity(new EntityCreeper(world)));
+		compound.setBoolean("eightball", entityList.containsEntity(new EntityEightBall(world)));
+		compound.setBoolean("eyebat", entityList.containsEntity(new EntityEyeBat(world)));
+		compound.setBoolean("eyebathuge", entityList.containsEntity(new EntityEyeBatHuge(world)));
+		compound.setBoolean("gnome", entityList.containsEntity(new EntityGnome(world)));
+		compound.setBoolean("hidebehind", entityList.containsEntity(new EntityHideBehind(world)));
+		compound.setBoolean("keyhole", entityList.containsEntity(new EntityKeyhole(world)));
+		compound.setBoolean("timebaby", entityList.containsEntity(new EntityTimeBaby(world)));
+		compound.setBoolean("unicorn", entityList.containsEntity(new EntityUnicorn(world)));
 
-		compound.setBoolean("bat", entityList.contains(new EntityBat(world)));
-		compound.setBoolean("blaze", entityList.contains(new EntityBlaze(world)));
-		compound.setBoolean("chicken", entityList.contains(new EntityChicken(world)));
-		compound.setBoolean("cow", entityList.contains(new EntityCow(world)));
-		compound.setBoolean("creeper", entityList.contains(new EntityCreeper(world)));
-		compound.setBoolean("enderman", entityList.contains(new EntityEnderman(world)));
-		compound.setBoolean("ghast", entityList.contains(new EntityGhast(world)));
-		compound.setBoolean("horse", entityList.contains(new EntityHorse(world)));
-		compound.setBoolean("evoker", entityList.contains(new EntityEvoker(world)));
-		compound.setBoolean("vex", entityList.contains(new EntityVex(world)));
-		compound.setBoolean("ocelot", entityList.contains(new EntityOcelot(world)));
-		compound.setBoolean("llama", entityList.contains(new EntityLlama(world)));
-		compound.setBoolean("parrot", entityList.contains(new EntityParrot(world)));
-		compound.setBoolean("pig", entityList.contains(new EntityPig(world)));
-		compound.setBoolean("rabbit", entityList.contains(new EntityRabbit(world)));
-		compound.setBoolean("sheep", entityList.contains(new EntitySheep(world)));
-		compound.setBoolean("shulker", entityList.contains(new EntityShulker(world)));
-		compound.setBoolean("skeleton", entityList.contains(new EntitySkeleton(world)));
-		compound.setBoolean("slime", entityList.contains(new EntitySlime(world)));
-		compound.setBoolean("spider", entityList.contains(new EntitySpider(world)));
-		compound.setBoolean("villager", entityList.contains(new EntityVillager(world)));
-		compound.setBoolean("wither", entityList.contains(new EntityWither(world)));
-		compound.setBoolean("wolf", entityList.contains(new EntityWolf(world)));
-		compound.setBoolean("pigzombie", entityList.contains(new EntityPigZombie(world)));
-		compound.setBoolean("zombievillager", entityList.contains(new EntityZombieVillager(world)));
-		compound.setBoolean("zombie", entityList.contains(new EntityZombie(world)));	
+		compound.setBoolean("blaze", entityList.containsEntity(new EntityBlaze(world)));
+		compound.setBoolean("chicken", entityList.containsEntity(new EntityChicken(world)));
+		compound.setBoolean("cow", entityList.containsEntity(new EntityCow(world)));
+		compound.setBoolean("creeper", entityList.containsEntity(new EntityCreeper(world)));
+		compound.setBoolean("enderman", entityList.containsEntity(new EntityEnderman(world)));
+		compound.setBoolean("ghast", entityList.containsEntity(new EntityGhast(world)));
+		compound.setBoolean("vex", entityList.containsEntity(new EntityVex(world)));
+		compound.setBoolean("ocelot", entityList.containsEntity(new EntityOcelot(world)));
+		compound.setBoolean("llama", entityList.containsEntity(new EntityLlama(world)));
+		compound.setBoolean("parrot", entityList.containsEntity(new EntityParrot(world)));
+		compound.setBoolean("pig", entityList.containsEntity(new EntityPig(world)));
+		compound.setBoolean("rabbit", entityList.containsEntity(new EntityRabbit(world)));
+		compound.setBoolean("shulker", entityList.containsEntity(new EntityShulker(world)));
+		compound.setBoolean("skeleton", entityList.containsEntity(new EntitySkeleton(world)));
+		compound.setBoolean("slime", entityList.containsEntity(new EntitySlime(world)));
+		compound.setBoolean("spider", entityList.containsEntity(new EntitySpider(world)));
+		compound.setBoolean("villager", entityList.containsEntity(new EntityVillager(world)));
+		compound.setBoolean("wither", entityList.containsEntity(new EntityWither(world)));
+		compound.setBoolean("pigzombie", entityList.containsEntity(new EntityPigZombie(world)));
+		compound.setBoolean("zombievillager", entityList.containsEntity(new EntityZombieVillager(world)));
+		compound.setBoolean("zombie", entityList.containsEntity(new EntityZombie(world)));	
+		compound.setBoolean("magmacube", entityList.containsEntity(new EntityMagmaCube(world)));	
+		compound.setBoolean("player", entityList.containsEntity(new EntitySilverfish(world)));	
 
 		compound.setString("currentEntity", currentEntity.toString().substring(0, currentEntity.toString().indexOf("[")).toLowerCase());
 	}
@@ -640,15 +854,9 @@ public class EntityShapeShifter extends EntityAnimal
 			entityList.add(new EntityKeyhole(world));
 		if(compound.getBoolean("timebaby")) 
 			entityList.add(new EntityTimeBaby(world));
-		if(compound.getBoolean("timecopdundgren")) 
-			entityList.add(new EntityTimeCopDundgren(world));
-		if(compound.getBoolean("timecoplolph")) 
-			entityList.add(new EntityTimeCopLolph(world));
 		if(compound.getBoolean("unicorn")) 
 			entityList.add(new EntityUnicorn(world));
 
-		if(compound.getBoolean("bat")) 
-			entityList.add(new EntityBat(world));
 		if(compound.getBoolean("blaze")) 
 			entityList.add(new EntityBlaze(world));
 		if(compound.getBoolean("chicken")) 
@@ -661,10 +869,6 @@ public class EntityShapeShifter extends EntityAnimal
 			entityList.add(new EntityEnderman(world));
 		if(compound.getBoolean("ghast")) 
 			entityList.add(new EntityGhast(world));
-		if(compound.getBoolean("horse")) 
-			entityList.add(new EntityHorse(world));
-		if(compound.getBoolean("evoker")) 
-			entityList.add(new EntityEvoker(world));
 		if(compound.getBoolean("vex"))
 			entityList.add(new EntityVex(world));
 		if(compound.getBoolean("ocelot")) 
@@ -677,8 +881,6 @@ public class EntityShapeShifter extends EntityAnimal
 			entityList.add(new EntityPig(world));
 		if(compound.getBoolean("rabbit")) 
 			entityList.add(new EntityRabbit(world));
-		if(compound.getBoolean("sheep")) 
-			entityList.add(new EntitySheep(world));
 		if(compound.getBoolean("shulker")) 
 			entityList.add(new EntityShulker(world));
 		if(compound.getBoolean("skeleton")) 
@@ -691,18 +893,22 @@ public class EntityShapeShifter extends EntityAnimal
 			entityList.add(new EntityVillager(world));
 		if(compound.getBoolean("wither")) 
 			entityList.add(new EntityWither(world));
-		if(compound.getBoolean("wolf")) 
-			entityList.add(new EntityWolf(world));
 		if(compound.getBoolean("pigzombie"))
 			entityList.add(new EntityPigZombie(world));
 		if(compound.getBoolean("zombievillager"))
 			entityList.add(new EntityZombieVillager(world));
 		if(compound.getBoolean("zombie"))
 			entityList.add(new EntityZombie(world));	
+		if(compound.getBoolean("magmacube"))
+			entityList.add(new EntityMagmaCube(world));	
+		if(compound.getBoolean("player"))
+			entityList.add(new EntitySilverfish(world));	
 
 
+		String string = "";
+		if(compound.hasKey("currentEntity"))
+			string = compound.getString("currentEntity").substring(6);
 
-		String string = compound.getString("currentEntity");
 
 		if(string.equals("bill")) {
 			currentEntity = new EntityShapeShifter(world);
@@ -736,22 +942,9 @@ public class EntityShapeShifter extends EntityAnimal
 			currentEntity = new EntityTimeBaby(world);
 			currentModel = new ModelTimeBaby();
 		}
-		else if(string.equals("timecopdundgren")) {
-			currentEntity = new EntityTimeCopDundgren(world);
-			currentModel = new ModelTimeCopDundgren();
-		}
-		else if(string.equals("timecoplolph")) {
-			currentEntity = new EntityTimeCopLolph(world);
-			currentModel = new ModelTimeCopLolph();
-		}
 		else if(string.equals("unicorn")) {
 			currentEntity = new EntityUnicorn(world);
 			currentModel = new ModelUnicorn();
-		}
-
-		else if(string.equals("bat")) {
-			currentEntity = new EntityBat(world);
-			currentModel = new ModelBat();
 		}
 		else if(string.equals("blaze")) {
 			currentEntity = new EntityBlaze(world);
@@ -777,14 +970,6 @@ public class EntityShapeShifter extends EntityAnimal
 			currentEntity = new EntityGhast(world);
 			currentModel = new ModelGhast();
 		}
-		else if(string.equals("horse")) {
-			currentEntity = new EntityHorse(world);
-			currentModel = new ModelHorse();
-		}
-		else if(string.equals("evoker")) {
-			currentEntity = new EntityEvoker(world);
-			currentModel = new ModelEvokerFangs();
-		}
 		else if(string.equals("vex")) {
 			currentEntity = new EntityVex(world);
 			currentModel = new ModelVex();
@@ -808,10 +993,6 @@ public class EntityShapeShifter extends EntityAnimal
 		else if(string.equals("rabbit")) {
 			currentEntity = new EntityRabbit(world);
 			currentModel = new ModelRabbit();
-		}
-		else if(string.equals("sheep")) {
-			currentEntity = new EntitySheep(world);
-			currentModel = new ModelSheep1();
 		}
 		else if(string.equals("shulker")) {
 			currentEntity = new EntityShulker(world);
@@ -837,10 +1018,6 @@ public class EntityShapeShifter extends EntityAnimal
 			currentEntity = new EntityWither(world);
 			currentModel = new ModelWither(0);
 		}
-		else if(string.equals("wolf")) {
-			currentEntity = new EntityWolf(world);
-			currentModel = new ModelWolf();
-		}
 		else if(string.equals("pigzombie")) {
 			currentEntity = new EntityPigZombie(world);
 			currentModel = new ModelZombie();
@@ -856,15 +1033,17 @@ public class EntityShapeShifter extends EntityAnimal
 			currentModel = new ModelZombie();
 			texture = "minecraft:textures/entity/zombie.png";
 		}
-
-		if(currentEntity != null && !(currentEntity instanceof EntityPigZombie)) {
-			this.setSize(currentEntity.width, currentEntity.height);
+		else if(string.equals("magmacube")) {
+			currentEntity = new EntityMagmaCube(world);
+			currentModel = new ModelMagmaCube();
+		}
+		else if(string.equals("silverfish")) {
+			currentEntity = new EntitySilverfish(world);
+			currentModel = new ModelPlayer(0.0F, true);
 		}
 
-		if(this.isPotionActive(PotionInit.GROWTH_EFFECT))
-			this.removePotionEffect(PotionInit.GROWTH_EFFECT);
+		setEntity(currentEntity);
 	}
-
 
 	@Override
 	protected SoundEvent getDeathSound() 
@@ -889,49 +1068,10 @@ public class EntityShapeShifter extends EntityAnimal
 		return SoundEvents.ENTITY_GENERIC_HURT;
 	}
 
-	/*
-	public boolean processInteract(EntityPlayer player, EnumHand hand)
-	{
-		ItemStack itemstack = player.getHeldItem(hand);
-
-		if (!this.isTamed() && itemstack.getItem() == Items.POTATO && !this.isAngry())
-		{
-			if (!player.capabilities.isCreativeMode)
-			{
-				itemstack.shrink(1);
-			}
-
-			if (!this.world.isRemote)
-			{
-				if (this.rand.nextInt(3) == 0 && !net.minecraftforge.event.ForgeEventFactory.onAnimalTame(this, player))
-				{
-					this.setOwnerId(player.getUniqueID());
-					//this.setTamedBy(player);
-					this.navigator.clearPath();
-					this.setAttackTarget((EntityLivingBase)null);
-					//this.setHealth(200.0F);
-					this.playTameEffect(true);
-					this.world.setEntityState(this, (byte)7);
-				}
-				else
-				{
-					this.playTameEffect(false);
-					this.world.setEntityState(this, (byte)6);
-				}
-			}
-
-			return true;
-		}
-
-		return super.processInteract(player, hand);
-	}
-	 */
-
 	@Override
 	public boolean isBreedingItem(ItemStack stack) {
 		return stack.getItem() == Items.POTATO;
 	}
-
 
 	static class AIHurtByAggressor extends EntityAIHurtByTarget
 	{
@@ -998,5 +1138,313 @@ public class EntityShapeShifter extends EntityAnimal
 		{
 			this.angerTargetUUID = livingBase.getUniqueID();
 		}
+	}
+
+	public int entityToInt(EntityLivingBase entity) {
+
+		if(entity instanceof EntitySilverfish)
+			return 0;
+		else if(entity instanceof EntityBill)
+			return 1;
+		else if(entity instanceof EntityBlaze)
+			return 2;
+		else if(entity instanceof EntityChicken)
+			return 3;
+		else if(entity instanceof EntityCow)
+			return 4;
+		else if(entity instanceof EntityCreeper)
+			return 5;
+		else if(entity instanceof EntityEightBall)
+			return 6;
+		else if(entity instanceof EntityEnderman)
+			return 7;
+		else if(entity instanceof EntityEyeBat)
+			return 8;
+		else if(entity instanceof EntityEyeBatHuge)
+			return 9;
+		else if(entity instanceof EntityGhast)
+			return 10;
+		else if(entity instanceof EntityGnome)
+			return 11;
+		else if(entity instanceof EntityHideBehind)
+			return 12;
+		else if(entity instanceof EntityKeyhole)
+			return 13;
+		else if(entity instanceof EntityLlama)
+			return 14;
+		else if(entity instanceof EntityMagmaCube)
+			return 15;
+		else if(entity instanceof EntityOcelot)
+			return 16;
+		else if(entity instanceof EntityParrot)
+			return 17;
+		else if(entity instanceof EntityPig)
+			return 18;
+		else if(entity instanceof EntityPigZombie)
+			return 19;
+		else if(entity instanceof EntityRabbit)
+			return 20;
+		else if(entity instanceof EntityShulker)
+			return 21;
+		else if(entity instanceof EntitySkeleton)
+			return 22;
+		else if(entity instanceof EntitySlime)
+			return 23;
+		else if(entity instanceof EntitySpider)
+			return 24;
+		else if(entity instanceof EntitySquid)
+			return 25;
+		else if(entity instanceof EntityTimeBaby)
+			return 26;
+		else if(entity instanceof EntityUnicorn)
+			return 29;
+		else if(entity instanceof EntityVex)
+			return 30;
+		else if(entity instanceof EntityVillager)
+			return 31;
+		else if(entity instanceof EntityWither)
+			return 32;
+		else if(entity instanceof EntityZombie)
+			return 33;
+		else if(entity instanceof EntityZombieVillager)
+			return 34;
+		else 
+			return -1;
+	}
+
+	public EntityLivingBase intToEntity(int num) {
+
+		switch(num) {
+		case 0:
+			return new EntitySilverfish(world);
+		case 1:
+			return new EntityBill(world);
+		case 2:
+			return new EntityBlaze(world);
+		case 3:
+			return new EntityChicken(world);
+		case 4:
+			return new EntityCow(world);
+		case 5:
+			return new EntityCreeper(world);
+		case 6:
+			return new EntityEightBall(world);
+		case 7:
+			return new EntityEnderman(world);
+		case 8:
+			return new EntityEyeBat(world);
+		case 9:
+			return new EntityEyeBatHuge(world);
+		case 10:
+			return new EntityGhast(world);
+		case 11:
+			return new EntityGnome(world);
+		case 12:
+			return new EntityHideBehind(world);
+		case 13:
+			return new EntityKeyhole(world);
+		case 14:
+			return new EntityLlama(world);
+		case 15:
+			return new EntityMagmaCube(world);
+		case 16:
+			return new EntityOcelot(world);
+		case 17:
+			return new EntityParrot(world);
+		case 18:
+			return new EntityPig(world);
+		case 19:
+			return new EntityPigZombie(world);
+		case 20:
+			return new EntityRabbit(world);
+		case 21:
+			return new EntityShulker(world);
+		case 22:
+			return new EntitySkeleton(world);
+		case 23:
+			return new EntitySlime(world);
+		case 24:
+			return new EntitySpider(world);
+		case 25:
+			return new EntitySquid(world);
+		case 26:
+			return new EntityTimeBaby(world);
+		case 29:
+			return new EntityUnicorn(world);
+		case 30:
+			return new EntityVex(world);
+		case 31:
+			return new EntityVillager(world);
+		case 32:
+			return new EntityWither(world);
+		case 33:
+			return new EntityZombie(world);		
+		case 34:
+			return new EntityZombieVillager(world);		
+		default:
+			return new EntityShapeShifter(world);
+		}
+	}
+
+	public int modelToInt(ModelBase model) {
+
+		if(model instanceof ModelPlayer)
+			return 0;
+		else if(model instanceof ModelBill)
+			return 1;
+		else if(model instanceof ModelBlaze)
+			return 2;
+		else if(model instanceof ModelChicken)
+			return 3;
+		else if(model instanceof ModelCow)
+			return 4;
+		else if(model instanceof ModelCreeper)
+			return 5;
+		else if(model instanceof ModelEightBall)
+			return 6;
+		else if(model instanceof ModelEnderman)
+			return 7;
+		else if(model instanceof ModelEyeBat)
+			return 8;
+		else if(model instanceof ModelEyeBatHuge)
+			return 9;
+		else if(model instanceof ModelGhast)
+			return 10;
+		else if(model instanceof ModelGnome)
+			return 11;
+		else if(model instanceof ModelHideBehind)
+			return 12;
+		else if(model instanceof ModelKeyhole)
+			return 13;
+		else if(model instanceof ModelLlama)
+			return 14;
+		else if(model instanceof ModelMagmaCube)
+			return 15;
+		else if(model instanceof ModelOcelot)
+			return 16;
+		else if(model instanceof ModelParrot)
+			return 17;
+		else if(model instanceof ModelPig)
+			return 18;
+		else if(model instanceof ModelZombie) {
+			texture = "minecraft:textures/entity/zombie_pigman.png";
+			return 19;
+		}
+		else if(model instanceof ModelRabbit)
+			return 20;
+		else if(model instanceof ModelShulker)
+			return 21;
+		else if(model instanceof ModelSkeleton)
+			return 22;
+		else if(model instanceof ModelSlime)
+			return 23;
+		else if(model instanceof ModelSpider)
+			return 24;
+		else if(model instanceof ModelSquid)
+			return 25;
+		else if(model instanceof ModelTimeBaby)
+			return 26;
+		else if(model instanceof ModelUnicorn)
+			return 29;
+		else if(model instanceof ModelVex)
+			return 30;
+		else if(model instanceof ModelVillager)
+			return 31;
+		else if(model instanceof ModelWither)
+			return 32;
+		else if(model instanceof ModelZombie) {
+			texture = "minecraft:textures/entity/zombie/zombie.png";
+			return 33;
+		}
+		else if(model instanceof ModelZombieVillager)
+			return 34;
+		else 
+			return -1;
+	}
+
+	public ModelBase intToModel(int num) {
+
+		switch(num) {
+		case 0:
+			return new ModelPlayer(0, true);
+		case 1:
+			return new ModelBill();
+		case 2:
+			return new ModelBlaze();
+		case 3:
+			return new ModelChicken();
+		case 4:
+			return new ModelCow();
+		case 5:
+			return new ModelCreeper();
+		case 6:
+			return new ModelEightBall();
+		case 7:
+			return new ModelEnderman(0);
+		case 8:
+			return new ModelEyeBat();
+		case 9:
+			return new ModelEyeBatHuge();
+		case 10:
+			return new ModelGhast();
+		case 11:
+			return new ModelGnome();
+		case 12:
+			return new ModelHideBehind();
+		case 13:
+			return new ModelKeyhole();
+		case 14:
+			return new ModelLlama(0);
+		case 15:
+			return new ModelMagmaCube();
+		case 16:
+			return new ModelOcelot();
+		case 17:
+			return new ModelParrot();
+		case 18:
+			return new ModelPig();
+		case 19:
+			return new ModelZombie();
+		case 20:
+			return new ModelRabbit();
+		case 21:
+			return new ModelShulker();
+		case 22:
+			return new ModelSkeleton();
+		case 23:
+			return new ModelSlime(0);
+		case 24:
+			return new ModelSpider();
+		case 25:
+			return new ModelSquid();
+		case 26:
+			return new ModelTimeBaby();
+		case 29:
+			return new ModelUnicorn();
+		case 30:
+			return new ModelVex(0);
+		case 31:
+			return new ModelVillager(0);
+		case 32:
+			return new ModelWither(0);
+		case 33:
+			return new ModelZombie();		
+		case 34:
+			return new ModelZombieVillager();		
+		default:
+			return new ModelShapeShifter();
+		}
+	}
+
+	@Override
+	public void writeSpawnData(ByteBuf buffer) {
+		buffer.writeInt(this.entityToInt(currentEntity));
+		buffer.writeInt(this.modelToInt(currentModel));		
+	}
+
+	@Override
+	public void readSpawnData(ByteBuf additionalData) {
+		currentEntity = this.intToEntity(additionalData.readInt());
+		currentModel = this.intToModel(additionalData.readInt());
 	}
 }

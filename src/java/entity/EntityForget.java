@@ -1,20 +1,19 @@
 package entity;
 
-import java.util.Set;
-
 import models.ModelShapeShifter;
 import net.minecraft.block.Block;
-import net.minecraft.client.model.ModelBase;
 import net.minecraft.entity.EntityCreature;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.ai.EntityAILookIdle;
-import net.minecraft.entity.ai.EntityAITasks;
+import net.minecraft.entity.ai.EntityAISwimming;
 import net.minecraft.entity.ai.EntityAIWanderAvoidWater;
-import net.minecraft.entity.monster.EntityMob;
-import net.minecraft.entity.ai.EntityAITasks.EntityAITaskEntry;
+import net.minecraft.entity.ai.EntityAIWatchClosest;
+import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.item.EntityItem;
+import net.minecraft.entity.monster.EntitySkeleton;
+import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
@@ -32,6 +31,7 @@ public class EntityForget extends EntityThrowable
 {
 	private World world = null;
 	private int timer = 50;
+	private boolean fullMemoryWipe = false;
 
 	public EntityForget(World worldIn)
 	{
@@ -39,13 +39,14 @@ public class EntityForget extends EntityThrowable
 		this.world = worldIn;
 	}
 
-	public EntityForget(World worldIn, EntityLivingBase throwerIn)
+	public EntityForget(World worldIn, EntityLivingBase throwerIn, boolean fullMemoryWipe)
 	{
 		super(worldIn, throwerIn);
 		this.world = worldIn;
+		this.fullMemoryWipe = fullMemoryWipe;
 	}
 
-	public EntityForget(World worldIn, EntityLivingBase throwerIn, double x, double y, double z)
+	public EntityForget(World worldIn, EntityLivingBase throwerIn, double x, double y, double z, boolean fullMemoryWipe)
 	{
 		super(worldIn, throwerIn);
 		this.world = worldIn;
@@ -53,12 +54,16 @@ public class EntityForget extends EntityThrowable
 		this.posX = x;
 		this.posY = y;
 		this.posZ = z;
+
+		this.fullMemoryWipe = fullMemoryWipe;
 	}
 
-	public EntityForget(World worldIn, double x, double y, double z)
+	public EntityForget(World worldIn, double x, double y, double z, boolean fullMemoryWipe)
 	{
 		super(worldIn, x, y, z);
 		this.world = worldIn;
+
+		this.fullMemoryWipe = fullMemoryWipe;
 	}
 
 	/**
@@ -79,16 +84,20 @@ public class EntityForget extends EntityThrowable
 
 	@Override
 	protected void onImpact(RayTraceResult result) 
-	{
-		if (result.entityHit instanceof EntityLiving && !(result.entityHit instanceof EntityBill) && !(result.entityHit instanceof EntitySecurityDroid))
+	{	
+		if (result.entityHit instanceof EntityLiving && !(result.entityHit instanceof EntityBill) && !(result.entityHit instanceof EntitySecurityDroid) && !(result.entityHit instanceof EntityWither))
 		{
-			EntityLivingBase entity = (EntityLivingBase)result.entityHit;
-
-			EntityLiving entityLiving = (EntityLiving) entity;
+			EntityLiving entityLiving = (EntityLiving) result.entityHit;
 
 			ItemStack stack = entityLiving.getItemStackFromSlot(EntityEquipmentSlot.HEAD);
 
 			ItemArmor armor = null;
+
+			if(fullMemoryWipe)
+				entityLiving.setNoAI(true);
+
+			entityLiving.tasks.taskEntries.removeAll(entityLiving.tasks.taskEntries);
+			entityLiving.targetTasks.taskEntries.removeAll(entityLiving.targetTasks.taskEntries);
 
 			if(stack.getItem() instanceof ItemArmor)
 			{
@@ -99,50 +108,45 @@ public class EntityForget extends EntityThrowable
 
 			if(armor == null || !(armor.getArmorMaterial() == material))
 			{
-				entityLiving.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 6000));
+				entityLiving.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, 300));
 				entityLiving.addPotionEffect(new PotionEffect(MobEffects.BLINDNESS, 6000));
 				entityLiving.addPotionEffect(new PotionEffect(MobEffects.WEAKNESS, 6000));
-				entityLiving.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 20));
+				entityLiving.addPotionEffect(new PotionEffect(MobEffects.GLOWING, 30));
 
 				//entityLiving.setNoAI(true);
 				//entityLiving.setSilent(true);
 
-				if(entity instanceof EntityShapeShifter)
+				if(entityLiving instanceof EntityShapeShifter)
 				{
-					EntityShapeShifter shapeShifter = (EntityShapeShifter) entity;
+					EntityShapeShifter shapeShifter = (EntityShapeShifter) entityLiving;
 
 					shapeShifter.entityList = new EntityList();
 					shapeShifter.entityList.add(new EntityShapeShifter(world));
 					shapeShifter.currentEntity = new EntityShapeShifter(world);
 					shapeShifter.currentModel = new ModelShapeShifter();
-					shapeShifter.hasPlayer = false;
 				}
-				else if(entityLiving instanceof EntityMob)
+				if(entityLiving instanceof EntityCreature)
 				{
-					EntityMob mob = (EntityMob) entityLiving;
+					EntityCreature creature = (EntityCreature) entityLiving;
 
-					Set <EntityAITasks.EntityAITaskEntry> entries = mob.tasks.taskEntries;					
+					entityLiving.tasks.addTask(0, new EntityAISwimming(creature));
+					entityLiving.tasks.addTask(1, new EntityAIWanderAvoidWater(creature, 1.0D));
+					entityLiving.tasks.addTask(2, new EntityAILookIdle(creature));
+					entityLiving.tasks.addTask(2, new EntityAIWatchClosest(creature, EntityPlayer.class, 8.0F));
 
-					if(entries != null && !entries.isEmpty()) {
-						for(EntityAITasks.EntityAITaskEntry element : entries) {
-							mob.tasks.removeTask(element.action);
-						}
+					if(entityLiving instanceof EntityZombie) {
+						EntityZombie zombie = (EntityZombie) entityLiving;
+						zombie.setArmsRaised(true);
 					}
-
-					Set <EntityAITasks.EntityAITaskEntry> targetEntries = mob.tasks.taskEntries;					
-
-					if(targetEntries != null && !targetEntries.isEmpty()) {
-						for(EntityAITasks.EntityAITaskEntry element : targetEntries) {
-							mob.targetTasks.removeTask(element.action);
-						}
+					else if(entityLiving instanceof EntitySkeleton) {
+						EntitySkeleton skeleton = (EntitySkeleton) entityLiving;
+						skeleton.setItemStackToSlot(EntityEquipmentSlot.MAINHAND, ItemStack.EMPTY);
+						skeleton.setSwingingArms(false);
 					}
-
-					mob.tasks.addTask(2, new EntityAILookIdle(mob));
-					mob.tasks.addTask(1, new EntityAIWanderAvoidWater(mob, 1.0D));
 				}
-				else if(entity instanceof EntityPlayer)
+				else if(result.entityHit instanceof EntityPlayer)
 				{
-					EntityPlayer player = (EntityPlayer) entity;
+					EntityPlayer player = (EntityPlayer) result.entityHit;
 
 					if(this.thrower != null && player != this.thrower)
 					{
@@ -163,6 +167,7 @@ public class EntityForget extends EntityThrowable
 					}
 				}
 
+				/*
 				if(!world.isRemote)
 				{
 					for(int i = 0; i < world.playerEntities.size(); i++)
@@ -174,6 +179,7 @@ public class EntityForget extends EntityThrowable
 						//Use EntityLiving to erase the memory of all entites
 					}
 				}
+				 */
 			}
 		}
 

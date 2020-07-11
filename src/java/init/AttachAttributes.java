@@ -2,6 +2,7 @@ package init;
 
 import compatibilities.ISizeCap;
 import compatibilities.SizeCapPro;
+import entity.EntityShapeShifter;
 import main.ConfigHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -144,7 +145,7 @@ public class AttachAttributes
 			entity.removePotionEffect(PotionInit.NORMAL_EFFECT);
 		}
 
-		if(!(entity instanceof EntityPlayer))
+		if(!(entity instanceof EntityPlayer) && !(entity instanceof EntityShapeShifter))
 		{
 			if(entity.hasCapability(SizeCapPro.sizeCapability, null))
 			{
@@ -224,7 +225,7 @@ public class AttachAttributes
 	{
 		final EntityLivingBase entity = event.getEntity();
 
-		if(entity.hasCapability(SizeCapPro.sizeCapability, null))
+		if(entity.hasCapability(SizeCapPro.sizeCapability, null) && !(entity instanceof EntityShapeShifter))
 		{
 			final ISizeCap cap = entity.getCapability(SizeCapPro.sizeCapability, null);
 

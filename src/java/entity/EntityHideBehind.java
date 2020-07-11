@@ -37,16 +37,12 @@ import net.minecraft.world.World;
 
 public class EntityHideBehind extends EntityEnderman
 {
-
-	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityWolf.class, DataSerializers.FLOAT);
-
 	public EntityHideBehind(World par1World)
 	{
 		super(par1World);
 		this.setSize(1.0F, 3.0F);
 		this.setPathPriority(PathNodeType.OPEN, -1.0F);
 		this.experienceValue = 40;
-
 	}
 
 	@Override
@@ -57,20 +53,16 @@ public class EntityHideBehind extends EntityEnderman
 		this.tasks.addTask(8, new EntityAILookIdle(this));
 		this.targetTasks.addTask(1, new EntityHideBehind.AIFindPlayer(this));
 		this.targetTasks.addTask(2, new EntityAIHurtByTarget(this, false, new Class[0]));
-
-
 	}
 
 	@Override
 	protected void applyEntityAttributes() 
 	{
-
 		super.applyEntityAttributes();
 
 		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(40.0D);
 
 		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.3D);
-
 	}
 
 	@Override
@@ -79,13 +71,11 @@ public class EntityHideBehind extends EntityEnderman
 		shouldTeleport();
 
 		super.onUpdate();
-
 	}
 
 	@Override
 	public void setAttackTarget(EntityLivingBase entitylivingbaseIn)
 	{
-
 	}
 
 	@Override
@@ -98,29 +88,14 @@ public class EntityHideBehind extends EntityEnderman
 	@Override
 	protected SoundEvent getHurtSound(DamageSource damageSourceIn)
 	{
-
 		return SoundEvents.ENTITY_PLAYER_HURT;
 	}
-
-	@Override
-	protected SoundEvent getDeathSound() 
-	{
-		return SoundEvents.VINDICATION_ILLAGER_DEATH;
-	}
-
+	
 	@Override
 	protected void playStepSound(BlockPos pos, Block blockIn)
 	{
-
 		this.playSound(SoundEvents.ENTITY_POLAR_BEAR_STEP, 0.15F, 1.0F);
 	}
-
-	@Override
-	protected SoundEvent getAmbientSound()
-	{
-		return SoundEvents.ENTITY_HORSE_BREATHE;
-	}
-
 
 	@Override
 	protected ResourceLocation getLootTable()
@@ -139,7 +114,6 @@ public class EntityHideBehind extends EntityEnderman
 	{
 		if((int) (Math.random() * 800) == 0)
 			this.teleportRandomly();
-
 	}
 
 	protected boolean teleportRandomly()

@@ -12,13 +12,12 @@ import net.minecraft.world.World;
 
 public class InfinityPizza extends ItemFood implements IHasModel{
 
-	private PotionEffect[] effects;
 	public final int itemUseDuration;
 	private boolean alwaysEdible;
 	public boolean count = false;
 	public EntityLivingBase player;
 
-	public InfinityPizza(String name, int amount, float saturation, boolean isWolfFood, PotionEffect...potionEffects) 
+	public InfinityPizza(String name, int amount, float saturation, boolean isWolfFood) 
 	{
 		super(amount, saturation, isWolfFood);
 		this.setMaxStackSize(1);
@@ -26,8 +25,6 @@ public class InfinityPizza extends ItemFood implements IHasModel{
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
 
-
-		this.effects = potionEffects;
 		this.itemUseDuration = 32;
 		ItemInit.ITEMS.add(this);
 	}
@@ -53,8 +50,7 @@ public class InfinityPizza extends ItemFood implements IHasModel{
 	@Override
 	public ItemFood setAlwaysEdible()
 	{
-		//this.alwaysEdible = true;
-		return this;
+		return super.setAlwaysEdible();
 	}
 
 	@Override

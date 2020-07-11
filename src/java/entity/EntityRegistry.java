@@ -25,6 +25,9 @@ public class EntityRegistry
 		registerEntity2("gideonbot", EntityGideonBot.class, ConfigHandler.ENTITY_GIDEONBOT, 60);
 		registerEntity("timebaby", EntityTimeBaby.class, ConfigHandler.ENTITY_TIMEBABY, 100, 15460340, 1703889);
 		registerEntity("shapeshifter", EntityShapeShifter.class, ConfigHandler.ENTITY_SHAPESHIFTER, 100, 14406843, 12742797);
+		registerEntity2("billstatue", EntityBillStatue.class, ConfigHandler.ENTITY_BILL_STATUE, 100);
+		registerEntity2("cipherwheel", EntityCipherWheel.class, ConfigHandler.ENTITY_CIPHER_WHEEL, 100);
+		registerEntity("evil_tree", EntityEvilTree.class, ConfigHandler.ENTITY_EVIL_TREE, 40, 9408399, 14803354);
 
 		registerEntity2("entitybullet", EntityForget.class, ConfigHandler.ENTITY_FORGET, 100);
 	}

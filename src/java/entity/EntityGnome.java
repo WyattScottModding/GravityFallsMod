@@ -132,19 +132,10 @@ public class EntityGnome extends EntityMob
 	{
 		return SoundsHandler.ENTITY_GNOME_HURT;
 	}
-
-	@Override
-	protected SoundEvent getDeathSound() 
-	{
-		return SoundsHandler.ENTITY_GNOME_DEATH;
-	}
-
+	
 	@Override
 	protected void playStepSound(BlockPos pos, Block blockIn)
 	{
-		if(this.isAngry())
-			this.playSound(SoundsHandler.ENTITY_GNOME_ANGRY, 1.0F, 1.0F);
-
 		this.playSound(SoundEvents.ENTITY_CHICKEN_STEP, 0.15F, 1.0F);
 	}
 
@@ -292,8 +283,14 @@ public class EntityGnome extends EntityMob
 	public void readEntityFromNBT(NBTTagCompound compound)
 	{
 		super.readEntityFromNBT(compound);
-		this.angerLevel = compound.getShort("Anger");
-		String s = compound.getString("HurtBy");
+	
+		if(compound.hasKey("Anger"))
+			this.angerLevel = compound.getShort("Anger");
+		
+		String s = "";
+
+		if(compound.hasKey("HurtBy"))
+			s = compound.getString("HurtBy");
 
 		if (!s.isEmpty())
 		{

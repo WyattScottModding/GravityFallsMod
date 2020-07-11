@@ -1,7 +1,10 @@
 package handlers;
 
 import entity.EntityBill;
+import entity.EntityBillStatue;
+import entity.EntityCipherWheel;
 import entity.EntityEightBall;
+import entity.EntityEvilTree;
 import entity.EntityEyeBat;
 import entity.EntityEyeBatHuge;
 import entity.EntityForget;
@@ -21,7 +24,10 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraftforge.fml.client.registry.IRenderFactory;
 import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import render.RenderBill;
+import render.RenderBillStatue;
+import render.RenderCipherWheel;
 import render.RenderEightBall;
+import render.RenderEvilTree;
 import render.RenderEyeBat;
 import render.RenderEyeBatHuge;
 import render.RenderForget;
@@ -201,6 +207,33 @@ public class RenderHandler {
 				return new RenderShapeShifter(manager);
 			}
 
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityBillStatue.class, new IRenderFactory<EntityBillStatue>()
+		{
+			@Override
+			public Render<? super EntityBillStatue> createRenderFor(RenderManager manager)
+			{
+				return new RenderBillStatue(manager);
+			}
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityCipherWheel.class, new IRenderFactory<EntityCipherWheel>()
+		{
+			@Override
+			public Render<? super EntityCipherWheel> createRenderFor(RenderManager manager)
+			{
+				return new RenderCipherWheel(manager);
+			}
+		});
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityEvilTree.class, new IRenderFactory<EntityEvilTree>()
+		{
+			@Override
+			public Render<? super EntityEvilTree> createRenderFor(RenderManager manager)
+			{
+				return new RenderEvilTree(manager);
+			}
 		});
 	}
 }

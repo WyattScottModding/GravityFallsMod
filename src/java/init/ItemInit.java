@@ -12,10 +12,7 @@ import armor.LightSweater;
 import armor.Mabel;
 import armor.MysticAmulet;
 import armor.RegenerationLegs;
-import armor.RubberBoots;
-import armor.RubberChestplate;
-import armor.RubberHat;
-import armor.RubberLeggings;
+import armor.RubberArmor;
 import armor.SpeedBoots;
 import armor.StrengthChestplate;
 import armor.TieOfPossession;
@@ -23,7 +20,8 @@ import armor.TieOfPossession2;
 import food.InfinityPizza;
 import food.SmileDip;
 import handlers.SoundsHandler;
-import items.ItemBasic;
+import items.AlexShirt;
+import items.BillStatue;
 import items.BlackLight;
 import items.Book1;
 import items.Book2;
@@ -40,6 +38,7 @@ import items.GideonBotPart;
 import items.GolfCart;
 import items.GrapplingHook;
 import items.InfinitySidedDie;
+import items.ItemBasic;
 import items.LaserArmCannon;
 import items.Latex;
 import items.LeafBlower;
@@ -70,21 +69,19 @@ import net.minecraftforge.common.util.EnumHelper;
 
 public class ItemInit {
 
-
 	public static final List<Item> ITEMS = new ArrayList<Item>();
 
-
 	//Armor Material
-	public static final ArmorMaterial DIPPER2= EnumHelper.addArmorMaterial("dipper2", Reference.MODID + ":dipper2", 20, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
-	public static final ArmorMaterial DIPPER = EnumHelper.addArmorMaterial("dipper", Reference.MODID + ":dipper", 20, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
-	public static final ArmorMaterial MABEL = EnumHelper.addArmorMaterial("mabel", Reference.MODID + ":mabel", 20, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
+	public static final ArmorMaterial DIPPER2= EnumHelper.addArmorMaterial("dipper2", Reference.MODID + ":dipper2", 20, new int[]{1, 2, 3, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
+	public static final ArmorMaterial DIPPER = EnumHelper.addArmorMaterial("dipper", Reference.MODID + ":dipper", 20, new int[]{1, 2, 3, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
+	public static final ArmorMaterial MABEL = EnumHelper.addArmorMaterial("mabel", Reference.MODID + ":mabel", 20, new int[]{1, 2, 3, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.5F);
 	public static final ArmorMaterial RUBBER = EnumHelper.addArmorMaterial("rubber", Reference.MODID + ":rubber", 10, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
-	public static final ArmorMaterial MAGIC = EnumHelper.addArmorMaterial("magic", Reference.MODID + ":magic", 50, new int[]{7, 8, 9, 6}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
-	public static final ArmorMaterial CLOAK = EnumHelper.addArmorMaterial("cloak", Reference.MODID + ":cloak", 40, new int[]{2, 2, 2, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
-	public static final ArmorMaterial KNUCKLES = EnumHelper.addArmorMaterial("knuckles", Reference.MODID + ":knuckles", 30, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
-	public static final ArmorMaterial AMULET = EnumHelper.addArmorMaterial("amulet", Reference.MODID + ":amulet", 30, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, 0.0F);
-	public static final ArmorMaterial TIE = EnumHelper.addArmorMaterial("tie", Reference.MODID + ":tie", 40, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
-	public static final ArmorMaterial SWEATER = EnumHelper.addArmorMaterial("sweater", Reference.MODID + ":sweater", 40, new int[]{2, 3, 4, 2}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
+	public static final ArmorMaterial MAGIC = EnumHelper.addArmorMaterial("magic", Reference.MODID + ":magic", 33, new int[]{7, 8, 9, 6}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 1.0F);
+	public static final ArmorMaterial CLOAK = EnumHelper.addArmorMaterial("cloak", Reference.MODID + ":cloak", 20, new int[]{1, 1, 1, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
+	public static final ArmorMaterial KNUCKLES = EnumHelper.addArmorMaterial("knuckles", Reference.MODID + ":knuckles", 30, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_GOLD, 0.0F);
+	public static final ArmorMaterial AMULET = EnumHelper.addArmorMaterial("amulet", Reference.MODID + ":amulet", 30, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_DIAMOND, 0.0F);
+	public static final ArmorMaterial TIE = EnumHelper.addArmorMaterial("tie", Reference.MODID + ":tie", 40, new int[]{0, 0, 0, 0}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
+	public static final ArmorMaterial SWEATER = EnumHelper.addArmorMaterial("sweater", Reference.MODID + ":sweater", 40, new int[]{1, 2, 3, 1}, 0, SoundEvents.ITEM_ARMOR_EQUIP_LEATHER, 0.0F);
 
 	//Armor
 	public static final Item PINE_HAT = new ArmorModel("pinehat", GravityFalls.gravityfallsarmor, DIPPER2, EntityEquipmentSlot.HEAD);
@@ -97,10 +94,10 @@ public class ItemInit {
 	public static final Item MABEL_PANTS = new Mabel("mabelpants", MABEL, 1, EntityEquipmentSlot.LEGS);
 	public static final Item MABEL_SHOES = new Mabel("mabelshoes", MABEL, 1, EntityEquipmentSlot.FEET);
 
-	public static final Item RUBBER_HAT = new RubberHat("rubberhat", RUBBER, 1, EntityEquipmentSlot.HEAD);
-	public static final Item RUBBER_CHESTPLATE = new RubberChestplate("rubberchestplate", RUBBER, 1, EntityEquipmentSlot.CHEST);
-	public static final Item RUBBER_LEGGINGS = new RubberLeggings("rubberleggings", RUBBER, 1, EntityEquipmentSlot.LEGS);
-	public static final Item RUBBER_BOOTS = new RubberBoots("rubberboots", RUBBER, 1, EntityEquipmentSlot.FEET);
+	public static final Item RUBBER_HAT = new RubberArmor("rubberhat", RUBBER, 1, EntityEquipmentSlot.HEAD);
+	public static final Item RUBBER_CHESTPLATE = new RubberArmor("rubberchestplate", RUBBER, 1, EntityEquipmentSlot.CHEST);
+	public static final Item RUBBER_LEGGINGS = new RubberArmor("rubberleggings", RUBBER, 1, EntityEquipmentSlot.LEGS);
+	public static final Item RUBBER_BOOTS = new RubberArmor("rubberboots", RUBBER, 1, EntityEquipmentSlot.FEET);
 
 	public static final Item FIRE_HELMET = new FireHelmet("firehelmet", MAGIC, 1, EntityEquipmentSlot.HEAD);
 	public static final Item STRENGTH_CHESTPLATE = new StrengthChestplate("strengthchestplate", MAGIC, 1, EntityEquipmentSlot.CHEST);
@@ -119,8 +116,6 @@ public class ItemInit {
 	//Items
 	public static final Item CRYSTALSHARD = new CrystalShard("crystalshard");
 
-	//public static final Item CRYSTALFLAKE = new ItemBasic("crystalflake");
-
 	public static final Item FLASHLIGHT = new FlashLight("flashlight");
 
 	public static final Item MAGICFLASHLIGHT = new MagicFlashLight("magicflashlight");
@@ -137,11 +132,11 @@ public class ItemInit {
 
 	public static final Item MEMORY_GUN = new MemoryGun("memorygun");
 
-	public static final Item SMILE_DIP = new SmileDip("smiledip", 2, 4.0F, false, new PotionEffect(Potion.getPotionById(1), 3000, 0), new PotionEffect(Potion.getPotionById(3), 3000, 0), new PotionEffect(Potion.getPotionById(9), 3000, 0));
+	public static final Item SMILE_DIP = new SmileDip("smiledip", 2, 4.0F, false);
 
 	public static final Item INFINITY_PIZZA = new InfinityPizza("infinitypizza", 4, 4.0F, false);
 
-	public static final Item TIME_WISH = new TimeWish("timewish", 4, 4.0F, false, new PotionEffect(MobEffects.ABSORPTION, 60000, 100), new PotionEffect(MobEffects.REGENERATION, 60000, 100), new PotionEffect(MobEffects.FIRE_RESISTANCE, 60000, 100), new PotionEffect(MobEffects.HASTE, 60000, 100), new PotionEffect(MobEffects.RESISTANCE, 60000, 100), new PotionEffect(MobEffects.SPEED, 60000, 3));
+	public static final Item TIME_WISH = new TimeWish("timewish", 4, 4.0F, false);
 
 	public static final Item TIME_TAPE = new TimeTape("timetape");
 
@@ -189,6 +184,10 @@ public class ItemInit {
 
 	public static final Item CRYOGENICTUBE_ITEM = new CryogenicTubeItem("cryogenictube_item");
 
+	public static final Item BILL_STATUE = new BillStatue("bill_statue");
+
+	public static final Item ALEX_SHIRT = new AlexShirt("a_h_");
+
 
 	//Discs
 	public static final Item DISC_THEMESONG = new CustomRecords("themesong", SoundsHandler.RECORD_THEMESONG);
@@ -196,6 +195,5 @@ public class ItemInit {
 	public static final Item DISC_WEIRDMAGEDDON  = new CustomRecords("weirdmageddon", SoundsHandler.RECORD_WEIRDMAGEDDON);
 	public static final Item DISC_STRAIGHTBLANCHIN = new CustomRecords("straightblanchin", SoundsHandler.RECORD_STRAIGHTBLANCHIN);
 	public static final Item DISC_DISCOGIRL = new CustomRecords("discogirl", SoundsHandler.RECORD_DISCOGIRL);
-
-	
+	public static final Item DISC_MEETAGAIN = new CustomRecords("meetagain", SoundsHandler.RECORD_MEETAGAIN);
 }

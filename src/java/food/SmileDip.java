@@ -1,24 +1,34 @@
 package food;
 
+import handlers.SoundsHandler;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.init.MobEffects;
+import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.EnumAction;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemFood;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
+import net.minecraft.util.SoundCategory;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
+import network.MessagePlaySound;
+import network.Messages;
 
 public class SmileDip extends ItemFood implements IHasModel{
 
-	private PotionEffect[] effects;
 	public final int itemUseDuration;
-	public boolean count = false;
-	public EntityLivingBase player;
+	public EntityLivingBase entity;
 
-	public SmileDip(String name, int amount, float saturation, boolean isWolfFood, PotionEffect...potionEffects) 
+	public SmileDip(String name, int amount, float saturation, boolean isWolfFood) 
 	{
 		super(amount, saturation, isWolfFood);
 		this.setMaxStackSize(64);
@@ -26,39 +36,29 @@ public class SmileDip extends ItemFood implements IHasModel{
 		this.setRegistryName(name);
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
 
-		this.effects = potionEffects;
 		this.itemUseDuration = 32;
 		ItemInit.ITEMS.add(this);
-	}
-	
-	public boolean isAlwaysEdible() {
-		return true;
 	}
 
 	@Override
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving)
 	{
-		for(PotionEffect effect : effects)
-		{
-			entityLiving.addPotionEffect(effect);
-		}
+		int duration = 1780;
+		entityLiving.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, duration, 0));
+		entityLiving.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, 0));
+		entityLiving.addPotionEffect(new PotionEffect(MobEffects.HASTE, duration, 0));
 		entityLiving.heal(2.0F);
 
-		count = true;
-		player = entityLiving;
-		
-		return super.onItemUseFinish(stack, worldIn, entityLiving);
-	}
-	
-	public boolean getCount()
-	{
-		return count;
-	}
+		if(entityLiving instanceof EntityPlayer) {
 
-	public void afterEffects()
-	{
-		player.addPotionEffect(new PotionEffect(Potion.getPotionById(24), 6000, 0));
-		count = false;
+			EntityPlayer player = (EntityPlayer) entityLiving;
+
+			Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord
+					.getMasterRecord(SoundsHandler.SMILE_DIP, 1.0F));
+		}
+		entity = entityLiving;
+
+		return super.onItemUseFinish(stack, worldIn, entityLiving);
 	}
 
 	@Override
@@ -66,17 +66,16 @@ public class SmileDip extends ItemFood implements IHasModel{
 	{
 		return EnumAction.EAT;
 	}
-	
+
 	@Override
-    public ItemFood setAlwaysEdible()
-    {
-        return this;
-    }
+	public ItemFood setAlwaysEdible()
+	{
+		return super.setAlwaysEdible();
+	}
 
 	@Override
 	public void registerModels()
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
-
 }

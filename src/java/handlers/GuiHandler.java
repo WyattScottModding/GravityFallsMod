@@ -1,10 +1,12 @@
 package handlers;
 
+import containers.ContainerFordWorkbench;
 import containers.ContainerUraniumFurnace;
 import gui.GuiBook1;
 import gui.GuiBook2;
 import gui.GuiBook3;
 import gui.GuiComputer;
+import gui.GuiFordWorkbench;
 import gui.GuiReturnDevice;
 import gui.GuiScope;
 import gui.GuiUraniumFurnace;
@@ -15,6 +17,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.IGuiHandler;
 import net.minecraftforge.fml.common.network.NetworkRegistry;
+import tileEntities.TileEntityFordWorkbench;
 import tileEntities.TileEntityUraniumFurnace;
 
 public class GuiHandler implements IGuiHandler
@@ -25,6 +28,8 @@ public class GuiHandler implements IGuiHandler
 	{
 		if(ID == ConfigHandler.GUI_URANIUM_FURNACE)
 			return new ContainerUraniumFurnace(player.inventory, (TileEntityUraniumFurnace)world.getTileEntity(new BlockPos(x, y, z)));
+		else if(ID == ConfigHandler.FORD_WORKBENCH)
+			return new ContainerFordWorkbench(player.inventory, world, new BlockPos(x, y, z));
 		return null;
 	}
 
@@ -45,6 +50,8 @@ public class GuiHandler implements IGuiHandler
 			return new GuiComputer();
 		else if(ID == ConfigHandler.RETURN_DEVICE)
 			return new GuiReturnDevice();
+		else if(ID == ConfigHandler.FORD_WORKBENCH)
+			return new GuiFordWorkbench(player.inventory, player.world);
 		return null;
 	}
 	

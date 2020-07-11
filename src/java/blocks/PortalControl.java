@@ -46,10 +46,6 @@ public class PortalControl extends Block implements IHasModel
 	public static final PropertyBool BOOK2 = PropertyBool.create("book2");
 	public static final PropertyBool BOOK3 = PropertyBool.create("book3");
 
-
-	public boolean portalActive = false;
-	private boolean isPowered = false;
-
 	public PortalControl(String name, Material material)
 	{
 		super(material);
@@ -222,7 +218,6 @@ public class PortalControl extends Block implements IHasModel
 
 			if(book1 && book2 && book3) {
 				if(tileEntity != null) {
-					System.out.println("Tile Entity: " + tileEntity.toString());
 					tileEntity.nbt.setBoolean("portalControl", true);
 				}
 			}
@@ -249,7 +244,6 @@ public class PortalControl extends Block implements IHasModel
 		return null;
 	}
 
-
 	@Override
 	public void onBlockAdded(World worldIn, BlockPos pos, IBlockState state) 
 	{
@@ -272,7 +266,6 @@ public class PortalControl extends Block implements IHasModel
 	@Override
 	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) 
 	{
-
 		return this.getDefaultState().withProperty(FACING, placer.getHorizontalFacing());
 	}
 
@@ -293,7 +286,6 @@ public class PortalControl extends Block implements IHasModel
 	{
 		return state.withRotation(rot);
 	}
-
 
 	/**
 	 * Returns the blockstate with the given mirror of the passed blockstate. If inapplicable, returns the passed

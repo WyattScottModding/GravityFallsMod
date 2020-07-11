@@ -44,7 +44,6 @@ public class CryogenicTube extends Block implements IHasModel, ITileEntityProvid
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 	public static final PropertyEnum<CryogenicTube.EnumHalf> HALF = PropertyEnum.<CryogenicTube.EnumHalf>create("half", CryogenicTube.EnumHalf.class);
 
-
 	public CryogenicTube(String name, Material material)
 	{
 		super(material);
@@ -62,7 +61,6 @@ public class CryogenicTube extends Block implements IHasModel, ITileEntityProvid
 	{
 		GravityFalls.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
 	}
-
 
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) 

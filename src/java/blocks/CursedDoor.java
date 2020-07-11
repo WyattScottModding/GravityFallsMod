@@ -24,7 +24,6 @@ import tileEntities.TileEntityCursedDoor;
 
 public class CursedDoor extends BlockDoor implements ITileEntityProvider, IHasModel
 {
-
 	public CursedDoor(String name, Material material)
 	{
 		super(material);

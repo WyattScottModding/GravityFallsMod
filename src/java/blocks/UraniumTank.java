@@ -33,7 +33,6 @@ public class UraniumTank extends Block implements IHasModel{
 
 	public static final AxisAlignedBB URANIUMTANK = new AxisAlignedBB(0D, 0D, 0D, 1.0D, 1.0D, 1.0D);
 
-
 	public UraniumTank(String name, Material material)
 	{
 		super(material);
@@ -71,7 +70,6 @@ public class UraniumTank extends Block implements IHasModel{
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) {
 		return URANIUMTANK;
 	}
-
 
 	@Override
 	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos,

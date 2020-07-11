@@ -44,7 +44,7 @@ import tileEntities.TileEntityComputer;
 import tileEntities.TileEntityPortalLever;
 import tileEntities.TileEntityUraniumFurnace;
 
-public class ComputerOpen extends Block implements IHasModel
+public class ComputerOpen extends Block
 {
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
@@ -54,7 +54,7 @@ public class ComputerOpen extends Block implements IHasModel
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setSoundType(SoundType.METAL);
-		this.setHardness(2.0F);
+		this.setHardness(1.0F);
 		this.setResistance(10.0F);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 
@@ -63,10 +63,6 @@ public class ComputerOpen extends Block implements IHasModel
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
 	}
 
-	public void registerModels()
-	{
-		GravityFalls.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
-	}
 
 	@Override
 	public boolean isOpaqueCube(IBlockState state) 
@@ -96,7 +92,6 @@ public class ComputerOpen extends Block implements IHasModel
 			if(!worldIn.isRemote && playerIn instanceof EntityPlayerMP) {
 				EntityPlayerMP serverPlayer = (EntityPlayerMP) playerIn;
 				Messages.INSTANCE.sendTo(new MessageOpenComputer(),  serverPlayer);
-
 			}
 		}
 

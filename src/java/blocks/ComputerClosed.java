@@ -1,7 +1,5 @@
 package blocks;
 
-import org.lwjgl.input.Keyboard;
-
 import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
@@ -9,13 +7,11 @@ import main.IHasModel;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.SoundType;
-import net.minecraft.block.material.MapColor;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -36,18 +32,16 @@ public class ComputerClosed extends Block implements IHasModel
 	public static AxisAlignedBB COMPUTER = new AxisAlignedBB(0D, 0D, 0D, 1.0D, 0.20D, 1.0D);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
 
-
 	public ComputerClosed(String name, Material material)
 	{
 		super(material);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
 		this.setSoundType(SoundType.METAL);
-		this.setHardness(2.0F);
+		this.setHardness(1.0F);
 		this.setResistance(10.0F);
 		this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
-
 
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));

@@ -1,21 +1,17 @@
 package blocks;
 
-import java.util.Random;
 import init.BlockInit;
 import init.ItemInit;
-import main.GravityFalls;
-import main.IHasModel;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.SoundType;
 import net.minecraft.block.material.Material;
 import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.BlockFaceShape;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumFacing;
@@ -24,41 +20,27 @@ import net.minecraft.util.Mirror;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
-public class HyperDrive extends Block implements IHasModel{
-
-	public static final AxisAlignedBB HYPERDRIVE = new AxisAlignedBB(0.1875D, 0D, 0.1875D, .8125D, 1.0D, .8125D);
+public class Journal extends Block {
+	public static final AxisAlignedBB BOOK = new AxisAlignedBB(0.3D, 0D, 0.2D, .7D, 0.30D, .8D);
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-
-	public boolean power = false;
-
-	public HyperDrive(String name, Material material, boolean power)
+	
+	public Journal(String name)
 	{
-		super(material);
-		this.setLightOpacity(1);
+		super(Material.CLOTH);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-
-		if(name.equals("hyperdrive"))
-			this.setCreativeTab(GravityFalls.gravityfallsblocks);
-		
-		this.setSoundType(SoundType.METAL);
-		this.setTickRandomly(true);
-		this.power = power;
+		this.setSoundType(SoundType.CLOTH);
+		this.setHardness(1.0F);
+		this.setResistance(2.0F);
+		this.setDefaultState(this.blockState.getBaseState().withProperty(FACING, EnumFacing.NORTH));
 
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));
 	}
-
-	@Override
-	public void registerModels()
-	{
-		GravityFalls.proxy.registerItemRenderer(Item.getItemFromBlock(this), 0, "inventory");
-	}
-
+	
 	@Override
 	public boolean isOpaqueCube(IBlockState state) 
 	{
@@ -70,63 +52,7 @@ public class HyperDrive extends Block implements IHasModel{
 	{
 		return false;
 	}
-
-	@Override
-	public ItemStack getPickBlock(IBlockState state, RayTraceResult target, World world, BlockPos pos, EntityPlayer player) 
-	{
-		return new ItemStack(Item.getItemFromBlock(this));
-	}
-
-	@Override
-	public IBlockState getActualState(IBlockState state, IBlockAccess worldIn, BlockPos pos)
-	{
-		return state.withProperty(FACING, state.getValue(FACING));
-	}
-
-
-	@Override
-	public void neighborChanged(IBlockState state, World world, BlockPos pos, Block blockIn, BlockPos fromPos) 
-	{
-		BlockPos pos1 = new BlockPos(pos.getX() - 1, pos.getY(), pos.getZ());
-		BlockPos pos2 = new BlockPos(pos.getX() + 1, pos.getY(), pos.getZ());
-		BlockPos pos3 = new BlockPos(pos.getX(), pos.getY(), pos.getZ() + 1);
-		BlockPos pos4 = new BlockPos(pos.getX(), pos.getY(), pos.getZ() - 1);
-
-		Block block1 = world.getBlockState(pos1).getBlock();
-		Block block2 = world.getBlockState(pos2).getBlock();
-		Block block3 = world.getBlockState(pos3).getBlock();
-		Block block4 = world.getBlockState(pos4).getBlock();
-
-		Block uranium = BlockInit.URANIUM_TANK_FILLED;
-
-		if((block1 == uranium && block2 == uranium) || (block3 == uranium && block4 == uranium))	
-		{
-			world.setBlockState(pos, BlockInit.HYPER_DRIVE_ON.getDefaultState().withProperty(FACING, state.getValue(FACING)));
-		}
-		else
-		{
-			world.setBlockState(pos, BlockInit.HYPER_DRIVE.getDefaultState().withProperty(FACING, state.getValue(FACING)));
-		}
-
-		super.neighborChanged(state, world, pos, blockIn, fromPos);
-	}
-
-
-	@Override
-	public void updateTick(World world, BlockPos pos, IBlockState state, Random rand) 
-	{
-		super.updateTick(world, pos, state, rand);
-	}
-
-	@Override
-	public boolean canProvidePower(IBlockState state) 
-	{
-		if(power)
-			return true;
-		else
-			return false;
-	}
-
+	
 	@Override
 	public boolean canPlaceBlockAt(World worldIn, BlockPos pos) 
 	{	
@@ -151,7 +77,6 @@ public class HyperDrive extends Block implements IHasModel{
 			worldIn.setBlockState(pos, state.withProperty(FACING, face), 2);
 		}
 	}
-
 
 	@Override
 	public IBlockState getStateForPlacement(World world, BlockPos pos, EnumFacing facing, float hitX, float hitY, float hitZ, int meta, EntityLivingBase placer, EnumHand hand) 
@@ -191,6 +116,7 @@ public class HyperDrive extends Block implements IHasModel{
 		return this.getDefaultState().withProperty(FACING, facing);
 	}
 
+
 	@Override
 	public int getMetaFromState(IBlockState state) 
 	{
@@ -200,19 +126,46 @@ public class HyperDrive extends Block implements IHasModel{
 	@Override
 	public AxisAlignedBB getBoundingBox(IBlockState state, IBlockAccess source, BlockPos pos) 
 	{
-		return HYPERDRIVE;
+		return BOOK;
 
 	}
 	@Override
 	public AxisAlignedBB getSelectedBoundingBox(IBlockState state, World worldIn, BlockPos pos) 
 	{
-		return HYPERDRIVE;
+		return BOOK;
 	}
 
 	@Override
 	public AxisAlignedBB getCollisionBoundingBox(IBlockState blockState, IBlockAccess worldIn, BlockPos pos)
 	{
-		return HYPERDRIVE;
+		return BOOK;
 	}
+	
+	/**
+     * Called when a neighboring block was changed and marks that this state should perform any checks during a neighbor
+     * change. Cases may include when redstone power is updated, cactus blocks popping off due to a neighboring solid
+     * block, etc.
+     */
+    public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos)
+    {
+        this.checkForDrop(worldIn, pos, state);
+    }
+    
+    protected boolean checkForDrop(World worldIn, BlockPos pos, IBlockState state)
+    {
+        if (state.getBlock() == this && this.canPlaceBlockAt(worldIn, pos))
+        {
+            return false;
+        }
+        else
+        {
+            if (worldIn.getBlockState(pos).getBlock() == this)
+            {
+                this.dropBlockAsItem(worldIn, pos, state, 0);
+                worldIn.setBlockToAir(pos);
+            }
 
+            return true;
+        }
+    }
 }

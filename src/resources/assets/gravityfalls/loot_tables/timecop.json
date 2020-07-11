@@ -13,7 +13,7 @@
             "entries": [
                 {
                     "type": "item",
-                    "weight": 3
+                    "weight": 2,
                     "name": "gravityfalls:timetape",
                     "quality": 10
                 },
@@ -22,12 +22,6 @@
                     "weight": 10,
                     "name": "gravityfalls:laser_arm_cannon",
                     "quality": 3
-                },
-                {
-                    "type": "item",
-                    "weight": 3
-                    "name": "gravityfalls:themesong2",
-                    "quality": 20
                 },
                 {
                     "type": "item",

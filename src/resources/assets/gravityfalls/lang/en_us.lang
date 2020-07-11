@@ -43,6 +43,7 @@ item.themesong2.name=Music Disc
 item.weirdmageddon.name=Music Disc
 item.straightblanchin.name=Music Disc
 item.discogirl.name=Music Disc
+item.meetagain.name=Music Disc
 
 item.pinehat.name=Dipper's Hat
 item.pinevest.name=Dipper's Vest
@@ -71,12 +72,15 @@ item.tie2.name=Tie of Possession 2
 item.light_sweater.name=Light Sweater
 item.cryogenictube_item.name=Cryogenic Tube
 item.crystalflake.name=Crystal Flake
+item.bill_statue.name=Bill's Statue
+item.a_h_.name=A. H.
 
 item.record.themesong.desc=Theme Song
 item.record.themesong2.desc=Theme Song 2
 item.record.weirdmageddon.desc=Weirdmageddon Theme
 item.record.straightblanchin.desc=Straight Blanchin
 item.record.discogirl.desc=Disco Girl
+item.record.meetagain.desc=We'll Meet Again
 
 tile.lightsource.name=Light Source
 tile.crystal.name=Crystal
@@ -84,10 +88,10 @@ tile.uranium.name=Uranium Ore
 tile.uraniumtank.name=Uranium Tank
 tile.uraniumtankhalffilled.name=Half Filled Uranium Tank
 tile.uraniumtankfilled.name=Filled Uranium Tank
-tile.redwoodlogs.name=Red Wood Logs
-tile.redwoodplanks.name=Red Wood Planks
-tile.redwoodleaves.name=Red Wood Leaves
-tile.redwoodsapling.name=Red Wood Sapling
+tile.redwood_log.name=Redwood 
+tile.redwood_planks.name=Redwood Planks
+tile.redwood_leaves.name=Redwood Leaves
+tile.redwood_sapling.name=Redwood Sapling
 tile.powercord.name=Power Cord
 tile.uranium_furnace.name=Uranium Furnace
 tile.hyperdrive.name=Hyper Drive
@@ -137,6 +141,18 @@ tile.iron_ore_nightmare.name=Iron Ore
 tile.gold_ore_nightmare.name=Gold Ore
 tile.copper_ore_nightmare.name=Copper Ore
 tile.unlit_torch.name=Unlit Torch
+tile.ford_workbench.name=Ford's Workbench
+tile.bill_statue.name=Bill Statue
+tile.birch_log_eye.name=Birch Log Eye
+tile.birch_log_eye_evil.name=Evil Birch Log Eye
+tile.birch_log_eye_normal_evil.name=Evil Birch Log
+tile.birch_eye_evil_sapling.name=Evil Birch Eye Sapling
+tile.birch_eye_sapling.name=Birch Eye Sapling
+tile.birch_eye_leaves.name=Birch Eye Leaves
+tile.birch_eye_evil_leaves.name=Evil Birch Eye Leaves
+tile.redwood_fence.name=Redwood Fence
+tile.redwood_fence_gate.name=Redwood Fence Gate
+tile.redwood_button.name=Redwood Button
 
 itemGroup.tabGravityFallsBlocks=Gravity Falls Blocks
 itemGroup.tabGravityFallsArmor=Gravity Falls Armor
@@ -161,6 +177,7 @@ entity.unicorn.name=Unicorn
 entity.gideonbot.name=Gideon Bot
 entity.timebaby.name=Time Baby
 entity.shapeshifter.name=Shape Shifter
+entity.evil_tree.name=Evil Tree
 
 container.uranium_furnace=Uranium Furnace
 
@@ -185,3 +202,5 @@ tipped_arrow.effect.freeze_potion=Arrow of Freeze Potion
 
 attribute.name.gravityfalls.entityWidth=Entity Width
 attribute.name.gravityfalls.entityHeight=Entity Height
+attribute.name.gravityfalls.shapeshifterWidth=Shapeshifter Width
+attribute.name.gravityfalls.shapeshifterHeight=Shapeshifter Height

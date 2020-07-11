@@ -1,10 +1,10 @@
 {
     "pools": [
         {
-            "name": "TimeBabyMain",
+            "name": "EvilTreeMain",
             "rolls": {
-                "min": 0,
-                "max": 0
+                "min": 1,
+                "max": 1
             },
             "bonus_rolls": {
                 "min": 0,
@@ -14,8 +14,8 @@
                 {
                     "type": "item",
                     "weight": 1,
-                    "name": "gravityfalls:timetape",
-                    "quality": 1
+                    "name": "gravityfalls:birch_log_eye_evil",
+                    "quality": 5
                 }
             ]
         }

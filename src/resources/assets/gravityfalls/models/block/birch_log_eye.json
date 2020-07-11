@@ -1,0 +1,13 @@
+{
+    "parent": "block/orientable",    
+    "textures":
+    {
+        "particle": "gravityfalls:blocks/birch_log_eye_side_normal",
+        "up": "gravityfalls:blocks/birch_log_eye_top",
+        "down": "gravityfalls:blocks/birch_log_eye_top",
+        "north": "gravityfalls:blocks/birch_log_eye_side_eye",
+        "east": "gravityfalls:blocks/birch_log_eye_side_normal",
+        "west": "gravityfalls:blocks/birch_log_eye_side_normal",
+        "south": "gravityfalls:blocks/birch_log_eye_side_normal"
+    }
+}

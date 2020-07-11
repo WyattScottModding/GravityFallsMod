@@ -1,6 +1,7 @@
 {
-    "variants": {
-        "half=bottom": { "model": "gravityfalls:redwood_slab_half" },
-        "half=top": { "model": "gravityfalls:redwood_slab_double" }
+    "variants":
+    {
+        "half=bottom,variant=default": { "model": "gravityfalls:redwood_slab_bottom" },
+        "half=top,variant=default": { "model": "gravityfalls:redwood_slab_top" }
     }
 }

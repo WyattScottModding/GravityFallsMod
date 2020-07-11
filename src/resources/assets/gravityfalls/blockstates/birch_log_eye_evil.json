@@ -1,0 +1,11 @@
+{
+    "variants":
+    {
+        "facing=north": {"model": "gravityfalls:birch_log_eye_evil"},
+        "facing=east": {"model": "gravityfalls:birch_log_eye_evil", "y": 90},
+        "facing=south": {"model": "gravityfalls:birch_log_eye_evil", "y": 180},
+        "facing=west": {"model": "gravityfalls:birch_log_eye_evil", "y": 270},
+        "facing=up": {"model": "gravityfalls:birch_log_eye_evil", "x": 90},
+        "facing=down": {"model": "gravityfalls:birch_log_eye_evil", "x": 270}
+    }
+}

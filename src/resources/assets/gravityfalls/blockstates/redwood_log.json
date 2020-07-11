@@ -1,0 +1,9 @@
+{
+    "variants":
+    {
+        "axis=y":  { "model": "gravityfalls:redwood_log" },
+        "axis=z":   { "model": "gravityfalls:redwood_log", "x": 90 },
+        "axis=x":   { "model": "gravityfalls:redwood_log", "x": 90, "y": 90 },
+        "axis=none": { "model": "gravityfalls:redwood_log" }
+    }
+}

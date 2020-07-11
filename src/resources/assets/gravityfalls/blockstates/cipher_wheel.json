@@ -1,0 +1,9 @@
+{
+    "variants":
+    {
+        "facing=north": {"model": "gravityfalls:cipher_wheel"},
+        "facing=east": {"model": "gravityfalls:cipher_wheel", "y": 90},
+        "facing=south": {"model": "gravityfalls:cipher_wheel", "y": 180},
+        "facing=west": {"model": "gravityfalls:cipher_wheel", "y": 270}
+     }
+}

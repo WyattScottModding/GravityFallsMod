@@ -11,18 +11,6 @@
         "subtitle": "entity.gnome.hurt",
         "sounds": [{ "name": "gravityfalls:entity/gnome/hurt", "stream": true}]
     },
-    "entity.gnome.death":
-    {
-        "category": "entity",
-        "subtitle": "entity.gnome.death",
-        "sounds": [{ "name": "gravityfalls:entity/gnome/death", "stream": true}]
-    },
-    "entity.gnome.angry":
-    {
-        "category": "entity",
-        "subtitle": "entity.gnome.angry",
-        "sounds": [{ "name": "gravityfalls:entity/gnome/angry", "stream": true}]
-    },
     "record.themesong":
     {
         "category": "record",
@@ -52,6 +40,12 @@
         "category": "record",
         "subtitle": "record.discogirl",
         "sounds": [{ "name": "gravityfalls:record/discogirl", "stream": true}]
+    },
+    "record.meetagain":
+    {
+        "category": "record",
+        "subtitle": "record.meetagain",
+        "sounds": [{ "name": "gravityfalls:record/meetagain", "stream": true}]
     },
     "block.password":
     {
@@ -113,10 +107,83 @@
         "subtitle": "item.raisedead",
         "sounds": [{ "name": "gravityfalls:item/raisedead", "stream": true}]
     },
-    "tiembaby.crying":
+    "entity.timebaby.crying":
+    {
+        "category": "entity",
+        "subtitle": "entity.timebaby.crying",
+        "sounds": [{ "name": "gravityfalls:entity/timebaby/crying", "stream": true}]
+    },
+    "item.laser_arm_cannon":
     {
         "category": "item",
-        "subtitle": "item.raisedead",
-        "sounds": [{ "name": "gravityfalls:entity/timebaby/crying", "stream": true}]
+        "subtitle": "item.laser_arm_cannon",
+        "sounds": [{ "name": "gravityfalls:item/laser_arm_cannon", "stream": true}]
+    },
+    "ambient.journal_3":
+    {
+        "category": "ambient",
+        "subtitle": "ambient.journal_3",
+        "sounds": [{ "name": "gravityfalls:ambient/journal_3", "stream": true}]
+    },
+    "item.smile_dip":
+    {
+        "category": "item",
+        "subtitle": "item.smile_dip",
+        "sounds": [{ "name": "gravityfalls:item/smile_dip", "stream": true}]
+    },
+    "ambient.alien_ship":
+    {
+        "category": "ambient",
+        "subtitle": "ambient.alien_ship",
+        "sounds": [{ "name": "gravityfalls:ambient/alien_ship", "stream": true}]
+    },
+    "ambient.portal_start":
+    {
+        "category": "ambient",
+        "subtitle": "ambient.portal_start",
+        "sounds": [{ "name": "gravityfalls:ambient/portal_start", "stream": true}]
+    },
+    "music.song1":
+    {
+        "category": "music",
+        "subtitle": "music.song1",
+        "sounds": [{ "name": "gravityfalls:music/song1", "stream": true}]
+    },
+    "music.song2":
+    {
+        "category": "music",
+        "subtitle": "music.song1",
+        "sounds": [{ "name": "gravityfalls:music/song2", "stream": true}]
+    },
+    "music.song3":
+    {
+        "category": "music",
+        "subtitle": "music.song1",
+        "sounds": [{ "name": "gravityfalls:music/song3", "stream": true}]
+    },
+    "music.song4":
+    {
+        "category": "music",
+        "subtitle": "music.song1",
+        "sounds": [{ "name": "gravityfalls:music/song4", "stream": true}]
+    },
+    "music.song5":
+    {
+        "category": "music",
+        "subtitle": "music.song1",
+        "sounds": [{ "name": "gravityfalls:music/song5", "stream": true}]
+    },
+    "music.song6":
+    {
+        "category": "music",
+        "subtitle": "music.song1",
+        "sounds": [{ "name": "gravityfalls:music/song6", "stream": true}]
+    },
+    "music.song7":
+    {
+        "category": "music",
+        "subtitle": "music.song1",
+        "sounds": [{ "name": "gravityfalls:music/song7", "stream": true}]
     }
+    
 }

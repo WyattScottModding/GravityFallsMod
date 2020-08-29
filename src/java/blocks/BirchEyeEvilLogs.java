@@ -40,6 +40,7 @@ import net.minecraft.util.NonNullList;
 import net.minecraft.util.Rotation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 public class BirchEyeEvilLogs extends BlockLog implements IHasModel
@@ -69,16 +70,18 @@ public class BirchEyeEvilLogs extends BlockLog implements IHasModel
 		super.onBlockAdded(worldIn, pos, state);
 		this.setDefaultDirection(worldIn, pos, state);
 	}
-
+	
 	@Override
-	public void neighborChanged(IBlockState state, World worldIn, BlockPos pos, Block blockIn, BlockPos fromPos) {
-
+	public void onBlockHarvested(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player) {
+		
 		if(!worldIn.isRemote)
-		{
-			worldIn.setBlockState(pos, Blocks.AIR.getDefaultState());
 			worldIn.spawnEntity(new EntityEvilTree(worldIn, pos.getX(), pos.getY(), pos.getZ()));
-		}
-		super.neighborChanged(state, worldIn, pos, blockIn, fromPos);
+		super.onBlockHarvested(worldIn, pos, state, player);
+	}
+	
+	@Override
+	public void getDrops(NonNullList<ItemStack> drops, IBlockAccess world, BlockPos pos, IBlockState state,
+			int fortune) {
 	}
 
 	private void setDefaultDirection(World worldIn, BlockPos pos, IBlockState state)

@@ -3,8 +3,12 @@ package armor;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
+import net.minecraft.item.ItemStack;
 
 public class Dipper extends ItemArmor implements IHasModel{
 
@@ -19,6 +23,17 @@ public class Dipper extends ItemArmor implements IHasModel{
 		
 		//this.renderHelmetOverlay(stack, player, resolution, partialTicks);
 	}
+	
+	 /**
+     * Return whether this item is repairable in an anvil.
+     *  
+     * @param toRepair the {@code ItemStack} being repaired
+     * @param repair the {@code ItemStack} being used to perform the repair
+     */
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
+    {
+        return repair.getItem() == Item.getItemFromBlock(Blocks.WOOL);
+    }
 
 	@Override
 	public void registerModels() 

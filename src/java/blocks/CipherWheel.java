@@ -51,7 +51,7 @@ public class CipherWheel extends Block implements IHasModel, ITileEntityProvider
 		this.setSoundType(SoundType.CLOTH);
 		this.setHardness(2.0F);
 		this.setResistance(10.0F);
-		this.setCreativeTab(GravityFalls.gravityfallsblocks);
+		//this.setCreativeTab(GravityFalls.gravityfallsblocks);
 
 		BlockInit.BLOCKS.add(this);
 		ItemInit.ITEMS.add(new ItemBlock(this).setRegistryName(this.getRegistryName()));

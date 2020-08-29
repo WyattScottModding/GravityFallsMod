@@ -31,7 +31,7 @@ public class FordWorkbench extends Block implements IHasModel
 		super(Material.IRON);
 		this.setUnlocalizedName(name);
 		this.setRegistryName(name);
-		this.setCreativeTab(GravityFalls.gravityfallsblocks);
+		//this.setCreativeTab(GravityFalls.gravityfallsblocks);
 		this.setHardness(4.0F);
 		this.setResistance(20.0F);
 

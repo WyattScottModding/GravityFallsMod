@@ -1,35 +1,20 @@
 package armor;
 
-import org.lwjgl.input.Keyboard;
-
-import handlers.RegistryHandler;
-import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class GoldKnuckles extends ItemArmor implements IHasModel
 {
-
 	public GoldKnuckles(String name, ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
 	{
 		super(materialIn, renderIndexIn, equipmentSlotIn);
@@ -38,10 +23,7 @@ public class GoldKnuckles extends ItemArmor implements IHasModel
 		this.setCreativeTab(GravityFalls.gravityfallsitems);
 
 		ItemInit.ITEMS.add(this);
-
 	}
-
-
 
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entityIn, int itemSlot, boolean isSelected) 
@@ -50,28 +32,28 @@ public class GoldKnuckles extends ItemArmor implements IHasModel
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
 
-
 			if(player.getArmorInventoryList().toString().contains("goldknuckles"))
-			{
-				
+			{				
 				player.addPotionEffect(new PotionEffect(MobEffects.STRENGTH, 1, 2));
-
 			}
-
 		}
-
-
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}
-
-
-
+	
+	/**
+     * Return whether this item is repairable in an anvil.
+     *  
+     * @param toRepair the {@code ItemStack} being repaired
+     * @param repair the {@code ItemStack} being used to perform the repair
+     */
+    public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
+    {
+        return repair.getItem() == Items.GOLD_INGOT;
+    }
 
 	@Override
 	public void registerModels() 
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
-
 	}
-
 }

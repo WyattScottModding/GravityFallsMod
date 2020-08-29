@@ -23,7 +23,6 @@ public class ArmorModel extends ItemArmor implements IHasModel
 		
 		ItemInit.ITEMS.add(this);
 	}
-
 	
 	@Override
 	public ModelBiped getArmorModel(EntityLivingBase entityLiving, ItemStack itemStack, EntityEquipmentSlot armorSlot,
@@ -50,11 +49,9 @@ public class ArmorModel extends ItemArmor implements IHasModel
 		return null;
 	}
 
-
 	@Override
 	public void registerModels() 
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
-
 }

@@ -1,37 +1,21 @@
 package armor;
 
-import org.lwjgl.input.Keyboard;
-
-import handlers.RegistryHandler;
-import init.BlockInit;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
 import main.Reference;
-import net.minecraft.block.Block;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.MobEffects;
 import net.minecraft.inventory.EntityEquipmentSlot;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionEffect;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.EnumActionResult;
-import net.minecraft.util.EnumHand;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.World;
-import net.minecraftforge.fml.client.registry.ClientRegistry;
 
 public class StrengthChestplate extends ItemArmor implements IHasModel
-{
-	private int counter = 0;
-	
+{	
 	public StrengthChestplate(String name, ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
 	{
 		super(materialIn, renderIndexIn, equipmentSlotIn);
@@ -45,6 +29,17 @@ public class StrengthChestplate extends ItemArmor implements IHasModel
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
+		
+		int counter = 0;
+		
+		if(nbt.hasKey("counter"))
+			counter = nbt.getInteger("counter");
+		
 		if(counter < 18)
 			counter++;
 		else if(counter == 18)
@@ -63,14 +58,26 @@ public class StrengthChestplate extends ItemArmor implements IHasModel
 				player.fallDistance = 0;	
 			}
 		}
-		
+		nbt.setInteger("counter", counter);
+		stack.setTagCompound(nbt);
 
 		super.onUpdate(stack, world, entityIn, itemSlot, isSelected);
 	}
 
 	@Override
 	public String getArmorTexture(ItemStack stack, Entity entity, EntityEquipmentSlot slot, String type) 
-	{		
+	{
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
+		
+		int counter = 0;
+		
+		if(nbt.hasKey("counter"))
+			counter = nbt.getInteger("counter");
+		
 		if(counter == 0 || counter == 1 || counter == 2)
 			return Reference.MODID + ":textures/models/armor/magic_layer_1-1.png";
 		else if(counter == 3 || counter == 4 || counter == 5)
@@ -85,12 +92,9 @@ public class StrengthChestplate extends ItemArmor implements IHasModel
 			return Reference.MODID + ":textures/models/armor/magic_layer_1-2.png";
 	}
 
-
 	@Override
 	public void registerModels() 
 	{
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
-
 	}
-
 }

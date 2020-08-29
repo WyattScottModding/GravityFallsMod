@@ -21,12 +21,15 @@ public class ContainerUraniumFurnace extends Container
 	{
 		this.tileentity = tileentity;
 		this.player = player;
+		
+		//Uranium Furnace Slots
 		this.addSlotToContainer(new SlotUraniumFurnaceFuel(tileentity, 0, 17, 38));
 		this.addSlotToContainer(new Slot(tileentity, 1, 56, 25));
 		this.addSlotToContainer(new Slot(tileentity, 2, 79, 18));
 		this.addSlotToContainer(new Slot(tileentity, 3, 102, 25));
 		this.addSlotToContainer(new SlotUraniumFurnaceOutput(player.player, tileentity, 4, 79, 59));
 
+		//Player Inventory Slots
 		for(int y = 0; y < 3; y++)
 		{
 			for(int x = 0; x < 9; x++)
@@ -144,7 +147,6 @@ public class ContainerUraniumFurnace extends Container
 			else
 			{
 				slot.onSlotChanged();
-
 			}
 			if(stack1.getCount() == stack.getCount()) 
 				return ItemStack.EMPTY;
@@ -152,6 +154,4 @@ public class ContainerUraniumFurnace extends Container
 		}
 		return stack;
 	}
-	
-	
 }

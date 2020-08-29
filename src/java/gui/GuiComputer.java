@@ -103,7 +103,7 @@ public class GuiComputer extends GuiScreen
 		BlockPos portalLever = findNearestPortalLever();
 		
 		
-		if(portalLever != null) {
+		if(portalLever != null && PortalBlocks.portalMap != null && PortalBlocks.portalMap.containsKey(portalLever)) {
 			countdown = PortalBlocks.portalMap.get(portalLever);
 		}
 

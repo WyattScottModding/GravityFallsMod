@@ -4,6 +4,7 @@ import java.util.Random;
 
 import org.lwjgl.input.Keyboard;
 
+import handlers.KeyBindings;
 import init.BlockInit;
 import init.ItemInit;
 import main.ConfigHandler;
@@ -20,6 +21,8 @@ import net.minecraft.block.properties.IProperty;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.BlockStateContainer;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
@@ -37,8 +40,8 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.RayTraceResult;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
-import network.MessageOpenBook1;
-import network.MessageOpenComputer;
+import network.MessageOpenGUI;
+import network.MessagePlaySound;
 import network.Messages;
 import tileEntities.TileEntityComputer;
 import tileEntities.TileEntityPortalLever;
@@ -77,25 +80,27 @@ public class ComputerOpen extends Block
 	}
 
 	@Override
-	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer playerIn,
+	public boolean onBlockActivated(World worldIn, BlockPos pos, IBlockState state, EntityPlayer player,
 			EnumHand hand, EnumFacing facing, float hitX, float hitY, float hitZ)
 	{
-		EnumFacing face = (EnumFacing)this.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, this.getMetaFromState(state), playerIn).getValue(FACING);
-
-		if(!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+		EnumFacing face = (EnumFacing)this.getStateForPlacement(worldIn, pos, facing, hitX, hitY, hitZ, this.getMetaFromState(state), player).getValue(FACING);
+		GameSettings gameSettings = Minecraft.getMinecraft().gameSettings;
+		
+		if(player != null)
 		{
-			IBlockState state2 = BlockInit.COMPUTER_CLOSED.getDefaultState().withProperty(FACING, face);
-			worldIn.setBlockState(pos, state2);
-		}
-		else if(!worldIn.isRemote)
-		{	
-			if(!worldIn.isRemote && playerIn instanceof EntityPlayerMP) {
-				EntityPlayerMP serverPlayer = (EntityPlayerMP) playerIn;
-				Messages.INSTANCE.sendTo(new MessageOpenComputer(),  serverPlayer);
+			if(!gameSettings.keyBindSprint.isKeyDown())
+			{
+				IBlockState state2 = BlockInit.COMPUTER_CLOSED.getDefaultState().withProperty(FACING, face);
+				worldIn.setBlockState(pos, state2);		
 			}
+			else
+			{
+				player.openGui(GravityFalls.instance, ConfigHandler.COMPUTER, player.world, (int) player.posX, (int) player.posY, (int) player.posZ);
+			}
+			return true;
 		}
 
-		return true;
+		return false;
 	}
 
 	public static TileEntityPortalLever searchForLever(World world, BlockPos pos) {

@@ -43,7 +43,7 @@ public class SmileDip extends ItemFood implements IHasModel{
 	@Override
 	public ItemStack onItemUseFinish(ItemStack stack, World worldIn, EntityLivingBase entityLiving)
 	{
-		int duration = 1780;
+		int duration = 1740;
 		entityLiving.addPotionEffect(new PotionEffect(MobEffects.NAUSEA, duration, 0));
 		entityLiving.addPotionEffect(new PotionEffect(MobEffects.SPEED, duration, 0));
 		entityLiving.addPotionEffect(new PotionEffect(MobEffects.HASTE, duration, 0));
@@ -54,7 +54,7 @@ public class SmileDip extends ItemFood implements IHasModel{
 			EntityPlayer player = (EntityPlayer) entityLiving;
 
 			Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord
-					.getMasterRecord(SoundsHandler.SMILE_DIP, 1.0F));
+					.getMusicRecord(SoundsHandler.SMILE_DIP));
 		}
 		entity = entityLiving;
 

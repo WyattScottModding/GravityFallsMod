@@ -3,16 +3,13 @@ package armor;
 import init.ItemInit;
 import main.GravityFalls;
 import main.IHasModel;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.inventory.EntityEquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemArmor;
 import net.minecraft.item.ItemStack;
 
-public class Mabel extends ItemArmor implements IHasModel{
+public class RubberArmor extends ItemArmor implements IHasModel {
 
-	public Mabel(String name, ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
+	public RubberArmor(String name, ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
 	{
 		super(materialIn, renderIndexIn, equipmentSlotIn);
 		this.setUnlocalizedName(name);
@@ -21,7 +18,7 @@ public class Mabel extends ItemArmor implements IHasModel{
 		
 		ItemInit.ITEMS.add(this);
 	}
-	
+
 	 /**
      * Return whether this item is repairable in an anvil.
      *  
@@ -30,12 +27,12 @@ public class Mabel extends ItemArmor implements IHasModel{
      */
     public boolean getIsRepairable(ItemStack toRepair, ItemStack repair)
     {
-        return repair.getItem() == Item.getItemFromBlock(Blocks.WOOL);
+        return repair.getItem() == ItemInit.RUBBER_ITEM;
     }
 	
 	@Override
 	public void registerModels() 
 	{
-		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");	
+		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
 }

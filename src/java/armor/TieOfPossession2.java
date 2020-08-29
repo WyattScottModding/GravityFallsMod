@@ -15,7 +15,6 @@ import net.minecraft.world.World;
 
 public class TieOfPossession2 extends ItemArmor implements IHasModel
 {
-
 	public TieOfPossession2(String name, ArmorMaterial materialIn, int renderIndexIn, EntityEquipmentSlot equipmentSlotIn) 
 	{
 		super(materialIn, renderIndexIn, equipmentSlotIn);
@@ -37,7 +36,6 @@ public class TieOfPossession2 extends ItemArmor implements IHasModel
 		return this;
 	}
 
-
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
@@ -45,5 +43,4 @@ public class TieOfPossession2 extends ItemArmor implements IHasModel
 		
 		return super.onItemRightClick(world, player, hand);
 	}
-
 }

@@ -586,4 +586,13 @@ public class EntityUnicorn extends EntityHorse implements net.minecraftforge.com
             this.addGrowth(60);
         }
     }
+    
+    /**
+     * Returns the Y offset from the entity's position for any entity riding this one.
+     */
+     @Override
+    public double getMountedYOffset()
+    {
+        return (double)this.height * 0.55D;
+    }
 }

@@ -38,7 +38,7 @@ public class Crafting {
 		GameRegistry.addShapedRecipe(new ResourceLocation("leafblower"), new ResourceLocation("leafblower"), new ItemStack(ItemInit.LEAFBLOWER, 1), new Object[]{"SI ", "BII", "RR ", 'R', Items.REDSTONE, 'B', ItemInit.BATTERY, 'I', Items.IRON_INGOT, 'S', Blocks.STONE_BUTTON});
 		GameRegistry.addShapedRecipe(new ResourceLocation("copper_block"), new ResourceLocation("copper_block"), new ItemStack(BlockInit.COPPER_BLOCK, 1), new Object[]{"CCC", "CCC", "CCC", 'C', ItemInit.COPPER_INGOT});
 
-		GameRegistry.addShapedRecipe(new ResourceLocation("golfcart"), new ResourceLocation("golfcart"), new ItemStack(ItemInit.GOLF_CART, 1), new Object[]{"CCC", "LLL", "IBI", 'C',BlockInit.COPPER_BLOCK, 'B', ItemInit.BATTERY, 'I', Blocks.IRON_BLOCK, 'L', Items.LEATHER});
+		GameRegistry.addShapedRecipe(new ResourceLocation("golfcart"), new ResourceLocation("golfcart"), new ItemStack(ItemInit.GOLF_CART, 1), new Object[]{"CCC", "ILI", "RIR", 'C',BlockInit.COPPER_BLOCK, 'R', ItemInit.RUBBER_ITEM, 'I', Blocks.IRON_BLOCK, 'L', Items.LEATHER});
 		GameRegistry.addShapedRecipe(new ResourceLocation("presidentkey1"), new ResourceLocation("presidentkey"), new ItemStack(ItemInit.PRESIDENT_KEY, 1), new Object[]{"GIG",'G', Items.GOLD_INGOT, 'I', Items.IRON_INGOT});
 
 		GameRegistry.addShapedRecipe(new ResourceLocation("blacklight1"), new ResourceLocation("blacklight"), new ItemStack(ItemInit.BLACK_LIGHT, 1), new Object[]{" LO", " LO", " LO", 'L', BlockInit.LIGHT_PURPLE, 'O', Blocks.OBSIDIAN});

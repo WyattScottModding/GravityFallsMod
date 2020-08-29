@@ -39,6 +39,7 @@ public class SoundsHandler
 	public static SoundEvent ITEM_RAISEDEAD;
 	public static SoundEvent ITEM_LASER_ARM_CANNON;
 	public static SoundEvent SMILE_DIP;
+	public static SoundEvent EMP;
 
 	public static SoundEvent JOURNAL_3;
 	public static SoundEvent ALIEN_SHIP;
@@ -88,6 +89,7 @@ public class SoundsHandler
 		ITEM_RAISEDEAD = registerSound("item.raisedead");
 		ITEM_LASER_ARM_CANNON = registerSound("item.laser_arm_cannon");
 		SMILE_DIP = registerSound("item.smile_dip");
+		EMP = registerSound("item.emp");
 
 		JOURNAL_3 = registerSound("ambient.journal_3");
 		ALIEN_SHIP = registerSound("ambient.alien_ship");

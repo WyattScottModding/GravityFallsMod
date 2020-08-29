@@ -1,40 +1,69 @@
 package entity;
 
+import java.util.Collection;
+
 import javax.annotation.Nullable;
 
 import org.lwjgl.input.Keyboard;
 
+import gui.GuiGolfCart;
+import handlers.KeyBindings;
 import init.ItemInit;
+import main.ConfigHandler;
+import main.GravityFalls;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiScreenHorseInventory;
+import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityCreature;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.monster.EntityMob;
+import net.minecraft.entity.passive.AbstractChestHorse;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.Items;
+import net.minecraft.init.SoundEvents;
+import net.minecraft.inventory.ContainerHorseChest;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.inventory.IInventoryChangedListener;
+import net.minecraft.inventory.InventoryHelper;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.datasync.DataParameter;
 import net.minecraft.network.datasync.DataSerializers;
 import net.minecraft.network.datasync.EntityDataManager;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.EntityDamageSourceIndirect;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.EnumHand;
+import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
+import net.minecraftforge.fml.common.network.NetworkRegistry.TargetPoint;
+import network.MessageChangeSize;
+import network.MessageHandleGolfCart;
+import network.MessageOpenGUI;
+import network.MessageUpdatePlayerMotionClient;
+import network.Messages;
 
-public class EntityGolfCart extends EntityMob
+public class EntityGolfCart extends EntityLiving implements IInventoryChangedListener
 {
-	public EntityPlayer player;
 	private static final DataParameter<Float> DATA_HEALTH_ID = EntityDataManager.<Float>createKey(EntityGolfCart.class, DataSerializers.FLOAT);
 
 	public double acceleration = 1.0;
-	World world = null;
-	public boolean passenger = false;
-	public EntityPlayer driver = null;
-	public EntityPlayer rider = null;
+	public ContainerHorseChest inventory;
+	private net.minecraftforge.items.IItemHandler itemHandler = null; 
+	public int batteryLife;
 
 	public EntityGolfCart(World worldIn)
 	{
@@ -42,21 +71,20 @@ public class EntityGolfCart extends EntityMob
 		this.setSize(1.8F, 2.8F);
 		this.stepHeight = 1;
 		this.world = worldIn;
+		this.motionX = 0.0D;
+		this.motionY = 0.0D;
+		this.motionZ = 0.0D;
+		this.batteryLife = 100;
+		this.initChest();
 	}
 
 	public EntityGolfCart(World worldIn, double x, double y, double z)
 	{
-		super(worldIn);
+		this(worldIn);
 		this.setPosition(x, y, z);
-		this.motionX = 0.0D;
-		this.motionY = 0.0D;
-		this.motionZ = 0.0D;
 		this.prevPosX = x;
 		this.prevPosY = y;
 		this.prevPosZ = z;
-		this.setSize(1.8F, 2.8F);
-		this.stepHeight = 1;
-		this.world = worldIn;
 	}
 
 	protected void entityInit()
@@ -69,9 +97,13 @@ public class EntityGolfCart extends EntityMob
 	{
 		super.applyEntityAttributes();
 		this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.7D);
-		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(500.0D);
+		this.getEntityAttribute(SharedMonsterAttributes.MAX_HEALTH).setBaseValue(200.0D);
 	}
 
+	protected int getInventorySize()
+	{
+		return 25;
+	}
 
 	protected Item getDropItem()
 	{
@@ -84,13 +116,50 @@ public class EntityGolfCart extends EntityMob
 		return true;
 	}
 
+	/**
+	 * Called when the entity is attacked.
+	 */
+	@Override
+	public boolean attackEntityFrom(DamageSource source, float amount)
+	{
+		if (this.isEntityInvulnerable(source))
+		{
+			return false;
+		}
+		else if(source != DamageSource.GENERIC)
+		{
+			return false;
+		}
+		else if (!this.world.isRemote && !this.isDead)
+		{
+			if (source instanceof EntityDamageSourceIndirect && source.getTrueSource() != null && this.isPassenger(source.getTrueSource()))
+			{
+				return false;
+			}
+			else
+			{
+				this.markVelocityChanged();
+
+				if (this.world.getGameRules().getBoolean("doEntityDrops"))
+				{
+					this.dropItemWithOffset(getDropItem(), 1, 0.0F);
+					InventoryHelper.dropInventoryItems(world, this, inventory);
+				}
+				this.setDead();
+
+				return true;
+			}
+		}
+		else
+		{
+			return true;
+		}
+	}
 
 	@Override
 	public boolean processInteract(EntityPlayer player, EnumHand hand)
 	{
 		ItemStack stack = player.getHeldItemMainhand();
-
-		this.player = player;
 
 		this.height = 0.7F;
 		this.width = 2.5F;
@@ -102,7 +171,14 @@ public class EntityGolfCart extends EntityMob
 		}
 		else
 		{
-			if(!this.isBeingRidden())
+			//If the player is sneaking, open the gui
+			if(player.isSneaking())
+			{
+				this.openGUI(player);
+				return true;
+			}
+			//If the golf cart is not being riden, this player will become the driver
+			else if(!this.isBeingRidden())
 			{
 				if(stack != null && stack.interactWithEntity(player, this, hand))
 				{
@@ -110,16 +186,15 @@ public class EntityGolfCart extends EntityMob
 				}
 				else
 				{
-					this.mountToCart(player);
-					driver = player;
+					this.mountToCart(player, true);
+					Minecraft.getMinecraft().gameSettings.thirdPersonView = 1;
 					return true;
 				}
 			}
-			else if(!passenger)
+			//If there is only 1 player in the golf cart, this player will become the rider
+			else if(!hasRider())
 			{
-				this.mountToCart(player);
-				passenger = true;
-				rider = player;
+				this.mountToCart(player, false);
 				return true;
 			}
 			else
@@ -130,15 +205,30 @@ public class EntityGolfCart extends EntityMob
 		}
 	}
 
-	private void mountToCart(EntityPlayer player)
+	/**
+	 * If at least 2 entities are riding this
+	 */
+	public boolean hasRider()
+	{
+		return this.getPassengers().size() >= 2;
+	}
+
+	private void mountToCart(EntityPlayer player, boolean driver)
 	{
 		player.rotationYaw = this.rotationYaw;
 		player.rotationPitch = this.rotationPitch;
-		player.startRiding(this);
 
+		player.startRiding(this, true);
+		
+		double y = this.posY + this.getMountedYOffset();
+
+		if(driver)
+			player.setPosition(this.posX + Math.sin(this.rotationYaw / 180 * Math.PI)*.8 - Math.cos(this.rotationYaw / 180 * Math.PI)*.2, y, this.posZ - Math.cos(this.rotationYaw / 180 * Math.PI)*.8 - Math.sin(this.rotationYaw / 180 * Math.PI)*.2);
+		else
+			player.setPosition(this.posX + Math.sin(this.rotationYaw / 180 * Math.PI)*.8 - Math.cos(this.rotationYaw / 180 * Math.PI)*1.2, y, this.posZ - Math.cos(this.rotationYaw / 180 * Math.PI)*.8 - Math.sin(this.rotationYaw / 180 * Math.PI)*1.2);
 	}
 
-
+	@Override
 	public boolean canBeSteered()
 	{
 		Entity entity = this.getControllingPassenger();
@@ -148,34 +238,40 @@ public class EntityGolfCart extends EntityMob
 	@Override
 	public void travel(float strafe, float vertical, float forward) 
 	{
-		if(this.isBeingRidden() && this.canBeSteered())
+		if(this.isBeingRidden() && this.canBeSteered() && this.batteryLife > 0)
 		{
+			//float rotationAmount = -(strafe * 8);
 			forward *= acceleration;
 			EntityLivingBase entitylivingbase = (EntityLivingBase)this.getControllingPassenger();
 
-			if(Keyboard.isKeyDown(Keyboard.KEY_A))
-			{
-				this.rotationYaw -= 5;
-				player.rotationYaw -=5;
-			}
-			if(Keyboard.isKeyDown(Keyboard.KEY_D))
-			{
-				this.rotationYaw += 5;
-				player.rotationYaw +=5;
-			}
+			this.rotationYaw = entitylivingbase.rotationYaw;
 			this.prevRotationYaw = this.rotationYaw;
-			this.rotationPitch = entitylivingbase.rotationPitch;
-			this.prevRotationPitch = this.rotationPitch * 0.5f;
+			this.rotationPitch = entitylivingbase.rotationPitch * 0.5F;
 			this.setRotation(this.rotationYaw, this.rotationPitch);
 			this.renderYawOffset = this.rotationYaw;
 			this.rotationYawHead = this.renderYawOffset;
-			strafe = 0;
+			strafe = 0;//strafe = entitylivingbase.moveStrafing * 0.5F;
 			forward = entitylivingbase.moveForward;
 
-			if(forward <= 0.0f)
+			if(this.hasRider() && this.getPassengers().get(1) instanceof EntityLivingBase)
 			{
-				forward *= 0.25f;
+				EntityLivingBase entity = (EntityLivingBase) this.getPassengers().get(1);
+				entity.moveForward = entitylivingbase.moveForward;
 			}
+			
+			//Consume Battery Life when moving
+			if(world.getWorldTime() % 40 == 0)
+			{
+				//Moving forward drains the battery more than moving backward
+				if(forward > 0)
+					this.batteryLife--;
+				else if(forward < 0 && world.getWorldTime() % 3 == 0)
+					this.batteryLife--;
+			}
+
+			//Moving backwards is slower
+			if(forward <= 0.0f)
+				forward *= 0.4f;
 
 			this.jumpMovementFactor = this.getAIMoveSpeed() * 0.1f;
 
@@ -217,7 +313,6 @@ public class EntityGolfCart extends EntityMob
 		return this.getPassengers().isEmpty() ? null : (Entity)this.getPassengers().get(0);
 	}
 
-
 	@Override
 	protected boolean isMovementBlocked()
 	{
@@ -257,7 +352,7 @@ public class EntityGolfCart extends EntityMob
 	@Override
 	public boolean canBePushed() 
 	{
-		return false;
+		return !this.isBeingRidden();
 	}
 
 	@Override
@@ -266,105 +361,39 @@ public class EntityGolfCart extends EntityMob
 		return !this.isDead;
 	}
 
-
-
 	@Override
-	public void onUpdate() 
-	{
-		if(Keyboard.isKeyDown(Keyboard.KEY_W) && acceleration < 10 && player != null)
-			acceleration += 0.1;
-		else
-			acceleration = 1.0;
+	public void onUpdate() {
 
-		if(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) && player != null)
+		this.fallDistance = 0;
+
+		for(Entity passenger : this.getPassengers())
+			updatePassenger(passenger);
+		
+		//Consume Battery
+		if(this.batteryLife <= 50 && inventory.getStackInSlot(0).getItem() == ItemInit.BATTERY)
 		{
-			dismountEntity(player);
-			player.dismountRidingEntity();
-			player.attemptTeleport(player.posX - 1, player.posY, player.posZ - 1);
-			this.attemptTeleport(this.posX, this.posY - 1, this.posZ);
-			player = null;
+			inventory.decrStackSize(0, 1);
+			inventory.markDirty();
+			this.batteryLife += 50;
 		}
-
-		if(getAttackingEntity() instanceof EntityPlayer)
-		{
-			EntityPlayer player = (EntityPlayer) getAttackingEntity();
-
-			if(!player.isCreative())
-				this.dropItem(ItemInit.GOLF_CART, 1);
-			
-			this.setDead();
-		}
-
 		super.onUpdate();
 	}
 
-	public void dismountEntity(Entity entityIn)
-	{
-
-		double d1 = entityIn.posX;
-		double d13 = entityIn.getEntityBoundingBox().minY + (double)entityIn.height;
-		double d14 = entityIn.posZ;
-		EnumFacing enumfacing1 = entityIn.getAdjustedHorizontalFacing();
-
-		if (enumfacing1 != null)
-		{
-			EnumFacing enumfacing = enumfacing1.rotateY();
-			int[][] aint1 = new int[][] {{0, 1}, {0, -1}, { -1, 1}, { -1, -1}, {1, 1}, {1, -1}, { -1, 0}, {1, 0}, {0, 1}};
-			double d5 = Math.floor(this.posX) + 0.5D;
-			double d6 = Math.floor(this.posZ) + 0.5D;
-			double d7 = this.getEntityBoundingBox().maxX - this.getEntityBoundingBox().minX;
-			double d8 = this.getEntityBoundingBox().maxZ - this.getEntityBoundingBox().minZ;
-			AxisAlignedBB axisalignedbb = new AxisAlignedBB(d5 - d7 / 2.0D, entityIn.getEntityBoundingBox().minY, d6 - d8 / 2.0D, d5 + d7 / 2.0D, Math.floor(entityIn.getEntityBoundingBox().minY) + (double)this.height, d6 + d8 / 2.0D);
-
-			for (int[] aint : aint1)
-			{
-				double d9 = (double)(enumfacing1.getFrontOffsetX() * aint[0] + enumfacing.getFrontOffsetX() * aint[1]);
-				double d10 = (double)(enumfacing1.getFrontOffsetZ() * aint[0] + enumfacing.getFrontOffsetZ() * aint[1]);
-				double d11 = d5 + d9;
-				double d12 = d6 + d10;
-				AxisAlignedBB axisalignedbb1 = axisalignedbb.offset(d9, 0.0D, d10);
-
-				if (!this.world.collidesWithAnyBlock(axisalignedbb1))
-				{
-					if (this.world.getBlockState(new BlockPos(d11, this.posY, d12)).isSideSolid(world, new BlockPos(d11, this.posY, d12), EnumFacing.UP))
-					{
-						this.setPositionAndUpdate(d11, this.posY + 1.0D, d12);
-						return;
-					}
-
-					BlockPos blockpos = new BlockPos(d11, this.posY - 1.0D, d12);
-
-					if (this.world.getBlockState(blockpos).isSideSolid(world, blockpos, EnumFacing.UP) || this.world.getBlockState(blockpos).getMaterial() == Material.WATER)
-					{
-						d1 = d11;
-						d13 = this.posY + 1.0D;
-						d14 = d12;
-					}
-				}
-				else if (!this.world.collidesWithAnyBlock(axisalignedbb1.offset(0.0D, 1.0D, 0.0D)) && this.world.getBlockState(new BlockPos(d11, this.posY + 1.0D, d12)).isSideSolid(world, new BlockPos(d11, this.posY + 1.0D, d12), EnumFacing.UP))
-				{
-					d1 = d11;
-					d13 = this.posY + 2.0D;
-					d14 = d12;
-				}
-			}
-		}
-
-		this.setPositionAndUpdate(d1, d13, d14);
+	@Override
+	public void performHurtAnimation() {
 	}
 
 	@Override
-	public void writeEntityToNBT(NBTTagCompound compound)
-	{
-		super.writeEntityToNBT(compound);
-
+	protected void damageEntity(DamageSource damageSrc, float damageAmount) {
 	}
 
 	@Override
-	public void readEntityFromNBT(NBTTagCompound compound)
-	{
-		super.readEntityFromNBT(compound);
+	protected void playHurtSound(DamageSource source) {
+	}
 
+	@Override
+	protected SoundEvent getHurtSound(DamageSource damageSourceIn) {
+		return SoundEvents.BLOCK_STONE_HIT;
 	}
 
 	@Override
@@ -379,5 +408,136 @@ public class EntityGolfCart extends EntityMob
 		super.notifyDataManagerChange(key);
 	}
 
+	@Override
+	public void updatePassenger(Entity passenger) {
+		if (this.isPassenger(passenger))
+		{	
+			Entity driver = null;
+			if(this.getPassengers().size() > 0)
+				driver = this.getPassengers().get(0);
 
+			Entity rider = null;
+			if(this.getPassengers().size() > 1)
+				rider = this.getPassengers().get(1);
+			
+			double y = this.posY + this.getMountedYOffset();
+
+			if(driver != null && passenger == driver)
+				passenger.setPosition(this.posX + Math.sin(this.rotationYaw / 180 * Math.PI)*.8 - Math.cos(this.rotationYaw / 180 * Math.PI)*.2, y, this.posZ - Math.cos(this.rotationYaw / 180 * Math.PI)*.8 - Math.sin(this.rotationYaw / 180 * Math.PI)*.2);
+			else if(rider != null && passenger == rider)
+				passenger.setPosition(this.posX + Math.sin(this.rotationYaw / 180 * Math.PI)*.8 - Math.cos(this.rotationYaw / 180 * Math.PI)*1.2, y, this.posZ - Math.cos(this.rotationYaw / 180 * Math.PI)*.8 - Math.sin(this.rotationYaw / 180 * Math.PI)*1.2);
+		}
+	}
+
+	/**
+	 * (abstract) Protected helper method to write subclass entity data to NBT.
+	 */
+	public void writeEntityToNBT(NBTTagCompound compound)
+	{
+		super.writeEntityToNBT(compound);
+
+		NBTTagList nbttaglist = new NBTTagList();
+
+		for (int i = 0; i < this.inventory.getSizeInventory(); ++i)
+		{
+			ItemStack itemstack = this.inventory.getStackInSlot(i);
+
+			if (!itemstack.isEmpty())
+			{
+				NBTTagCompound nbttagcompound = new NBTTagCompound();
+				nbttagcompound.setByte("Slot", (byte)i);
+				itemstack.writeToNBT(nbttagcompound);
+				nbttaglist.appendTag(nbttagcompound);
+			}
+		}
+		
+		compound.setInteger("batteryLife", this.batteryLife);
+
+		compound.setTag("Items", nbttaglist);
+	}
+
+	/**
+	 * (abstract) Protected helper method to read subclass entity data from NBT.
+	 */
+	public void readEntityFromNBT(NBTTagCompound compound)
+	{
+		super.readEntityFromNBT(compound);
+
+		NBTTagList nbttaglist = compound.getTagList("Items", 10);
+
+		for (int i = 0; i < nbttaglist.tagCount(); ++i)
+		{
+			NBTTagCompound nbttagcompound = nbttaglist.getCompoundTagAt(i);
+			int j = nbttagcompound.getByte("Slot") & 255;
+
+			if (j >= 0 && j < this.inventory.getSizeInventory())
+			{
+				this.inventory.setInventorySlotContents(j, new ItemStack(nbttagcompound));
+			}
+		}
+		
+		this.batteryLife = compound.getInteger("batteryLife");
+	}
+
+	/**
+	 * Called by InventoryBasic.onInventoryChanged() on a array that is never filled.
+	 */
+	public void onInventoryChanged(IInventory invBasic)
+	{
+	}
+
+	public void openGUI(EntityPlayer playerEntity)
+	{
+		if (!this.world.isRemote && (!this.isBeingRidden() || this.isPassenger(playerEntity)))
+		{
+			this.inventory.setCustomName(this.getName());
+			//Minecraft.getMinecraft().displayGuiScreen(new GuiGolfCart(playerEntity.inventory, this.inventory, this, playerEntity));
+			playerEntity.openGui(GravityFalls.instance, ConfigHandler.GOLF_CART, playerEntity.world, (int) playerEntity.posX, (int) playerEntity.posY, (int) playerEntity.posZ);
+		}
+	}
+
+	public int getInventoryColumns()
+	{
+		return 6;
+	}
+
+	public String getName()
+	{
+		return "Golf Cart";
+	}
+
+	protected void initChest()
+	{
+		ContainerHorseChest containerhorsechest = this.inventory;
+		this.inventory = new ContainerHorseChest(this.getName(), this.getInventorySize());
+		this.inventory.setCustomName(this.getName());
+
+		if (containerhorsechest != null)
+		{
+			containerhorsechest.removeInventoryChangeListener(this);
+			int i = Math.min(containerhorsechest.getSizeInventory(), this.inventory.getSizeInventory());
+
+			for (int j = 0; j < i; ++j)
+			{
+				ItemStack itemstack = containerhorsechest.getStackInSlot(j);
+
+				if (!itemstack.isEmpty())
+				{
+					this.inventory.setInventorySlotContents(j, itemstack.copy());
+				}
+			}
+		}
+
+		this.inventory.addInventoryChangeListener(this);
+		this.itemHandler = new net.minecraftforge.items.wrapper.InvWrapper(this.inventory);
+	}
+	
+	/**
+     * Returns the Y offset from the entity's position for any entity riding this one.
+     */
+     @Override
+    public double getMountedYOffset()
+    {
+        return (double)this.height * 0.1D;
+    }
 }

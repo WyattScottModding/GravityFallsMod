@@ -10,7 +10,11 @@ public enum KeyBindings
 	ARMOR1("key.gravityfalls.armor1", Keyboard.KEY_B),
 	ARMOR2("key.gravityfalls.armor2", Keyboard.KEY_N),
 	ARMOR3("key.gravityfalls.armor3", Keyboard.KEY_M),
-	BATTERY("key.gravityfalls.battery", Keyboard.KEY_R);
+	BATTERY("key.gravityfalls.battery", Keyboard.KEY_R),
+	LEFT("key.gravityfalls.left", Keyboard.KEY_LEFT),
+	RIGHT("key.gravityfalls.right", Keyboard.KEY_RIGHT),
+	UP("key.gravityfalls.up", Keyboard.KEY_UP),
+	DOWN("key.gravityfalls.down", Keyboard.KEY_DOWN);
 
 	private final KeyBinding keybinding;
 	

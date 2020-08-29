@@ -41,6 +41,7 @@ public class ConfigHandler
 	public static int COMPUTER;
 	public static int RETURN_DEVICE;
 	public static int FORD_WORKBENCH;
+	public static int GOLF_CART;
 
 	public static int THE_FUTURE;
 	public static int NIGHTMARE_REALM;
@@ -56,7 +57,8 @@ public class ConfigHandler
 	public static boolean INFINITY_SIDED_DICE;
 	public static int PORTAL_COUNTDOWN;
 	public static int GRAVITY_FALLS_BIOME_WEIGHT;
-	
+	public static int TIE_RANGE;
+
 	public static float SIZE_MAX;
 	public static float SIZE_MIN;
 	
@@ -78,6 +80,7 @@ public class ConfigHandler
 		INFINITY_SIDED_DICE = config.getBoolean("Infinity Sided Dice Settings", category, false, "Can the Infinity Sided Dice permanently affect your world?");
 		PORTAL_COUNTDOWN = config.getInt("Countdown time to portal opening", category, 36000, 800, 1000000, "This value is in ticks.  20 ticks = 1 second.");
 		GRAVITY_FALLS_BIOME_WEIGHT = config.getInt("Controls how common the Gravity Falls biome is", category, 20, 1, 50, "Higher number means it will be more common");
+		TIE_RANGE = config.getInt("The range at which the Tie of Possession will work", category, 40, 10, 400, "Increasing this past the default value may cause more lag");
 
 		SIZE_MAX = config.getFloat("Magic Flashlight Max", category, 200F, 1.8F, 1000F, "Maximum size an entity can grow");
 		SIZE_MIN = config.getFloat("Magic Flashlight Min", category, .4F, .4F, 1.8F, "Minimum size an entity can shrink");
@@ -127,6 +130,7 @@ public class ConfigHandler
 		COMPUTER = config.getInt("Gui Computer ID", category, 405, 120, 10000, "ID for the Computer gui");
 		RETURN_DEVICE = config.getInt("Gui Return Device ID", category, 406, 120, 10000, "ID for the Return Device gui");
 		FORD_WORKBENCH = config.getInt("Ford's Workbench ID", category, 407, 120, 10000, "ID for Ford's Workbench gui");
+		GOLF_CART = config.getInt("Golf Cart GUI ID", category, 408, 120, 10000, "ID for the Golf Cart GUI");
 
 		
 		category = "Time Wishes";

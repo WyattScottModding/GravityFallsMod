@@ -1,6 +1,7 @@
 package entity;
 
 import java.util.List;
+import java.util.Random;
 import java.util.UUID;
 
 import javax.annotation.Nullable;
@@ -48,12 +49,14 @@ public class EntityGnome extends EntityMob
 	private static final AttributeModifier ATTACK_SPEED_BOOST_MODIFIER = (new AttributeModifier(ATTACK_SPEED_BOOST_MODIFIER_UUID, "Attacking speed boost", 0.05D, 0)).setSaved(false);
 	private int angerLevel;
 	private UUID angerTargetUUID;
+	public final int variant;
 
 	public EntityGnome(World par1World)
 	{
 		super(par1World);
 		this.setSize(0.3F, 0.8F);
 		this.experienceValue = 4;
+		this.variant = new Random().nextInt(4) + 1;
 	}
 
 	@Override
@@ -153,6 +156,8 @@ public class EntityGnome extends EntityMob
 
 	}
 
+	/*
+	 * Turns into monster when enough are threatened 
 	@Override
 	public void onUpdate()
 	{
@@ -196,14 +201,14 @@ public class EntityGnome extends EntityMob
 				averageX /= count - 1;
 				averageY /= count - 1;
 				averageZ /= count - 1;
-				/*
+				
 				System.out.println("averageX: " + averageX);
 				System.out.println("averageY: " + averageY);
 				System.out.println("averageZ: " + averageZ);
 				System.out.println("list count: " + count);
 
 				System.out.println(list.get(entity).toString());
-				 */
+				 
 				if((int)list.get(entity).posX != (int)averageX && (int)list.get(entity).posY!= (int)averageY && (int)list.get(entity).posZ != (int)averageZ)
 				{
 					//list.get(entity).motionX = (averageX - list.get(entity).posX) / 100;
@@ -223,6 +228,7 @@ public class EntityGnome extends EntityMob
 
 		super.onUpdate();
 	}
+	*/
 
 	static class AIHurtByAggressor extends EntityAIHurtByTarget
 	{

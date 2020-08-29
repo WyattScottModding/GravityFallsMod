@@ -86,14 +86,12 @@ public class EntityBill extends EntityWeirdMob
 		super.entityInit();
 	}
 
-
 	protected void applyEntityAI() 
 	{
 		this.targetTasks.addTask(1, new EntityBill.AIHurtByAggressor(this));
 		this.targetTasks.addTask(2, new EntityBill.AITargetAggressor(this));
 		this.targetTasks.addTask(1, new EntityAIHurtByTarget(this, true, new Class[] {}));
 	}
-
 
 	@Override
 	protected void applyEntityAttributes() 
@@ -107,6 +105,11 @@ public class EntityBill extends EntityWeirdMob
 		this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(7.0D);
 
 		this.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).setBaseValue(300.0D);
+	}
+	
+	@Override
+	public boolean canBeCollidedWith() {
+		return true;
 	}
 
 	/**
@@ -142,7 +145,7 @@ public class EntityBill extends EntityWeirdMob
 
 	@Override
 	public void onUpdate() {
-
+		
 		//When Bill Dies
 		if(this.getHealth() == 1 || this.billDying || this.getTime() == 240)
 		{
@@ -188,14 +191,12 @@ public class EntityBill extends EntityWeirdMob
 			if(world.getWorldTime() % 40 == 0 && !this.billDying)
 			{
 				this.setHealth(this.getHealth() + 1);
-				//System.out.println("Bill's Health: " + this.getHealth());
 			}
 
 			//If Bill's health goes too low, he will go into watching mode
 			if(this.getHealth() < 400 && !this.isWatching())
 			{
-				//System.out.println("Is Watching");
-				//this.setWatching(true);
+				this.setWatching(true);
 			}
 
 			if(this.isWatching())
@@ -204,25 +205,24 @@ public class EntityBill extends EntityWeirdMob
 				this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(0.0D);
 				this.angerLevel = 0;
 				this.watchingTimer--;
+				this.setEntityInvulnerable(true);
 
-				//	if(this.watchingTimer <= 0)
-				//		this.setWatching(false);
+				if(this.watchingTimer <= 0)
+					this.setWatching(false);
 			}
 			else
 			{
 				this.getEntityAttribute(SharedMonsterAttributes.MOVEMENT_SPEED).setBaseValue(0.6D);
 				this.getEntityAttribute(SharedMonsterAttributes.ATTACK_DAMAGE).setBaseValue(7.0D);
+				this.setEntityInvulnerable(false);
 
 				if(this.watchingTimer != 400)
 					this.watchingTimer = 400;
 			}
 
-			Random rand = new Random();
-
-			if(rand.nextInt(1000) == 0)
+			if(world.getWorldTime() % 5000 == 0)
 			{
-				//System.out.println("Randomly set to watching");
-				//	this.setWatching(true);
+				this.setWatching(true);
 			}
 
 			super.onUpdate();
@@ -297,7 +297,7 @@ public class EntityBill extends EntityWeirdMob
 
 	@Override
 	public boolean hitByEntity(Entity entityIn) {
-		return !this.isWatching();
+		return this.isWatching();
 	}
 
 	public boolean isWatching()

@@ -188,6 +188,11 @@ key.gravityfalls.battery=Battery Key
 key.gravityfalls.armor1=Armor Key 1
 key.gravityfalls.armor2=Armor Key 2
 key.gravityfalls.armor3=Armor Key 3
+key.gravityfalls.open=Open GUI
+key.gravityfalls.left=Left Arrow Key
+key.gravityfalls.right=Right Arrow Key
+key.gravityfalls.up=Up Arrow Key
+key.gravityfalls.down=Down Arrow Key
 
 
 effect.freeze_potion=Freeze

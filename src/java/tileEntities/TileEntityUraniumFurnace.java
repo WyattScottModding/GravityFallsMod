@@ -109,9 +109,7 @@ public class TileEntityUraniumFurnace extends TileEntity implements IInventory, 
 			this.totalCookTime = this.getCookTime(stack1, stack2, stack3);
 			this.cookTime = 0;
 			this.markDirty();
-
 		}
-
 	}
 
 	@Override

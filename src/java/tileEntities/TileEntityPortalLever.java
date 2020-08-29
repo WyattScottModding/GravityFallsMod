@@ -47,11 +47,9 @@ public class TileEntityPortalLever extends TileEntity implements ITickable {
 
 	@Override
 	public void update() {
-		if(!world.isRemote) {
-			init();
-			initEntityLiving();
-			PortalBlocks.portalMap.put(pos, nbt.getInteger("countdown"));
-		}
+		init();
+		initEntityLiving();
+		PortalBlocks.portalMap.put(pos, nbt.getInteger("countdown"));
 	}
 
 

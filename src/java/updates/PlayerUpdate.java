@@ -1,9 +1,7 @@
 package updates;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Random;
 
 import javax.annotation.Nullable;
@@ -12,6 +10,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 
 import blocks.LightSource;
+import entity.EntityGolfCart;
 import handlers.ArmorDetector;
 import handlers.SoundsHandler;
 import init.BiomeInit;
@@ -22,10 +21,9 @@ import main.ConfigHandler;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.PositionedSound;
 import net.minecraft.client.audio.PositionedSoundRecord;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.client.audio.SoundManager;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
@@ -36,17 +34,14 @@ import net.minecraft.init.MobEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.EntitySelectors;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
-import net.minecraft.util.SoundEvent;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldServer;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import network.MessagePlaySound;
-import network.Messages;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class PlayerUpdate 
 {
@@ -284,7 +279,7 @@ public class PlayerUpdate
 		{
 			Random rand = new Random();
 
-			if(rand.nextInt(100) == 0)
+			if(rand.nextInt(36000) == 0)
 			{
 				//If there currently isn't a song playing, a new one can be played
 				if(currentSound == null || !Minecraft.getMinecraft().getSoundHandler().isSoundPlaying(currentSound))
@@ -339,5 +334,4 @@ public class PlayerUpdate
 		entity.removePotionEffect(PotionInit.GROWTH_EFFECT);
 		entity.removePotionEffect(PotionInit.NORMAL_EFFECT);
 	}
-
 }

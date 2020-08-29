@@ -10,18 +10,27 @@ import net.minecraft.util.ResourceLocation;
 
 public class RenderGnome extends RenderLiving<EntityGnome>
 {
-	public static final ResourceLocation TEXTURES = new ResourceLocation(Reference.MODID + ":textures/entity/gnome.png");
-	
+	public static final ResourceLocation TEXTURES_1 = new ResourceLocation(Reference.MODID + ":textures/entity/gnome_1.png");
+	public static final ResourceLocation TEXTURES_2 = new ResourceLocation(Reference.MODID + ":textures/entity/gnome_2.png");
+	public static final ResourceLocation TEXTURES_3 = new ResourceLocation(Reference.MODID + ":textures/entity/gnome_3.png");
+	public static final ResourceLocation TEXTURES_4 = new ResourceLocation(Reference.MODID + ":textures/entity/gnome_4.png");
+
 
 	public RenderGnome(RenderManager manager) 
 	{
 		super(manager, new ModelGnome(), 0.5F);
-		
 	}
 
 	protected ResourceLocation getEntityTexture(EntityGnome entity) {
 		
-		return TEXTURES;
+		if(entity.variant == 1)
+			return TEXTURES_1;
+		else if(entity.variant == 2)
+			return TEXTURES_2;
+		else if(entity.variant == 3)
+			return TEXTURES_3;
+		else
+			return TEXTURES_4;
 	}
 	
 	@Override
@@ -29,5 +38,4 @@ public class RenderGnome extends RenderLiving<EntityGnome>
 	{
 		super.applyRotations(entityLiving, p_77043_2_, rotationYaw, partialTicks);
 	}
-
 }

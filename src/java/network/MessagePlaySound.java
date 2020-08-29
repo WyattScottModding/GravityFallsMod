@@ -4,6 +4,8 @@ import handlers.SoundsHandler;
 import io.netty.buffer.ByteBuf;
 import main.GravityFalls;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.SoundCategory;
+import net.minecraft.world.World;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
 import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
@@ -40,6 +42,7 @@ public class MessagePlaySound implements IMessage{
 		
 		private void handle(MessagePlaySound message, MessageContext ctx) {
 			EntityPlayer player = GravityFalls.proxy.getClientPlayer();
+			World world = player.world;
 			
 			if(message.song == 0)
 				player.playSound(SoundsHandler.PORTAL_WORKING, 5.0F, 1.0F);
@@ -49,6 +52,8 @@ public class MessagePlaySound implements IMessage{
 				player.playSound(SoundsHandler.STARTING_THE_PORTAL, 5.0F, 1.0F);
 			else if(message.song == 3)
 				player.playSound(SoundsHandler.ALIEN_SHIP, 1.0F, 1.0F);
+			else if(message.song == 4)
+				world.playSound(player, player.getPosition(), SoundsHandler.ITEM_LASER_ARM_CANNON, SoundCategory.PLAYERS, 1, 1);
 		}
 	}
 }

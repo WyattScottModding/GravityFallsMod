@@ -104,7 +104,7 @@ public class GrapplingHook extends Item implements IHasModel
 					double yMotion = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
 					double zMotion = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 
-					if(time < 0.1 && (xMotion != player.motionX || yMotion != player.motionY || zMotion != player.motionZ)) {
+					if(time < 0.2 && (xMotion != player.motionX || yMotion != player.motionY || zMotion != player.motionZ)) {
 						time = 0;
 						stuckToSurface = true;
 					}
@@ -153,8 +153,6 @@ public class GrapplingHook extends Item implements IHasModel
 			nbt = itemstack.getTagCompound();
 
 		itemstack.setTagCompound(nbt);
-
-		entityLiving.setActiveHand(handIn);
 
 		if (entityLiving instanceof EntityPlayer)
 		{

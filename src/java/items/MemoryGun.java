@@ -49,6 +49,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import network.MessageProcessBattery;
+import network.MessageProcessMemoryWipe;
+import network.Messages;
 
 public class MemoryGun extends ItemBow implements IHasModel
 {
@@ -110,24 +113,18 @@ public class MemoryGun extends ItemBow implements IHasModel
 		if(nbt.hasKey("fullMemoryWipe"))
 			fullMemoryWipe = nbt.getBoolean("fullMemoryWipe");
 		if(nbt.hasKey("isDown"))
-			cooldown = nbt.getInteger("isDown");
+			isDown = nbt.getBoolean("isDown");
 
 		if(cooldown > 0)
 			cooldown--;
 
-		if (entityIn instanceof EntityPlayer && !worldIn.isRemote)
+		if (entityIn instanceof EntityPlayer)
 		{
 			EntityPlayer player = (EntityPlayer)entityIn;
 			boolean flag = player.capabilities.isCreativeMode;
 
 			if(KeyBindings.ITEM1.isDown()) {
-				if(!isDown) {
-					if(fullMemoryWipe)
-						fullMemoryWipe = false;
-					else
-						fullMemoryWipe = true;
-				}
-				isDown = true;
+				Messages.INSTANCE.sendToServer(new MessageProcessMemoryWipe());
 			}
 			else
 				isDown = false;
@@ -140,15 +137,9 @@ public class MemoryGun extends ItemBow implements IHasModel
 				fired = false;
 			}
 
-			if(stack.getItemDamage() >= 5 && KeyBindings.BATTERY.isDown())
+			if(KeyBindings.BATTERY.isDown())
 			{
-				ItemStack itemstack = findAmmo(player);
-
-				if(itemstack.getItem() instanceof ItemBasic && player.getHeldItemMainhand().getItem() instanceof MemoryGun)
-				{
-					stack.setItemDamage(stack.getItemDamage() - 5);
-					itemstack.shrink(1);
-				}
+				Messages.INSTANCE.sendToServer(new MessageProcessBattery(4));
 			}
 		}
 

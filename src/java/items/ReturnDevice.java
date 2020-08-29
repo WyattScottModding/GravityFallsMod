@@ -1,6 +1,7 @@
 package items;
 
 import init.ItemInit;
+import main.ConfigHandler;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.entity.player.EntityPlayer;
@@ -10,7 +11,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.EnumHand;
 import net.minecraft.world.World;
-import network.MessageOpenReturnDevice;
 import network.Messages;
 
 public class ReturnDevice extends Item implements IHasModel
@@ -28,12 +28,9 @@ public class ReturnDevice extends Item implements IHasModel
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
-		if(player.dimension == 3 && !world.isRemote) //&& active)
+		if(player.dimension == 3)
 		{
-			if(player instanceof EntityPlayerMP) {
-				EntityPlayerMP serverPlayer = (EntityPlayerMP) player;
-				Messages.INSTANCE.sendTo(new MessageOpenReturnDevice(),  serverPlayer);
-			}
+			player.openGui(GravityFalls.instance, ConfigHandler.RETURN_DEVICE, player.world, (int) player.posX, (int) player.posY, (int) player.posZ);
 		}
 
 		return super.onItemRightClick(world, player, hand);

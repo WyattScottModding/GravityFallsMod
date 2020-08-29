@@ -7,12 +7,15 @@ import handlers.KeyBindings;
 import handlers.SoundsHandler;
 import init.BlockInit;
 import init.ItemInit;
+import main.ConfigHandler;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockHorizontal;
 import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntityZombie;
 import net.minecraft.entity.player.EntityPlayer;
@@ -33,15 +36,11 @@ import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
-import network.MessageOpenBook3;
 import network.Messages;
 
 public class Book3 extends ItemWrittenBook implements IHasModel{
 
 	public static final PropertyDirection FACING = BlockHorizontal.FACING;
-	private boolean raiseDead = false;
-	private boolean isDown = false;
-	private boolean playSound = false;
 
 	public Book3(String name)
 	{
@@ -68,13 +67,12 @@ public class Book3 extends ItemWrittenBook implements IHasModel{
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand hand) 
 	{
-		if(Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+		GameSettings gameSettings = Minecraft.getMinecraft().gameSettings;
+		
+		if(gameSettings.keyBindSprint.isKeyDown())
 		{
 			if(player != null && player.getHeldItemMainhand().isItemEqual(new ItemStack(ItemInit.BOOK3))) {
-				if(!world.isRemote && player instanceof EntityPlayerMP) {
-					EntityPlayerMP serverPlayer = (EntityPlayerMP) player;
-					Messages.INSTANCE.sendTo(new MessageOpenBook3(),  serverPlayer);
-				}
+				player.openGui(GravityFalls.instance, ConfigHandler.GUI_JOURNAL3, player.world, (int) player.posX, (int) player.posY, (int) player.posZ);
 			}
 		}
 		return super.onItemRightClick(world, player, hand);
@@ -89,27 +87,24 @@ public class Book3 extends ItemWrittenBook implements IHasModel{
 		IBlockState block1 = world.getBlockState(pos);
 		IBlockState block2 = world.getBlockState(pos.up());
 
-		if(!Keyboard.isKeyDown(Keyboard.KEY_LCONTROL))
+		if(player.isCreative())
 		{
-			if(player.isCreative())
+			if(block1.getBlock() != Blocks.AIR && block2.getBlock() == Blocks.AIR && block1.getBlock() != BlockInit.PORTAL_CONTROL)
 			{
-				if(block1.getBlock() != Blocks.AIR && block2.getBlock() == Blocks.AIR && block1.getBlock() != BlockInit.PORTAL_CONTROL)
+				if(block1.isFullBlock())
 				{
-					if(block1.isFullBlock())
-					{
-						world.setBlockState(pos.up(), state);
-					}
+					world.setBlockState(pos.up(), state);
 				}
 			}
-			else
+		}
+		else
+		{
+			if(block1.getBlock() != Blocks.AIR && block2.getBlock() == Blocks.AIR && block1.getBlock() != BlockInit.PORTAL_CONTROL)
 			{
-				if(block1.getBlock() != Blocks.AIR && block2.getBlock() == Blocks.AIR && block1.getBlock() != BlockInit.PORTAL_CONTROL)
+				if(block1.isFullBlock())
 				{
-					if(block1.isFullBlock())
-					{
-						world.setBlockState(pos.up(), state);
-						player.getHeldItemMainhand().shrink(1);
-					}
+					world.setBlockState(pos.up(), state);
+					player.getHeldItemMainhand().shrink(1);
 				}
 			}
 		}
@@ -119,14 +114,31 @@ public class Book3 extends ItemWrittenBook implements IHasModel{
 
 	@Override
 	public void onUpdate(ItemStack stack, World world, Entity entity, int itemSlot, boolean isSelected) {
-		if(entity instanceof EntityPlayer && !world.isRemote) {
+		//Set the NBT to a new NBT if it is null
+		NBTTagCompound nbt = new NBTTagCompound();
+
+		if(stack.getTagCompound() != null)
+			nbt = stack.getTagCompound();
+
+		boolean raiseDead = false;
+		boolean isDown = false;
+		boolean playSound = false;
+
+		if(nbt.hasKey("raiseDead"))
+			raiseDead = nbt.getBoolean("raiseDead");
+		if(nbt.hasKey("isDown"))
+			isDown = nbt.getBoolean("isDown");
+		if(nbt.hasKey("playSound"))
+			playSound = nbt.getBoolean("playSound");
+
+		if(entity instanceof EntityPlayer) {
 			EntityPlayer player = (EntityPlayer) entity;
 
 			if(world.isDaytime())
 				raiseDead = false;
-			
+
 			if(isSelected && !raiseDead) {
-				if(KeyBindings.BATTERY.isDown()) //&& !RaiseDeadUpdate.nbt.getBoolean("raiseDead"))
+				if(KeyBindings.BATTERY.isDown())
 				{
 					if(!isDown) {
 						if(world.getDifficulty().equals(EnumDifficulty.PEACEFUL))
@@ -159,12 +171,15 @@ public class Book3 extends ItemWrittenBook implements IHasModel{
 				raiseDead(player, world);
 			}
 		}
-		else if(entity instanceof EntityPlayer && world.isRemote && playSound) {
+		else if(entity instanceof EntityPlayer && playSound) {
 			EntityPlayer player = (EntityPlayer) entity;
 
 			world.playSound(player, player.getPosition(), SoundsHandler.ITEM_RAISEDEAD, SoundCategory.VOICE, 1.0F, 1.0F);
 			playSound = false;
 		}
+		nbt.setBoolean("raiseDead", raiseDead);
+		nbt.setBoolean("isDown", isDown);
+		nbt.setBoolean("playSound", playSound);
 	}
 
 	public void raiseDead(EntityPlayer player, World world)
@@ -244,22 +259,6 @@ public class Book3 extends ItemWrittenBook implements IHasModel{
 		return -1;
 	}
 
-	@Override
-	public boolean updateItemStackNBT(NBTTagCompound nbt) {
-
-		nbt.setBoolean("raiseDead", raiseDead);
-
-		return super.updateItemStackNBT(nbt);
-	}
-
-	@Override
-	public void readNBTShareTag(ItemStack stack, NBTTagCompound nbt) {
-
-		if(nbt.hasKey("raiseDead"))
-			raiseDead = nbt.getBoolean("raiseDead");
-
-		super.readNBTShareTag(stack, nbt);
-	}
 
 	@Override
 	@SideOnly(Side.CLIENT)

@@ -12,9 +12,11 @@ import main.ConfigHandler;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemSword;
@@ -29,6 +31,12 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import network.MessageChangeSize;
+import network.MessageChangeSizeClient;
+import network.MessagePlaySound;
+import network.MessageProcessBattery;
+import network.MessageTeleportPlayer;
+import network.Messages;
 
 public class MagicFlashLight extends ItemSword implements IHasModel
 {
@@ -51,13 +59,13 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 
 				if(stack.getTagCompound() != null)
 					nbt = stack.getTagCompound();
-				
+
 				boolean clicked = false;
 
 				if(nbt.hasKey("clicked"))
 					clicked = nbt.getBoolean("clicked");
-				
-				return entityIn != null && (entityIn.getHeldItemMainhand() == stack || entityIn.getHeldItemOffhand() == stack) && clicked ? 1.0F : 0.0F;
+
+				return entityIn != null && entityIn.getHeldItemMainhand() == stack && clicked ? 1.0F : 0.0F;
 			}
 		});
 
@@ -70,165 +78,132 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 		GravityFalls.proxy.registerItemRenderer(this, 0, "inventory");
 	}
 
-
 	@Override
 	public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int itemSlot, boolean isSelected) 
 	{
-		//Set the NBT to a new NBT if it is null
-		NBTTagCompound nbt = new NBTTagCompound();
-
-		if(stack.getTagCompound() != null)
-			nbt = stack.getTagCompound();
-		
-		int height = 0;
-		boolean clicked = false;
-
-		if(nbt.hasKey("height"))
-			height = nbt.getInteger("height");
-		if(nbt.hasKey("clicked"))
-			clicked = nbt.getBoolean("clicked");
-
-		if(entityIn instanceof EntityPlayer && !worldIn.isRemote)
+		if(worldIn.isRemote)
 		{
-			EntityPlayer player = (EntityPlayer) entityIn;
-
-			if(isSelected && !Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown())
+			//Set the NBT to a new NBT if it is null
+			NBTTagCompound nbt = new NBTTagCompound();
+	
+			if(stack.getTagCompound() != null)
+				nbt = stack.getTagCompound();
+	
+			int height = 0;
+			boolean clicked = false;
+	
+			if(nbt.hasKey("height"))
+				height = nbt.getInteger("height");
+			if(nbt.hasKey("clicked"))
+				clicked = nbt.getBoolean("clicked");
+	
+			if(entityIn instanceof EntityPlayer && !Minecraft.getMinecraft().gameSettings.keyBindUseItem.isKeyDown())
 			{
-				if(stack.getItemDamage() <= 1999) {
-
-					if(KeyBindings.ITEM1.isDown() && KeyBindings.ITEM2.isDown())
-					{
-						player.removePotionEffect(PotionInit.GROWTH_EFFECT);
-
-						clicked = true;
-						stack.damageItem(1, player);
-						height = 1;
-					}
-					else if(KeyBindings.ITEM1.isDown())
-					{
-						if(player.height < ConfigHandler.SIZE_MAX)
-						{
-							height += 2;
-
-							player.removePotionEffect(PotionInit.GROWTH_EFFECT);
-
-							PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, height, true, false);
-							effect.setPotionDurationMax(true);
-							player.addPotionEffect(effect);
-
-							clicked = true;
-							stack.damageItem(1, player);
-						}
-						else
-							clicked = false;
-					}
-					else if(KeyBindings.ITEM2.isDown())
-					{
-						if(player.height > ConfigHandler.SIZE_MIN)
-						{
-							height -= 2;
-
-							player.removePotionEffect(PotionInit.GROWTH_EFFECT);
-
-							PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, height, true, false);
-							effect.setPotionDurationMax(true);
-							player.addPotionEffect(effect);
-
-							clicked = true;
-							stack.damageItem(1, player);
-						}
-						else
-							clicked = false;
-					}
-					else
-						clicked = false;
-
-				}
-
-				if(stack.getItemDamage() >= 1000 &&  KeyBindings.BATTERY.isDown())
+				EntityPlayer player = (EntityPlayer) entityIn;
+	
+				if(player.getHeldItemMainhand() == stack)
 				{
-					ItemStack itemstack = findAmmo(player);
-
-					if(itemstack.getItem() instanceof ItemBasic && player.getHeldItemMainhand().getItem() instanceof MagicFlashLight)
+					long uuid1 = player.getUniqueID().getMostSignificantBits();
+					long uuid2 = player.getUniqueID().getLeastSignificantBits();
+	
+					if(stack.getItemDamage() <= 1999) {
+	
+						if(KeyBindings.ITEM1.isDown() && KeyBindings.ITEM2.isDown())
+						{
+							//Server Side
+							Messages.INSTANCE.sendToServer(new MessageChangeSize(1, uuid1, uuid2));
+							
+							System.out.println("Player:  " + uuid1);
+						}
+						else if(KeyBindings.ITEM1.isDown())
+						{
+							//Server Side
+							Messages.INSTANCE.sendToServer(new MessageChangeSize(2, uuid1, uuid2));	
+						}
+						else if(KeyBindings.ITEM2.isDown())
+						{
+							//Server Side
+							Messages.INSTANCE.sendToServer(new MessageChangeSize(3, uuid1, uuid2));
+						}
+						else 
+						{
+							//Server Side
+							Messages.INSTANCE.sendToServer(new MessageChangeSize(4, uuid1, uuid2));
+						}
+					}
+	
+					if(KeyBindings.BATTERY.isDown())
 					{
-						stack.setItemDamage(stack.getItemDamage() - 1000);
-						itemstack.shrink(1);
+						//Server Side
+						Messages.INSTANCE.sendToServer(new MessageProcessBattery(3));
 					}
 				}
 			}
+	
+			nbt.setInteger("height", height);
+			nbt.setBoolean("clicked", clicked);
+			stack.setTagCompound(nbt);
+	
+			super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 		}
-		
-		nbt.setInteger("height", height);
-		nbt.setBoolean("clicked", clicked);
-		stack.setTagCompound(nbt);
-		
-		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
 
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World world, EntityPlayer player, EnumHand handIn)
 	{
-		ItemStack stack = player.getHeldItem(handIn);
-
-		if (!world.isRemote && stack.getItemDamage() <= 1999)
+		if(world.isRemote)
 		{
-			EntityLivingBase entityLiving = getMouseOver(player, world);
-
-			//Set the NBT to a new NBT if it is null
-			NBTTagCompound nbt = new NBTTagCompound();
-
-			if(stack.getTagCompound() != null)
-				nbt = stack.getTagCompound();
-			
-			boolean clicked = false;
-			int entityHeight = 0;
-
-			if(nbt.hasKey("clicked"))
-				clicked = nbt.getBoolean("clicked");
-			if(nbt.hasKey("entityHeight"))
-				entityHeight = nbt.getInteger("entityHeight");
-			
-			if(entityLiving != null && entityLiving != player && !(entityLiving instanceof EntityGideonBot)) {
-				if(KeyBindings.ITEM1.isDown()) {
-					if(entityLiving.height <= ConfigHandler.SIZE_MAX) {
-						entityLiving.removePotionEffect(PotionInit.GROWTH_EFFECT);
-						entityHeight += 10;
-
-						PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, entityHeight, true, false);
-						effect.setPotionDurationMax(true);
-						entityLiving.addPotionEffect(effect);
-
-						clicked = true;
-						stack.damageItem(1, player);		
+			ItemStack stack = player.getHeldItem(handIn);
+	
+			if (stack.getItemDamage() <= 1999)
+			{
+				EntityLivingBase entityLiving = getMouseOver(player, world);
+	
+				//Set the NBT to a new NBT if it is null
+				NBTTagCompound nbt = new NBTTagCompound();
+	
+				if(stack.getTagCompound() != null)
+					nbt = stack.getTagCompound();
+	
+				boolean clicked = false;
+				int entityHeight = 0;
+	
+				if(nbt.hasKey("clicked"))
+					clicked = nbt.getBoolean("clicked");
+				if(nbt.hasKey("entityHeight"))
+					entityHeight = nbt.getInteger("entityHeight");
+				
+				long uuid1 = player.getUniqueID().getMostSignificantBits();
+				long uuid2 = player.getUniqueID().getLeastSignificantBits();
+	
+				if(entityLiving != null && entityLiving != player && !(entityLiving instanceof EntityGideonBot)) {
+					if(KeyBindings.ITEM1.isDown()) 
+					{
+						//Server Side
+						Messages.INSTANCE.sendToServer(new MessageChangeSize(5, uuid1, uuid2));
 					}
-					else
-						clicked = false;
-				}
-				else if(KeyBindings.ITEM2.isDown())  {
-					if(entityLiving.height >= ConfigHandler.SIZE_MIN) {
-						entityLiving.removePotionEffect(PotionInit.GROWTH_EFFECT);
-						entityHeight -= 10;
-
-						PotionEffect effect = new PotionEffect(PotionInit.GROWTH_EFFECT, 10000000, entityHeight, true, false);
-						effect.setPotionDurationMax(true);
-						entityLiving.addPotionEffect(effect);
-
-						clicked = true;
-						stack.damageItem(1, player);
+					else if(KeyBindings.ITEM2.isDown())  
+					{
+						//Server Side
+						Messages.INSTANCE.sendToServer(new MessageChangeSize(6, uuid1, uuid2));
 					}
-					else
-						clicked = false;
-				}
+					else 
+					{
+						//Server Side
+						Messages.INSTANCE.sendToServer(new MessageChangeSize(4, uuid1, uuid2));
+					}
+				}	
 				else
-					clicked = false;
-			}	
-			else
-				clicked = false;
-			
-			nbt.setInteger("entityHeight", entityHeight);
-			nbt.setBoolean("clicked", clicked);
-			stack.setTagCompound(nbt);
+				{
+					//Server Side
+					Messages.INSTANCE.sendToServer(new MessageChangeSize(4, uuid1, uuid2));
+				}
+	
+				nbt.setInteger("entityHeight", entityHeight);
+				nbt.setBoolean("clicked", clicked);
+				stack.setTagCompound(nbt);
+			}
 		}
 		return super.onItemRightClick(world, player, handIn);
 	}
@@ -278,31 +253,5 @@ public class MagicFlashLight extends ItemSword implements IHasModel
 			}
 		}
 		return closestEntity;
-	}
-
-	private ItemStack findAmmo(EntityPlayer player)
-	{
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(ItemInit.BATTERY)))
-		{
-			return player.getHeldItem(EnumHand.OFF_HAND);
-		}
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(ItemInit.BATTERY)))
-		{
-			return player.getHeldItem(EnumHand.MAIN_HAND);
-		}
-		else
-		{
-			for (int i = 0; i < player.inventory.getSizeInventory(); ++i)
-			{
-				ItemStack itemstack = player.inventory.getStackInSlot(i);
-
-				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(ItemInit.BATTERY)))
-				{
-					return itemstack;
-				}
-			}
-
-			return ItemStack.EMPTY;
-		}
 	}
 }

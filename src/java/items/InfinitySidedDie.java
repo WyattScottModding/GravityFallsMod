@@ -272,7 +272,7 @@ public class InfinitySidedDie extends Item implements IHasModel{
 			else if(diceRoll == 31)
 			{
 				BlockPos posFeet = playerIn.getPosition();
-				playerIn.world.setBlockState(posFeet, Blocks.LAVA.getDefaultState());
+				playerIn.world.setBlockState(posFeet, Blocks.FLOWING_LAVA.getDefaultState());
 			}
 			else if(diceRoll == 32)
 			{

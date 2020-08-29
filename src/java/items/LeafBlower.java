@@ -32,6 +32,10 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import network.MessageProcessBattery;
+import network.MessageUpdatePlayerMotionClient;
+import network.MessageUpdatePlayerPosition;
+import network.Messages;
 
 public class LeafBlower extends ItemSword implements IHasModel
 {
@@ -79,7 +83,7 @@ public class LeafBlower extends ItemSword implements IHasModel
 		if(stack.getTagCompound() != null)
 			nbt = stack.getTagCompound();
 
-		int counter = 100;
+		int counter = 4;
 		boolean clicked = false;
 
 		if(nbt.hasKey("counter"))
@@ -87,23 +91,21 @@ public class LeafBlower extends ItemSword implements IHasModel
 		if(nbt.hasKey("clicked"))
 			clicked = nbt.getBoolean("clicked");
 
-		if (!worldIn.isRemote)
+		if(clicked && counter == 0)
 		{
-			if(clicked && counter == 0)
-			{
-				clicked = false;
-				counter = 4;
-			}
-			else if(!clicked && counter == 0)
-			{
-				clicked = true;
-				counter = 4;
-			}
+			clicked = false;
+			counter = 4;
 		}
+		else if(!clicked && counter == 0)
+		{
+			clicked = true;
+			counter = 4;
+		}
+
 		nbt.setInteger("counter", counter);
 		nbt.setBoolean("clicked", clicked);
 		stack.setTagCompound(nbt);
-		
+
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 
@@ -116,7 +118,7 @@ public class LeafBlower extends ItemSword implements IHasModel
 		if(stack.getTagCompound() != null)
 			nbt = stack.getTagCompound();
 
-		int counter = 100;
+		int counter = 4;
 		boolean clicked = false;
 
 		if(nbt.hasKey("counter"))
@@ -127,9 +129,9 @@ public class LeafBlower extends ItemSword implements IHasModel
 		if(counter > 0)
 			counter--;
 
-		if(entityIn instanceof EntityPlayerMP)
+		if(entityIn instanceof EntityPlayer)
 		{
-			EntityPlayerMP player = (EntityPlayerMP) entityIn;
+			EntityPlayer player = (EntityPlayer) entityIn;
 			boolean flag = player.capabilities.isCreativeMode;
 
 			if((player.getHeldItemMainhand() == stack || player.getHeldItemOffhand() == stack) && clicked && (stack.getItemDamage() < 100 || flag))
@@ -152,36 +154,35 @@ public class LeafBlower extends ItemSword implements IHasModel
 					float yaw = player.rotationYaw;
 					float pitch = player.rotationPitch;
 
-					entity.motionX = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
-					entity.motionY = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
-					entity.motionZ = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
+					double x = (double)(-MathHelper.sin(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
+					double y = (double)(-MathHelper.sin((pitch) / 180.0F * (float)Math.PI) * f);
+					double z = (double)(MathHelper.cos(yaw / 180.0F * (float)Math.PI) * MathHelper.cos(pitch / 180.0F * (float)Math.PI) * f);
 
+					entity.motionX = x;
+					entity.motionY = y;
+					entity.motionZ = z;
+					
+					if(entity instanceof EntityPlayerMP)
+					{
+						Messages.INSTANCE.sendTo(new MessageUpdatePlayerMotionClient(x, y, z, player.rotationYaw, player.rotationPitch), (EntityPlayerMP) entity);
+					}
+					
 					if(entity instanceof EntityLivingBase && entity instanceof EntityGnome)
 						((EntityLivingBase) entity).addPotionEffect(new PotionEffect(MobEffects.INSTANT_DAMAGE, 2, 0));					
 
 					entity = null;
 				}
 			}
-			if(stack.getItemDamage() >= 25 &&  KeyBindings.BATTERY.isDown())
-			{
-				if(player.getHeldItemMainhand().getItem() instanceof LeafBlower)
-				{
-					ItemStack itemstack = findAmmo(player);
-
-					if(itemstack.getItem() instanceof ItemBasic)
-					{
-						stack.setItemDamage(stack.getItemDamage() - 25);
-
-						itemstack.shrink(1);
-					}
-				}
-			}
+		}
+		if(KeyBindings.BATTERY.isDown())
+		{
+			Messages.INSTANCE.sendToServer(new MessageProcessBattery(5));
 		}
 
 		nbt.setInteger("counter", counter);
 		nbt.setBoolean("clicked", clicked);
 		stack.setTagCompound(nbt);
-		
+
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
@@ -214,39 +215,13 @@ public class LeafBlower extends ItemSword implements IHasModel
 			for(int j = 0; j < list.size(); j++)
 			{
 				Entity entity = list.get(j);
-				
+
 				if(entity != null)
 					return entity;
 			}
 
 		}
 		return null;
-	}
-
-	private ItemStack findAmmo(EntityPlayer player)
-	{
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(ItemInit.BATTERY)))
-		{
-			return player.getHeldItem(EnumHand.OFF_HAND);
-		}
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(ItemInit.BATTERY)))
-		{
-			return player.getHeldItem(EnumHand.MAIN_HAND);
-		}
-		else
-		{
-			for (int i = 0; i < player.inventory.getSizeInventory(); ++i)
-			{
-				ItemStack itemstack = player.inventory.getStackInSlot(i);
-
-				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(ItemInit.BATTERY)))
-				{
-					return itemstack;
-				}
-			}
-
-			return ItemStack.EMPTY;
-		}
 	}
 
 	@Override

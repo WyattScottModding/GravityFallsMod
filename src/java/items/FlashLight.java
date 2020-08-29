@@ -27,6 +27,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import network.MessageDamageItem;
+import network.MessageProcessBattery;
+import network.Messages;
 
 public class FlashLight extends ItemSword implements IHasModel
 {
@@ -54,7 +57,7 @@ public class FlashLight extends ItemSword implements IHasModel
 
 				if(nbt.hasKey("clicked"))
 					clicked = nbt.getBoolean("clicked");
-				
+
 				return entityIn != null && (entityIn.getHeldItemMainhand() == stack || entityIn.getHeldItemOffhand() == stack) && clicked ? 1.0F : 0.0F;
 			}
 		});
@@ -71,11 +74,6 @@ public class FlashLight extends ItemSword implements IHasModel
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
 	{
-		if(worldIn.provider.getDimension() == ConfigHandler.NIGHTMARE_REALM)
-		{
-			playerIn.addPotionEffect(new PotionEffect(MobEffects.JUMP_BOOST, 10, 0));
-		}
-		
 		ItemStack stack = playerIn.getHeldItemMainhand();
 
 		//Set the NBT to a new NBT if it is null
@@ -92,24 +90,22 @@ public class FlashLight extends ItemSword implements IHasModel
 		if(nbt.hasKey("counter"))
 			counter = nbt.getInteger("counter");
 
-		if (!worldIn.isRemote)
+		if(clicked && counter == 0)
 		{
-			if(clicked && counter == 0)
-			{
-				clicked = false;
-				counter = 4;
-			}
-			else if(!clicked && counter == 0 && stack != null && stack.getItemDamage() <= 99)
-			{
-				clicked = true;
-				counter = 4;
-			}
+			clicked = false;
+			counter = 4;
 		}
+		else if(!clicked && counter == 0 && stack != null && stack.getItemDamage() <= 99)
+		{
+			clicked = true;
+			counter = 4;
+		}
+
 		nbt.setBoolean("clicked", clicked);
 		nbt.setInteger("counter", counter);
 
 		stack.setTagCompound(nbt);
-		
+
 		return super.onItemRightClick(worldIn, playerIn, handIn);
 	}
 
@@ -133,7 +129,7 @@ public class FlashLight extends ItemSword implements IHasModel
 		if(counter > 0)
 			counter--;
 
-		if(entity instanceof EntityPlayer && !world.isRemote && stack.getItemDamage() <= 99)
+		if(entity instanceof EntityPlayer && stack.getItemDamage() <= 99 && ((EntityPlayer) entity).getHeldItemMainhand().getItem() == ItemInit.FLASHLIGHT)
 		{
 			EntityPlayer player = (EntityPlayer) entity;
 
@@ -141,17 +137,11 @@ public class FlashLight extends ItemSword implements IHasModel
 			{
 				stack.damageItem(1, player);
 			}
-
-
-			if(stack.getItemDamage() >= 50 &&  KeyBindings.BATTERY.isDown())
+			
+			//Client Side Only
+			if(KeyBindings.BATTERY.isDown())
 			{
-				ItemStack itemstack = findAmmo(player);
-
-				if(itemstack.getItem() instanceof ItemBasic && (player.getHeldItemMainhand().getItem() instanceof FlashLight || player.getHeldItemOffhand().getItem() instanceof FlashLight))
-				{
-					stack.setItemDamage(stack.getItemDamage() - 50);
-					itemstack.shrink(1);
-				}
+				Messages.INSTANCE.sendToServer(new MessageProcessBattery(1));
 			}
 
 			if(clicked) {
@@ -180,31 +170,5 @@ public class FlashLight extends ItemSword implements IHasModel
 		nbt.setInteger("counter", counter);
 
 		stack.setTagCompound(nbt);
-	}
-
-
-	private ItemStack findAmmo(EntityPlayer player)
-	{
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(ItemInit.BATTERY)))
-		{
-			return player.getHeldItem(EnumHand.OFF_HAND);
-		}
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(ItemInit.BATTERY)))
-		{
-			return player.getHeldItem(EnumHand.MAIN_HAND);
-		}
-		else
-		{
-			for (int i = 0; i < player.inventory.getSizeInventory(); ++i)
-			{
-				ItemStack itemstack = player.inventory.getStackInSlot(i);
-
-				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(ItemInit.BATTERY)))
-				{
-					return itemstack;
-				}
-			}
-			return ItemStack.EMPTY;
-		}
 	}
 }

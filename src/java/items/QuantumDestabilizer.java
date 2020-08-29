@@ -12,6 +12,7 @@ import entity.EntityBillStatue;
 import entity.EntityGolfCart;
 import init.BlockInit;
 import init.ItemInit;
+import main.ConfigHandler;
 import main.GravityFalls;
 import main.IHasModel;
 import net.minecraft.enchantment.EnchantmentHelper;
@@ -32,7 +33,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import network.MessageOpenScope;
 import network.Messages;
 
 public class QuantumDestabilizer extends ItemBow implements IHasModel
@@ -155,9 +155,9 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 	}
 
 	@Override
-	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer playerIn, EnumHand handIn)
+	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn)
 	{
-		ItemStack itemstack = playerIn.getHeldItem(handIn);
+		ItemStack itemstack = player.getHeldItem(handIn);
 
 		//Set the NBT to a new NBT if it is null
 		NBTTagCompound nbt = new NBTTagCompound();
@@ -173,16 +173,9 @@ public class QuantumDestabilizer extends ItemBow implements IHasModel
 		if(nbt.hasKey("aiming"))
 			aiming = nbt.getBoolean("aiming");
 
-		if(!worldIn.isRemote)
-		{
-			counter = 60;
-			aiming = true;
-			if(playerIn instanceof EntityPlayerMP) {
-				EntityPlayerMP serverPlayer = (EntityPlayerMP) playerIn;
-				Messages.INSTANCE.sendTo(new MessageOpenScope(),  serverPlayer);
-
-			}
-		}
+		counter = 60;
+		aiming = true;
+		player.openGui(GravityFalls.instance, ConfigHandler.SCOPE, player.world, (int) player.posX, (int) player.posY, (int) player.posZ);
 
 		nbt.setInteger("counter", counter);
 		nbt.setBoolean("aiming", aiming);

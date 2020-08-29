@@ -32,7 +32,7 @@ public class GolfCart extends Item implements IHasModel{
 
 		if (!world.isRemote)
         {
-            EntityGolfCart golfCart = new EntityGolfCart(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 0.0625D, (double)pos.getZ() + 0.5D);
+            EntityGolfCart golfCart = new EntityGolfCart(world, (double)pos.getX() + 0.5D, (double)pos.getY() + 1.0625D, (double)pos.getZ() + 0.5D);
 
             if (itemstack.hasDisplayName())
             {

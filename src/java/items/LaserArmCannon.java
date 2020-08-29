@@ -17,6 +17,7 @@ import main.IHasModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.init.MobEffects;
 import net.minecraft.item.IItemPropertyGetter;
 import net.minecraft.item.ItemStack;
@@ -34,6 +35,9 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
+import network.MessagePlaySound;
+import network.MessageProcessBattery;
+import network.Messages;
 
 public class LaserArmCannon extends ItemSword implements IHasModel
 {
@@ -57,30 +61,24 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 
 					if(stack.getTagCompound() != null)
 						nbt = stack.getTagCompound();
-					
+
 					int cooldown = 30;
-					boolean charging = false;
-					
+
 					if(nbt.hasKey("cooldown"))
 						cooldown = nbt.getInteger("cooldown");
-					if(nbt.hasKey("charging"))
-						charging = nbt.getBoolean("charging");
-					
-					if(charging)
-					{
-						if(cooldown >= 0 && cooldown < 5)
-							return 0.1F;
-						else if(cooldown >= 5 && cooldown < 10)
-							return 0.5F;
-						else if(cooldown >= 10 && cooldown < 15)
-							return 0.4F;
-						else if(cooldown >= 15 && cooldown < 20)
-							return 0.3F;
-						else if(cooldown >= 20 && cooldown < 25)
-							return 0.2F;
-					}
 
-					return 0.6F;
+					if(cooldown >= 0 && cooldown < 5)
+						return 0.1F;
+					else if(cooldown >= 5 && cooldown < 10)
+						return 0.5F;
+					else if(cooldown >= 10 && cooldown < 15)
+						return 0.4F;
+					else if(cooldown >= 15 && cooldown < 20)
+						return 0.3F;
+					else if(cooldown >= 20 && cooldown < 25)
+						return 0.2F;
+					else
+						return 0.6F;
 				}
 				return 0.1F;
 			}
@@ -98,6 +96,7 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 	@Override
 	public ActionResult<ItemStack> onItemRightClick(World worldIn, EntityPlayer player, EnumHand handIn) 
 	{
+		boolean flag = player.capabilities.isCreativeMode;
 		ItemStack stack = player.getHeldItem(handIn);
 
 		//Set the NBT to a new NBT if it is null
@@ -105,24 +104,27 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 
 		if(stack.getTagCompound() != null)
 			nbt = stack.getTagCompound();
-		
+
 		int cooldown = 30;
-		boolean charging = false;
-		
+
 		if(nbt.hasKey("cooldown"))
 			cooldown = nbt.getInteger("cooldown");
-		
-		
-		if(cooldown == 0) {
 
-			charging = false;
-			worldIn.playSound(player, player.getPosition(), SoundsHandler.ITEM_LASER_ARM_CANNON, SoundCategory.PLAYERS, 1, 1);
+		//Fire weapon
+		if(!worldIn.isRemote && cooldown == 0 && player.getHeldItemMainhand().getItem() == ItemInit.LASER_ARM_CANNON && (stack.getItemDamage() < 20 || flag)) {
+
+			Messages.INSTANCE.sendTo(new MessagePlaySound((short) 4),  (EntityPlayerMP) player);
+
+			if(!flag)
+				stack.damageItem(1, player);
+
+			getMouseOver(player, worldIn);
+			cooldown = 30;
 		}
 
 		nbt.setInteger("cooldown", cooldown);
-		nbt.setBoolean("charging", charging);
 		stack.setTagCompound(nbt);
-		
+
 		return super.onItemRightClick(worldIn, player, handIn);
 	}
 
@@ -134,66 +136,23 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 
 		if(stack.getTagCompound() != null)
 			nbt = stack.getTagCompound();
-		
+
 		int cooldown = 30;
-		boolean charging = false;
-		
+
 		if(nbt.hasKey("cooldown"))
 			cooldown = nbt.getInteger("cooldown");
-		if(nbt.hasKey("charging"))
-			charging = nbt.getBoolean("charging");
-		
+
 		if(cooldown > 0)
 			cooldown--;
 
-		if(entityIn instanceof EntityPlayer)
+		if(KeyBindings.BATTERY.isDown())
 		{
-			EntityPlayer player = (EntityPlayer) entityIn;
-			boolean flag = player.capabilities.isCreativeMode;
-
-			if(!charging && (stack.getItemDamage() < 20 || flag) && player.getHeldItemMainhand().getItem() instanceof LaserArmCannon)
-			{
-				if(!worldIn.isRemote) {
-					if(!flag)
-						stack.damageItem(1, player);
-
-					getMouseOver(player, worldIn);
-					charging = true;
-					cooldown = 30;
-				}
-			}
-
-			if(stack.getItemDamage() >= 10 &&  KeyBindings.BATTERY.isDown())
-			{
-				if(player.getHeldItemMainhand().getItem() instanceof LaserArmCannon)
-				{
-					ItemStack itemstack = findAmmo(player);
-
-					if(isBattery(itemstack))
-					{
-						stack.setItemDamage(stack.getItemDamage() - 10);
-
-						itemstack.shrink(1);
-					}
-				}
-			}
-		}
-		else if(entityIn instanceof EntityTimeCopDundgren || entityIn instanceof EntityTimeCopLolph)
-		{
-			EntityLivingBase entityLiving = (EntityPlayer) entityIn;
-
-			if(!charging)
-			{
-				getMouseOver(entityLiving, worldIn);
-				charging = true;
-				cooldown = 30;
-			}
+			Messages.INSTANCE.sendToServer(new MessageProcessBattery(6));
 		}
 
 		nbt.setInteger("cooldown", cooldown);
-		nbt.setBoolean("charging", charging);
 		stack.setTagCompound(nbt);
-		
+
 		super.onUpdate(stack, worldIn, entityIn, itemSlot, isSelected);
 	}
 
@@ -235,36 +194,5 @@ public class LaserArmCannon extends ItemSword implements IHasModel
 				}
 			}
 		}
-	}
-
-	private ItemStack findAmmo(EntityPlayer player)
-	{
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.OFF_HAND), new ItemStack(ItemInit.BATTERY)))
-		{
-			return player.getHeldItem(EnumHand.OFF_HAND);
-		}
-		if (player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(player.getHeldItem(EnumHand.MAIN_HAND), new ItemStack(ItemInit.BATTERY)))
-		{
-			return player.getHeldItem(EnumHand.MAIN_HAND);
-		}
-		else
-		{
-			for (int i = 0; i < player.inventory.getSizeInventory(); ++i)
-			{
-				ItemStack itemstack = player.inventory.getStackInSlot(i);
-
-				if (	player.inventory.getCurrentItem().areItemsEqualIgnoreDurability(itemstack, new ItemStack(ItemInit.BATTERY)))
-				{
-					return itemstack;
-				}
-			}
-
-			return ItemStack.EMPTY;
-		}
-	}
-
-	protected boolean isBattery(ItemStack stack)
-	{
-		return stack.getItem() instanceof ItemBasic;
 	}
 }
